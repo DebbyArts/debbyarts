@@ -50,6 +50,24 @@ describe("catalogue image safety", () => {
     ).rejects.toBeInstanceOf(ImageValidationError)
   })
 
+  it("rejects an image whose header parses but whose pixels cannot fully decode", async () => {
+    const jpeg = await sharp({
+      create: {
+        width: 640,
+        height: 480,
+        channels: 3,
+        background: "#cf2e78",
+      },
+    })
+      .jpeg()
+      .toBuffer()
+    const truncated = jpeg.subarray(0, jpeg.length - 100)
+
+    await expect(
+      validateImageFile(new File([truncated], "truncated.jpg"))
+    ).rejects.toBeInstanceOf(ImageValidationError)
+  })
+
   it("generates immutable owner-scoped paths and blocks arbitrary deletion", () => {
     const path = immutableImagePath("abc-123", "artwork", "jpg")
     expect(path).toMatch(/^abc-123\/artwork\/[0-9a-f-]+\.jpg$/)

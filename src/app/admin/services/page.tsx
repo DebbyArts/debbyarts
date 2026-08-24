@@ -17,6 +17,7 @@ import { getPublicMediaUrl } from "@/server/storage/public-url"
 
 type ServiceListPageProps = {
   searchParams: Promise<{
+    cleanup?: string
     deleted?: string
     group?: string
     q?: string
@@ -31,9 +32,16 @@ const GROUP_LABELS: Record<string, string> = {
 }
 
 async function ServiceListPage({ searchParams }: ServiceListPageProps) {
-  await requireAdmin()
+  const admin = await requireAdmin()
   const { prisma } = await import("@/db/client")
   const query = await searchParams
+  const cleanupPath =
+    query.cleanup &&
+    query.cleanup.length <= 250 &&
+    query.cleanup.startsWith(`${admin.id}/service/`) &&
+    /^[0-9a-f-]+\/service\/[0-9a-f-]+\.(jpg|png|webp)$/.test(query.cleanup)
+      ? query.cleanup
+      : null
   const group = Object.hasOwn(GROUP_LABELS, query.group ?? "")
     ? query.group
     : undefined
@@ -66,7 +74,18 @@ async function ServiceListPage({ searchParams }: ServiceListPageProps) {
             </Button>
           }
         />
-        {query.deleted ? <FeedbackBanner>Service deleted.</FeedbackBanner> : null}
+        {query.deleted ? (
+          <FeedbackBanner tone={cleanupPath ? "warning" : "success"}>
+            {cleanupPath ? (
+              <span>
+                Service deleted. Remove the orphaned Storage object at{" "}
+                <code className="break-all font-mono">{cleanupPath}</code>.
+              </span>
+            ) : (
+              "Service deleted."
+            )}
+          </FeedbackBanner>
+        ) : null}
         <form
           action="/admin/services"
           className="grid gap-3 border border-border-subtle bg-card p-3 md:grid-cols-[1fr_13rem_13rem_auto]"

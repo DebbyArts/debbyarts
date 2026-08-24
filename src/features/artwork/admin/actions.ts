@@ -184,11 +184,20 @@ async function deleteArtworkAction(artworkId: string) {
   if (!artwork) redirect("/admin/artwork")
 
   await prisma.artwork.delete({ where: { id: artworkId } })
+  let cleanupPath: string | null = null
   if (artwork.primaryImagePath) {
-    await deleteCatalogueImage(admin, "artwork", artwork.primaryImagePath)
+    try {
+      await deleteCatalogueImage(admin, "artwork", artwork.primaryImagePath)
+    } catch {
+      cleanupPath = artwork.primaryImagePath
+    }
   }
   revalidateArtwork()
-  redirect("/admin/artwork?deleted=1")
+  redirect(
+    cleanupPath
+      ? `/admin/artwork?deleted=1&cleanup=${encodeURIComponent(cleanupPath)}`
+      : "/admin/artwork?deleted=1"
+  )
 }
 
 export {

@@ -18,6 +18,7 @@ import { getPublicMediaUrl } from "@/server/storage/public-url"
 type ArtworkListPageProps = {
   searchParams: Promise<{
     category?: string
+    cleanup?: string
     deleted?: string
     q?: string
     status?: string
@@ -39,9 +40,16 @@ const AVAILABILITY_LABELS: Record<string, string> = {
 }
 
 async function ArtworkListPage({ searchParams }: ArtworkListPageProps) {
-  await requireAdmin()
+  const admin = await requireAdmin()
   const { prisma } = await import("@/db/client")
   const query = await searchParams
+  const cleanupPath =
+    query.cleanup &&
+    query.cleanup.length <= 250 &&
+    query.cleanup.startsWith(`${admin.id}/artwork/`) &&
+    /^[0-9a-f-]+\/artwork\/[0-9a-f-]+\.(jpg|png|webp)$/.test(query.cleanup)
+      ? query.cleanup
+      : null
   const category = Object.hasOwn(CATEGORY_LABELS, query.category ?? "")
     ? query.category
     : undefined
@@ -78,7 +86,16 @@ async function ArtworkListPage({ searchParams }: ArtworkListPageProps) {
           }
         />
         {query.deleted ? (
-          <FeedbackBanner>Artwork deleted.</FeedbackBanner>
+          <FeedbackBanner tone={cleanupPath ? "warning" : "success"}>
+            {cleanupPath ? (
+              <span>
+                Artwork deleted. Remove the orphaned Storage object at{" "}
+                <code className="break-all font-mono">{cleanupPath}</code>.
+              </span>
+            ) : (
+              "Artwork deleted."
+            )}
+          </FeedbackBanner>
         ) : null}
         <form
           action="/admin/artwork"

@@ -1,9 +1,11 @@
 import "server-only"
 
 import { randomUUID } from "node:crypto"
+import { createClient } from "@supabase/supabase-js"
 import sharp from "sharp"
 
 import type { VerifiedAdmin } from "@/server/auth/authorize"
+import { getSupabaseStorageAdminConfig } from "@/server/auth/config"
 
 const STORAGE_BUCKET = "catalogue-media"
 const MAX_IMAGE_BYTES = 8 * 1024 * 1024
@@ -50,6 +52,18 @@ function getStorageBucket() {
   return STORAGE_BUCKET
 }
 
+function createStorageAdminClient() {
+  const { secretKey, url } = getSupabaseStorageAdminConfig()
+
+  return createClient(url, secretKey, {
+    auth: {
+      autoRefreshToken: false,
+      detectSessionInUrl: false,
+      persistSession: false,
+    },
+  })
+}
+
 async function validateImageFile(file: File): Promise<ValidatedImage> {
   if (file.size === 0) {
     throw new ImageValidationError("Choose an image to upload.")
@@ -61,13 +75,15 @@ async function validateImageFile(file: File): Promise<ValidatedImage> {
 
   const buffer = Buffer.from(await file.arrayBuffer())
   let metadata: Awaited<ReturnType<ReturnType<typeof sharp>["metadata"]>>
+  let decoder: ReturnType<typeof sharp>
 
   try {
-    metadata = await sharp(buffer, {
+    decoder = sharp(buffer, {
       animated: false,
       failOn: "error",
       limitInputPixels: MAX_IMAGE_DIMENSION * MAX_IMAGE_DIMENSION,
-    }).metadata()
+    })
+    metadata = await decoder.metadata()
   } catch {
     throw new ImageValidationError(
       "The upload is not a decodable JPEG, PNG or WebP image."
@@ -100,6 +116,14 @@ async function validateImageFile(file: File): Promise<ValidatedImage> {
   ) {
     throw new ImageValidationError(
       `Images must be between ${MIN_IMAGE_DIMENSION}px and ${MAX_IMAGE_DIMENSION}px on each side.`
+    )
+  }
+
+  try {
+    await decoder.clone().raw().toBuffer()
+  } catch {
+    throw new ImageValidationError(
+      "The upload is not a fully decodable JPEG, PNG or WebP image."
     )
   }
 
@@ -139,7 +163,7 @@ async function uploadCatalogueImage(
 ): Promise<StoredImage> {
   const image = await validateImageFile(file)
   const path = immutableImagePath(admin.id, kind, image.extension)
-  const { error } = await admin.supabase.storage
+  const { error } = await createStorageAdminClient().storage
     .from(getStorageBucket())
     .upload(path, image.buffer, {
       cacheControl: "31536000",
@@ -184,7 +208,7 @@ async function deleteCatalogueImage(
     )
   }
 
-  const { data, error } = await admin.supabase.storage
+  const { data, error } = await createStorageAdminClient().storage
     .from(getStorageBucket())
     .remove([path])
 

@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from "vitest"
 
 import {
   getAdminEmail,
+  getSupabaseStorageAdminConfig,
   normalizeEmail,
   safeAdminRedirect,
 } from "@/server/auth/config"
@@ -26,5 +27,15 @@ describe("Admin auth configuration", () => {
     )
     expect(safeAdminRedirect("//evil.example")).toBe("/admin/artwork")
     expect(safeAdminRedirect("/%E0%A4%A")).toBe("/admin/artwork")
+  })
+
+  it("keeps privileged Storage configuration server-only and explicit", () => {
+    vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "https://example.supabase.co")
+    vi.stubEnv("SUPABASE_SECRET_KEY", "test-secret")
+
+    expect(getSupabaseStorageAdminConfig()).toEqual({
+      secretKey: "test-secret",
+      url: "https://example.supabase.co",
+    })
   })
 })

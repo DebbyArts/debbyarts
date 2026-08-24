@@ -13,33 +13,11 @@ on conflict (id) do update set
   file_size_limit = excluded.file_size_limit,
   allowed_mime_types = excluded.allowed_mime_types;
 
+-- There are deliberately no authenticated-role write policies. Catalogue
+-- mutations use a server-only privileged client only after requireAdmin has
+-- verified the sole configured owner. The public bucket remains read-only to
+-- browser clients, so a separately authenticated Supabase user cannot upload,
+-- replace, or delete catalogue objects through the Storage API.
 drop policy if exists "catalogue media owner insert" on storage.objects;
-create policy "catalogue media owner insert"
-on storage.objects for insert to authenticated
-with check (
-  bucket_id = 'catalogue-media'
-  and (storage.foldername(name))[1] = (select auth.uid()::text)
-);
-
 drop policy if exists "catalogue media owner update" on storage.objects;
-create policy "catalogue media owner update"
-on storage.objects for update to authenticated
-using (
-  bucket_id = 'catalogue-media'
-  and owner_id = (select auth.uid()::text)
-  and (storage.foldername(name))[1] = (select auth.uid()::text)
-)
-with check (
-  bucket_id = 'catalogue-media'
-  and owner_id = (select auth.uid()::text)
-  and (storage.foldername(name))[1] = (select auth.uid()::text)
-);
-
 drop policy if exists "catalogue media owner delete" on storage.objects;
-create policy "catalogue media owner delete"
-on storage.objects for delete to authenticated
-using (
-  bucket_id = 'catalogue-media'
-  and owner_id = (select auth.uid()::text)
-  and (storage.foldername(name))[1] = (select auth.uid()::text)
-);

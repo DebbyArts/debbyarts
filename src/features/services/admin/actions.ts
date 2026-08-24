@@ -177,11 +177,20 @@ async function deleteServiceAction(serviceId: string) {
   if (!service) redirect("/admin/services")
 
   await prisma.service.delete({ where: { id: serviceId } })
+  let cleanupPath: string | null = null
   if (service.primaryImagePath) {
-    await deleteCatalogueImage(admin, "service", service.primaryImagePath)
+    try {
+      await deleteCatalogueImage(admin, "service", service.primaryImagePath)
+    } catch {
+      cleanupPath = service.primaryImagePath
+    }
   }
   revalidateServices()
-  redirect("/admin/services?deleted=1")
+  redirect(
+    cleanupPath
+      ? `/admin/services?deleted=1&cleanup=${encodeURIComponent(cleanupPath)}`
+      : "/admin/services?deleted=1"
+  )
 }
 
 export {
