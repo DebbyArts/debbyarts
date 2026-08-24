@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/alert-dialog"
 
 type ConfirmationDialogProps = {
+  action?: (formData: FormData) => void | Promise<void>
   cancelLabel?: string
   children?: ReactNode
   confirmLabel: string
@@ -27,6 +28,7 @@ type ConfirmationDialogProps = {
 }
 
 function ConfirmationDialog({
+  action,
   cancelLabel = "Cancel",
   children,
   confirmLabel,
@@ -48,13 +50,25 @@ function ConfirmationDialog({
         {children}
         <AlertDialogFooter>
           <AlertDialogCancel>{cancelLabel}</AlertDialogCancel>
-          <AlertDialogAction
-            disabled={disabled}
-            variant={destructive ? "destructive" : "secondary"}
-            onClick={onConfirm}
-          >
-            {confirmLabel}
-          </AlertDialogAction>
+          {action ? (
+            <form action={action}>
+              <AlertDialogAction
+                type="submit"
+                disabled={disabled}
+                variant={destructive ? "destructive" : "secondary"}
+              >
+                {confirmLabel}
+              </AlertDialogAction>
+            </form>
+          ) : (
+            <AlertDialogAction
+              disabled={disabled}
+              variant={destructive ? "destructive" : "secondary"}
+              onClick={onConfirm}
+            >
+              {confirmLabel}
+            </AlertDialogAction>
+          )}
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
