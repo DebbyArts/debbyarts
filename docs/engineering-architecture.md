@@ -47,6 +47,7 @@ Shared UI follows **local first → prove reuse → promote intentionally**:
 
 - `src/components/ui/` owns low-level shadcn/base primitives.
 - `src/components/shared/` owns application-level UI that is genuinely used across features.
+- `src/features/site/components/` owns the repeated public header, footer, mobile navigation, and public shell because those remain public-site concerns rather than global domain components.
 - A possible future use is not enough reason to promote a component.
 - Before adding shared code, check for an equivalent and prefer reusing or extending it.
 - Never place feature-specific behaviour in a global shared module.
@@ -102,6 +103,8 @@ Use descriptive, purpose-specific names. Avoid vague names such as `utils2.ts`, 
 Create a component when it owns a coherent visual unit or behaviour, improves readability materially, needs independent testing, or establishes a real feature boundary. Prefer small composable components, but do not fragment trivial markup into dozens of files.
 
 Use Tailwind CSS, shadcn/ui primitives where useful, and the coded Paper tokens and conventions in `docs/design-foundations.md`. Do not add arbitrary design tokens or page-specific CSS architecture.
+
+The currently approved shared application primitives are catalogued in `docs/design-foundations.md`. Feature modules should compose them and keep domain copy, records, validation, workflows, and feature-specific cards local.
 
 ## Product and design sources of truth
 

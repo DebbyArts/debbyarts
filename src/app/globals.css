@@ -21,25 +21,33 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-border: var(--border);
   --color-border-subtle: var(--border-subtle);
+  --color-border-muted: var(--border-muted);
   --color-input: var(--input);
   --color-ring: var(--ring);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-destructive-surface: var(--destructive-surface);
+  --color-destructive-surface-foreground: var(
+    --destructive-surface-foreground
+  );
   --color-destructive-border: var(--destructive-border);
   --color-success: var(--success);
   --color-success-foreground: var(--success-foreground);
   --color-success-surface: var(--success-surface);
+  --color-success-surface-foreground: var(--success-surface-foreground);
   --color-success-border: var(--success-border);
   --color-warning: var(--warning);
   --color-warning-foreground: var(--warning-foreground);
   --color-warning-surface: var(--warning-surface);
+  --color-warning-surface-foreground: var(--warning-surface-foreground);
   --color-warning-border: var(--warning-border);
   --color-info: var(--info);
   --color-info-foreground: var(--info-foreground);
   --color-disabled: var(--disabled);
   --color-disabled-border: var(--disabled-border);
   --color-surface-subtle: var(--surface-subtle);
+  --color-skeleton: var(--skeleton);
+  --color-skeleton-muted: var(--skeleton-muted);
   --font-sans: "Manrope", "Manrope Fallback", ui-sans-serif, system-ui,
     sans-serif;
   --font-display: "Archivo Black", "Archivo Black Fallback", ui-sans-serif,
@@ -92,25 +100,31 @@
   --accent-foreground: #1f1e1b;
   --border: #1f1e1b;
   --border-subtle: #d8d1c7;
+  --border-muted: #bdb5aa;
   --input: #1f1e1b;
   --ring: #f2c84b;
   --destructive: #b3261e;
   --destructive-foreground: #ffffff;
   --destructive-surface: #fbe6e3;
+  --destructive-surface-foreground: #8b2e27;
   --destructive-border: #dca7a2;
   --success: #2f7d54;
   --success-foreground: #ffffff;
   --success-surface: #e7f2ea;
+  --success-surface-foreground: #2f6047;
   --success-border: #bfd8c8;
   --warning: #f2c84b;
   --warning-foreground: #1f1e1b;
   --warning-surface: #fff4d0;
+  --warning-surface-foreground: #765d12;
   --warning-border: #e7c85d;
   --info: #269db8;
   --info-foreground: #1f1e1b;
   --disabled: #d4cec5;
   --disabled-border: #beb7ad;
   --surface-subtle: #faf8f3;
+  --skeleton: #e3ddd4;
+  --skeleton-muted: #ece7df;
   --page-gutter: 1.25rem;
 }
 

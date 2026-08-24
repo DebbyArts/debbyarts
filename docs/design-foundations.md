@@ -108,4 +108,20 @@ Every control needs an accessible name. Use `Label` with matching `htmlFor`/`id`
 - Use token-based classes instead of feature-specific colours in primitives.
 - Prefer the existing primitive before creating a parallel raw control.
 - Add Dialog or other shadcn components only when a real feature needs them.
-- Feature-specific cards, request fields, headers, navigation, and admin shells stay in their owning feature until reuse is proven.
+- Feature-specific cards, request fields, route content, and shell variations stay in their owning feature until reuse is proven.
+
+## Shared application primitives
+
+The proven public shell lives in `src/features/site/`: `PublicHeader`, `PublicFooter`, `PublicShell`, and the small interactive mobile menu. It owns only the known `/`, `/art`, `/services`, and `/request` destinations. Public page content remains feature-owned.
+
+Cross-domain application primitives live in `src/components/shared/`:
+
+- `AdminShell` provides the final desktop sidebar and mobile section switcher. Feature routes pass the active section and content; authentication supplies the optional account action.
+- `MediaImage` standardises responsive `next/image` rendering, required `sizes`, deliberate alt text, aspect-ratio ownership, and a no-source fallback without hiding feature-specific image decisions.
+- `SelectableOption` is the domain-neutral radio selection surface used by the approved request patterns.
+- `EmptyState`, `LoadingState`, `ErrorState`, and `FeedbackBanner` implement the compact, recoverable feedback treatments shown in the final Admin reference.
+- `ConfirmationDialog` composes the Paper-styled Alert Dialog foundation for consequential actions without containing delete, unpublish, or other domain behaviour.
+
+Low-level `Field` composition and the existing Input, Textarea, Select, Checkbox, Switch, and Radio Group controls remain in `src/components/ui/`. A field should use a matching label/control ID, connect supporting/error copy through `aria-describedby`, set `aria-invalid` when an error exists, and keep validation logic in the owning feature.
+
+Do not add Artwork cards, Service cards, enquiry rows, schemas, request-mode logic, or CRUD behaviour to this shared layer. If a feature needs a visual variation only once, keep it local until a second real use proves promotion.
