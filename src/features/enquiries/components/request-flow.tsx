@@ -136,6 +136,9 @@ function validateClientStep(
     if (fields.includes("designReadiness") && !draft.designReadiness) {
       errors.designReadiness = "Choose your design readiness."
     }
+    if (draft.broadRequest && draft.customerNote.length > 2_000) {
+      errors.customerNote = "Keep the note under 2,000 characters."
+    }
   }
 
   if (step === "delivery") {
@@ -160,13 +163,23 @@ function validateClientStep(
     if (normalizeEmail(draft.email) === undefined) {
       errors.email = "Enter a valid email address."
     }
+    if (!draft.broadRequest && draft.customerNote.length > 2_000) {
+      errors.customerNote = "Keep the note under 2,000 characters."
+    }
   }
 
   return errors
 }
 
-function stepForServerErrors(fieldErrors: RequestFieldErrors): RequestStep {
+function stepForServerErrors(
+  fieldErrors: RequestFieldErrors,
+  draft: RequestDraft
+): RequestStep {
   const fields = Object.keys(fieldErrors) as RequestField[]
+
+  if (draft.broadRequest && fields.includes("customerNote")) {
+    return "details"
+  }
 
   if (
     fields.some((field) =>
@@ -251,6 +264,7 @@ function ChoiceField({
       <RadioGroup
         value={value}
         onValueChange={onChange}
+        aria-required={required}
         aria-invalid={Boolean(error)}
         aria-describedby={error ? `${id}-error` : undefined}
         className="sm:grid-cols-2"
@@ -545,7 +559,9 @@ function RequestStage({
           <RadioGroup
             value={draft.requestKind}
             onValueChange={(value) => onChange("requestKind", value)}
+            aria-required="true"
             aria-invalid={Boolean(errors.requestKind)}
+            aria-describedby={errors.requestKind ? "request-kind-error" : undefined}
             className="lg:grid-cols-2"
           >
             <SelectableOption
@@ -561,7 +577,9 @@ function RequestStage({
               className="min-h-40 p-6 lg:min-h-56"
             />
           </RadioGroup>
-          {errors.requestKind ? <FieldError>{errors.requestKind}</FieldError> : null}
+          {errors.requestKind ? (
+            <FieldError id="request-kind-error">{errors.requestKind}</FieldError>
+          ) : null}
         </FieldSet>
       ) : null}
 
@@ -587,6 +605,8 @@ function RequestStage({
               }
             }}
             aria-invalid={Boolean(errors.itemSlug)}
+            aria-required="true"
+            aria-describedby={errors.itemSlug ? "request-item-error" : undefined}
           >
             {candidates.map((candidate) => {
               const artwork = "title" in candidate
@@ -624,7 +644,9 @@ function RequestStage({
               description="Continue without linking a catalogue item."
             />
           </RadioGroup>
-          {errors.itemSlug ? <FieldError>{errors.itemSlug}</FieldError> : null}
+          {errors.itemSlug ? (
+            <FieldError id="request-item-error">{errors.itemSlug}</FieldError>
+          ) : null}
         </FieldSet>
       ) : null}
 
@@ -637,6 +659,7 @@ function RequestStage({
                 type="number"
                 min={1}
                 step={1}
+                required
                 inputMode="numeric"
                 value={draft.quantity}
                 onChange={(event) => onChange("quantity", event.target.value)}
@@ -716,10 +739,15 @@ function RequestStage({
             >
               <Textarea
                 id="request-broad-note"
+                maxLength={2_000}
                 value={draft.customerNote}
                 onChange={(event) => onChange("customerNote", event.target.value)}
                 aria-invalid={Boolean(errors.customerNote)}
-                aria-describedby="request-broad-note-description"
+                aria-describedby={
+                  errors.customerNote
+                    ? "request-broad-note-description request-broad-note-error"
+                    : "request-broad-note-description"
+                }
               />
             </FieldShell>
           ) : null}
@@ -750,6 +778,7 @@ function RequestStage({
               id="request-location"
               value={draft.location}
               onChange={(event) => onChange("location", event.target.value)}
+              required={draft.fulfilmentMethod === "DELIVERY"}
               placeholder="Area / city / state"
               aria-invalid={Boolean(errors.location)}
               aria-describedby={errors.location ? "request-location-error" : "request-location-description"}
@@ -779,6 +808,7 @@ function RequestStage({
             <Input
               id="request-name"
               autoComplete="name"
+              required
               value={draft.customerName}
               onChange={(event) => onChange("customerName", event.target.value)}
               aria-invalid={Boolean(errors.customerName)}
@@ -797,6 +827,7 @@ function RequestStage({
               type="tel"
               inputMode="tel"
               autoComplete="tel"
+              required
               value={draft.phoneWhatsApp}
               onChange={(event) => onChange("phoneWhatsApp", event.target.value)}
               aria-invalid={Boolean(errors.phoneWhatsApp)}
@@ -818,6 +849,7 @@ function RequestStage({
             <FieldShell id="request-note" label="Anything else? (optional)" error={errors.customerNote}>
               <Textarea
                 id="request-note"
+                maxLength={2_000}
                 value={draft.customerNote}
                 onChange={(event) => onChange("customerNote", event.target.value)}
                 aria-invalid={Boolean(errors.customerNote)}
@@ -871,7 +903,7 @@ function RequestFlow({ data }: { data: RequestPageData }) {
     if (nextState.status === "validation") {
       setErrors(nextState.fieldErrors)
       setReviewingAfterError(true)
-      const step = stepForServerErrors(nextState.fieldErrors)
+      const step = stepForServerErrors(nextState.fieldErrors, draft)
       if (steps.includes(step)) setCurrentStep(step)
     } else if (
       nextState.status === "error" ||
