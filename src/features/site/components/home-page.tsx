@@ -135,9 +135,6 @@ function ArtworkCard({
   index: number
 }) {
   const category = artworkCategoryLabels[artwork.category]
-  const displayableImage = artwork.primaryImagePath?.startsWith("/")
-    ? artwork.primaryImagePath
-    : undefined
 
   return (
     <article
@@ -148,7 +145,7 @@ function ArtworkCard({
       )}
     >
       <MediaImage
-        src={displayableImage}
+        src={artwork.primaryImageUrl ?? undefined}
         alt={artwork.primaryImageAlt ?? artwork.title}
         sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 90vw"
         fit="contain"
@@ -185,7 +182,9 @@ function FeaturedArtwork({ result }: { result: FeaturedArtworkResult }) {
       <Container className="border-t border-border py-20 min-[1400px]:min-h-[68.75rem] min-[1400px]:px-[4.25rem] min-[1400px]:pt-28 min-[1400px]:pb-[7.5rem]">
         <div className="flex flex-col gap-6 min-[1400px]:flex-row min-[1400px]:items-end min-[1400px]:justify-between">
           <div className="flex flex-col gap-[1.125rem]">
-            <Eyebrow className="bg-info text-white">A CURATED SELECTION</Eyebrow>
+            <Eyebrow className="bg-info text-info-foreground">
+              A CURATED SELECTION
+            </Eyebrow>
             <h2 id="featured-artwork-heading" className="type-h2">
               FEATURED
               <br />
@@ -403,7 +402,7 @@ function RequestProcess() {
               <br /> REQUESTS
               <br /> WORK
             </h2>
-            <p className="max-w-[22.5rem] text-[1.0625rem] leading-[1.6875rem] text-[#d8d2c8]">
+            <p className="max-w-[22.5rem] text-[1.0625rem] leading-[1.6875rem] text-border-subtle">
               Choose what you’re interested in, share a few useful details and
               submit your request.
             </p>
@@ -423,7 +422,7 @@ function RequestProcess() {
             <li
               key={action}
               className={cn(
-                "flex min-h-36 items-center gap-5 border-t border-[#625e58] py-6 min-[1400px]:min-h-[9.25rem] min-[1400px]:gap-6",
+                "flex min-h-36 items-center gap-5 border-t border-muted-foreground py-6 min-[1400px]:min-h-[9.25rem] min-[1400px]:gap-6",
                 index % 2 === 1 && "min-[1400px]:pl-10",
                 index === requestSteps.length - 1 && "border-b"
               )}
@@ -431,7 +430,7 @@ function RequestProcess() {
               <span
                 className={cn(
                   "flex size-12 shrink-0 items-center justify-center rounded-pill border border-white font-display text-lg leading-6 min-[1400px]:size-16 min-[1400px]:text-2xl min-[1400px]:leading-[1.875rem]",
-                  index === 0 && "bg-info",
+                  index === 0 && "bg-info text-info-foreground",
                   index === 1 && "bg-primary",
                   index === 2 && "bg-accent text-foreground",
                   index === 3 && "bg-white text-foreground"

@@ -20,6 +20,8 @@ import {
 describe("getFeaturedArtwork", () => {
   beforeEach(() => {
     vi.stubEnv("DATABASE_URL", "postgresql://example.invalid/debbyarts")
+    vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "https://example.supabase.co")
+    vi.stubEnv("NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET", "catalogue")
     findMany.mockReset()
     vi.restoreAllMocks()
   })
@@ -32,17 +34,30 @@ describe("getFeaturedArtwork", () => {
         title: "Quiet Strength",
         category: "PAINTING",
         mediumFormat: "Acrylic on canvas",
-        primaryImagePath: null,
-        primaryImageAlt: null,
-        primaryImageWidth: null,
-        primaryImageHeight: null,
+        primaryImagePath: "artwork/quiet-strength.jpg",
+        primaryImageAlt: "A portrait titled Quiet Strength",
+        primaryImageWidth: 800,
+        primaryImageHeight: 1000,
       },
     ]
     findMany.mockResolvedValue(artwork)
 
     await expect(getFeaturedArtwork()).resolves.toEqual({
       status: "ready",
-      artwork,
+      artwork: [
+        {
+          id: "artwork-1",
+          slug: "quiet-strength",
+          title: "Quiet Strength",
+          category: "PAINTING",
+          mediumFormat: "Acrylic on canvas",
+          primaryImageUrl:
+            "https://example.supabase.co/storage/v1/object/public/catalogue/artwork/quiet-strength.jpg",
+          primaryImageAlt: "A portrait titled Quiet Strength",
+          primaryImageWidth: 800,
+          primaryImageHeight: 1000,
+        },
+      ],
     })
     expect(findMany).toHaveBeenCalledWith(featuredArtworkQuery)
     expect(featuredArtworkQuery).toMatchObject({

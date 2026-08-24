@@ -29,7 +29,8 @@ describe("HomePage featured artwork states", () => {
               title: "Quiet Strength",
               category: "PAINTING",
               mediumFormat: "Acrylic on canvas",
-              primaryImagePath: "/quiet-strength.jpg",
+              primaryImageUrl:
+                "https://example.supabase.co/storage/v1/object/public/catalogue/artwork/quiet-strength.jpg",
               primaryImageAlt: "A portrait titled Quiet Strength",
               primaryImageWidth: 800,
               primaryImageHeight: 1000,
