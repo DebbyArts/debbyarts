@@ -1,14 +1,15 @@
-import { Container } from "@/components/shared/container";
+import { HomePage } from "@/features/site/components/home-page"
+import { PublicShell } from "@/features/site/components/public-shell"
+import { getFeaturedArtwork } from "@/features/site/server/get-featured-artwork"
 
-export default function Home() {
+export const dynamic = "force-dynamic"
+
+export default async function Home() {
+  const featuredArtwork = await getFeaturedArtwork()
+
   return (
-    <main className="flex min-h-screen items-center py-20">
-      <Container>
-        <div className="max-w-copy">
-          <h1 className="type-h3">Debby Art &amp; Prints</h1>
-          <p className="mt-4 text-muted-foreground">Project setup complete.</p>
-        </div>
-      </Container>
-    </main>
-  );
+    <PublicShell activePath="/">
+      <HomePage featuredArtwork={featuredArtwork} />
+    </PublicShell>
+  )
 }
