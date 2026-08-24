@@ -11,7 +11,9 @@ async function getPublishedServiceGroups() {
   const { prisma } = await import("@/db/client")
   const services = await prisma.service.findMany(PUBLISHED_SERVICES_QUERY)
 
-  return projectServiceGroups(services)
+  return projectServiceGroups(services, {
+    publicMediaBaseUrl: process.env.PUBLIC_MEDIA_BASE_URL,
+  })
 }
 
 export { getPublishedServiceGroups }

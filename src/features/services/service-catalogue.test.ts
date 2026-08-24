@@ -170,6 +170,20 @@ describe("Service catalogue projection", () => {
   test("uses an intentional fallback for missing or unusable images", () => {
     expect(resolveImageSource(null)).toBeUndefined()
     expect(resolveImageSource("service/object-path.jpg")).toBeUndefined()
+    expect(
+      resolveImageSource(
+        "services/custom shirt.jpg",
+        "https://project.example/storage/v1/object/public/catalogue/"
+      )
+    ).toBe(
+      "https://project.example/storage/v1/object/public/catalogue/services/custom%20shirt.jpg"
+    )
+    expect(
+      resolveImageSource(
+        "services/custom-shirt.jpg",
+        "http://project.example/storage/v1/object/public/catalogue"
+      )
+    ).toBeUndefined()
     expect(resolveImageSource("/services/example.jpg")).toBe(
       "/services/example.jpg"
     )
@@ -184,6 +198,26 @@ describe("Service catalogue projection", () => {
     expect(groups[0]?.services[0]?.imageSrc).toBeUndefined()
     expect(groups[0]?.services[0]?.imageAlt).toBe(
       "Image unavailable for Custom Clothing"
+    )
+
+    const groupsWithPublicMedia = projectServiceGroups(
+      [
+        serviceRecord({
+          primaryImagePath: "services/custom shirt.jpg",
+          primaryImageAlt: "A printed custom shirt",
+        }),
+      ],
+      {
+        publicMediaBaseUrl:
+          "https://project.example/storage/v1/object/public/catalogue",
+      }
+    )
+
+    expect(groupsWithPublicMedia[0]?.services[0]?.imageSrc).toBe(
+      "https://project.example/storage/v1/object/public/catalogue/services/custom%20shirt.jpg"
+    )
+    expect(groupsWithPublicMedia[0]?.services[0]?.imageAlt).toBe(
+      "A printed custom shirt"
     )
   })
 

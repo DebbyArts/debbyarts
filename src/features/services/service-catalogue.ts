@@ -57,6 +57,10 @@ type ServiceGroupPresentation = {
   value: ServiceGroupValue
 }
 
+type ServiceProjectionOptions = {
+  publicMediaBaseUrl?: string
+}
+
 const NGN_FORMATTER = new Intl.NumberFormat("en-NG", {
   style: "currency",
   currency: "NGN",
@@ -126,7 +130,26 @@ function deriveOptionCues(service: PublishedServiceRecord) {
   return cues
 }
 
-function resolveImageSource(path: string | null) {
+function resolvePublicMediaBaseUrl(value: string | undefined) {
+  const candidate = value?.trim()
+
+  if (!candidate) return undefined
+
+  try {
+    const url = new URL(candidate)
+
+    if (url.protocol !== "https:") return undefined
+
+    return url.toString().replace(/\/$/, "")
+  } catch {
+    return undefined
+  }
+}
+
+function resolveImageSource(
+  path: string | null,
+  publicMediaBaseUrl?: string
+) {
   const value = path?.trim()
 
   if (!value) return undefined
@@ -135,9 +158,19 @@ function resolveImageSource(path: string | null) {
   try {
     const url = new URL(value)
     return url.protocol === "https:" ? url.toString() : undefined
-  } catch {
-    return undefined
-  }
+  } catch {}
+
+  const baseUrl = resolvePublicMediaBaseUrl(publicMediaBaseUrl)
+
+  if (!baseUrl) return undefined
+
+  const encodedObjectPath = value
+    .split("/")
+    .filter(Boolean)
+    .map(encodeURIComponent)
+    .join("/")
+
+  return encodedObjectPath ? `${baseUrl}/${encodedObjectPath}` : undefined
 }
 
 function getServiceRequestHref(slug: string) {
@@ -164,7 +197,10 @@ function compareServices(
   return left.slug.localeCompare(right.slug, "en")
 }
 
-function projectService(service: PublishedServiceRecord): ServicePresentation {
+function projectService(
+  service: PublishedServiceRecord,
+  options: ServiceProjectionOptions
+): ServicePresentation {
   const groupDefinition = SERVICE_GROUP_DEFINITIONS.find(
     (group) => group.value === service.group
   )
@@ -173,7 +209,10 @@ function projectService(service: PublishedServiceRecord): ServicePresentation {
     throw new Error(`Service "${service.slug}" has an unsupported group.`)
   }
 
-  const imageSrc = resolveImageSource(service.primaryImagePath)
+  const imageSrc = resolveImageSource(
+    service.primaryImagePath,
+    options.publicMediaBaseUrl
+  )
   const imageAlt = service.primaryImageAlt?.trim()
   const usableImageSrc = imageSrc && imageAlt ? imageSrc : undefined
   const usableImageAlt = usableImageSrc ? imageAlt : undefined
@@ -196,7 +235,8 @@ function projectService(service: PublishedServiceRecord): ServicePresentation {
 }
 
 function projectServiceGroups(
-  services: readonly PublishedServiceRecord[]
+  services: readonly PublishedServiceRecord[],
+  options: ServiceProjectionOptions = {}
 ): ServiceGroupPresentation[] {
   const orderedServices = [...services].sort(compareServices)
 
@@ -207,7 +247,7 @@ function projectServiceGroups(
     number: String(index + 1).padStart(2, "0"),
     services: orderedServices
       .filter((service) => service.group === group.value)
-      .map(projectService),
+      .map((service) => projectService(service, options)),
   })).filter((group) => group.services.length > 0)
 }
 
@@ -221,4 +261,5 @@ export {
   type ServiceGroupPresentation,
   type ServicePresentation,
   type ServicePricingPresentation,
+  type ServiceProjectionOptions,
 }
