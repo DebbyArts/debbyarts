@@ -1,154 +1,151 @@
 # Domain and Data Contracts
 
-This document locks the V1 domain model and infrastructure direction for Debby Art & Prints. It is based on the [latest internal Website Structure](https://app.notion.com/p/3c0b505dc8528135ac15e4b3122a5d79?pvs=204), revised 23 August 2026. That document governs product behaviour; approved Paper references govern visual intent.
+This document defines the simplified V1 domain and persistence model for Debby Art & Prints. The latest Website Structure governs product behaviour; the approved Paper V1 Simplification frames govern the Admin configuration surface.
 
-## Domain ownership
+## Source of truth and ownership
 
-- `src/features/artwork/contracts.ts` owns Artwork content and request configuration.
-- `src/features/services/contracts.ts` owns Service content and request configuration.
-- `src/features/enquiries/contracts.ts` owns the persisted Enquiry contract.
-- `src/types/content.ts` and `src/types/request.ts` contain only contracts genuinely shared by those domains.
-- Future domain behaviour and data access remain inside the owning feature. `src/db/`, `src/server/`, and `src/components/shared/` remain infrastructure or proven shared layers.
+- `src/db/schema.prisma` is the source of truth for persisted Artwork, Service, Enquiry, and their enums.
+- Prisma-generated entity and enum types live in the ignored `src/db/generated/prisma/` directory. Regenerate them after schema changes with `npm run db:generate`.
+- Feature server code may import entity types and Prisma payload/select utilities from `@/db/generated/prisma/client`.
+- Client Components must not import the server client. Browser-safe enum values may be imported from `@/db/generated/prisma/enums`; create a separate projection only when a real serialization or data-exposure boundary requires it.
+- Do not manually recreate a full Prisma row as an application interface.
 
-## Core domains
+Feature behaviour and queries remain feature-owned. `src/db/client.ts` provides the single shared Prisma client instance; it is not a repository, service, or DAO layer.
 
-### Artwork
+## Artwork
 
-Artwork contains public catalogue content, publication and availability state, ordered images, optional price presentation, and explicit request configuration.
+Artwork is one public catalogue record with:
 
-The initial category slugs are `paintings`, `pencil-portraits`, `framed-custom-artwork`, and `digital-artwork`. Categories are relational records in the proposed schema so names and ordering can change without rewriting Artwork rows; the TypeScript union records the approved V1 slugs.
+- a unique slug, title, description, controlled category, optional combined medium/format, and optional displayed-piece dimensions;
+- availability: `AVAILABLE`, `MADE_TO_ORDER`, `SOLD`, or `UNAVAILABLE`;
+- one optional primary-image object path plus alt text and intrinsic dimensions;
+- shared pricing mode and optional amount;
+- `published`, `featured`, display order, and timestamps.
 
-Request configuration controls:
+Draft means `published = false`; there is no publication state machine. Publishing validation must require the content and image fields needed by the public site.
 
-- allowed request modes: exact piece, something similar, or custom commission;
-- available sizes;
-- framing and framing options;
-- quantity and quantity options;
-- behaviour when the piece is unavailable;
-- optional delivery/pickup and timing overrides;
-- up to five additional structured questions.
+Artwork request configuration is deliberately direct:
 
-When an artwork is unavailable, exact-piece requests must not be accepted. Configuration may either disable all requests or retain configured non-exact modes.
+- `availableSizes: String[]`
+- `framingEnabled: Boolean`
+- `framingOptions: String[]`
+- `askQuantity: Boolean`
 
-### Service
+There are no request modes, unavailable-item request rules, delivery overrides, additional images, or dynamic questions.
 
-Service contains public catalogue content, its service group, ordered images, optional price presentation, and explicit request configuration.
+## Service
 
-The initial group slugs are `personalised-products`, `print-event-materials`, and `branding-signage`. Request configuration independently enables quantity, size/format, design readiness, colour, finish, material, deadline, event date, delivery/pickup override, and up to five additional structured questions.
+Service is one public catalogue record with:
 
-### Enquiry
+- a unique slug, name, description, and controlled group;
+- one optional primary-image object path plus alt text and intrinsic dimensions;
+- the shared pricing mode and optional amount;
+- `published`, display order, and timestamps.
 
-Enquiry is the persisted source of truth before WhatsApp handoff. The application must save an Enquiry and receive its unique reference before opening WhatsApp; a failed save must not redirect.
+Service groups are fixed V1 product values:
 
-An Enquiry stores:
+- `PERSONALISED_PRODUCTS`
+- `PRINT_EVENT_MATERIALS`
+- `BRANDING_SIGNAGE`
 
-- request type and optional request mode;
-- optional Artwork or Service relation plus title/name and slug snapshots;
-- structured answers as key/value data with question and option label snapshots;
-- delivery and timing answers;
+Service has no featured flag.
+
+Service request configuration contains six fixed questions:
+
+- `askQuantity`
+- `askSizeFormat` plus `sizeFormatOptions: String[]`
+- `askDesignReadiness`
+- `askColour`
+- `askMaterial`
+- `askFinish`
+
+Only the size/format question has owner-configured text options. Design Readiness uses the fixed labels in `src/features/services/design-readiness.ts`. Quantity is a number, not a preset list. Colour, material, and finish collect the customer's relevant value without owner-built option sets.
+
+## Enquiry
+
+An Enquiry is saved before WhatsApp handoff and receives a unique reference. A failed save must not open WhatsApp.
+
+Each Enquiry stores:
+
+- status: `NEW`, `CONTACTED`, or `RESOLVED`;
+- request kind: `ARTWORK` or `SERVICE`;
+- the relevant optional Artwork or Service relation, using `SetNull` on catalogue deletion;
+- item name and slug snapshots so history remains understandable after deletion;
+- predictable request answers: quantity, size/format, framing, Design Readiness, colour, material, and finish;
+- optional delivery/pickup method, location, and preferred date collected by the normal request flow;
 - customer name, normalized WhatsApp phone, optional email, and optional note;
-- source context, lifecycle status, and timestamps;
-- an optional generated deterministic WhatsApp summary and handoff timestamp.
+- optional deterministic WhatsApp summary and handoff timestamp;
+- created and updated timestamps.
 
-The status lifecycle is deliberately small: `new`, `contacted`, and `resolved`. Content deletion must not erase enquiry history: relations use `SetNull`, while snapshots preserve the submitted context.
+The initial migration enforces positive quantities, relation/request-kind coherence, and Artwork-versus-Service answer scope. There is no request-mode column, JSON answer bag, question table, or dynamic answer engine.
 
-## Deterministic request configuration
+## Shared product concepts
 
-Only configured options appear in Make a Request. The chosen Artwork or Service determines which questions render; a contextual entry point also supplies known source and item context so the flow can skip redundant questions.
+### Pricing
 
-V1 uses bounded contracts rather than a general form builder:
+`PricingMode` is shared by Artwork and Service:
 
-- dedicated fields represent known Artwork and Service questions;
-- additional questions are limited to five per item;
-- additional question kinds are single select, multi-select, or boolean;
-- every selectable option has a stable value, display label, and order;
-- free text is limited to the optional final customer note;
-- no request questions or options are generated by AI.
+- `NONE` — presentation derives “Price on request” and no amount is stored;
+- `EXACT` — presentation derives the formatted amount;
+- `STARTING_FROM` — presentation derives “From” plus the formatted amount.
 
-The TypeScript constant records the limit. Runtime schemas and admin validation must enforce it when mutation work is introduced.
+Amounts use PostgreSQL `Decimal(12,2)`. Currency is fixed to NGN in V1, so it is application configuration rather than a repeated database field. Migration checks require a positive amount for `EXACT` and `STARTING_FROM`, and no amount for `NONE`.
 
-Shared request types include Artwork, Service, and custom requests; their allowed request modes; source context; delivery/timing answers; contact information; publication, availability, and enquiry statuses. Calendar answers use ISO dates, while lifecycle events use ISO date-times. Price amounts use integer minor units and an explicit currency. V1 currency is NGN, while a label-only price supports text such as “Price on request.”
+### Categories
 
-## Persistence proposition
+Artwork categories are a controlled Prisma enum because they drive public filtering and do not need owner-managed CRUD:
 
-The concrete architecture proposition is in [prisma-schema.proposed.prisma](prisma-schema.proposed.prisma). It is a reviewed design artifact, not an active Prisma configuration or migration.
+- `PAINTING`
+- `PENCIL_PORTRAIT`
+- `FRAMED_CUSTOM_ARTWORK`
+- `DIGITAL_ARTWORK`
 
-### Relational data
+### Delivery and timing
 
-Keep data relational when identity, referential integrity, filtering, ordering, or lifecycle queries matter:
+Delivery/pickup, location, and preferred date belong to the shared request process. Catalogue records do not configure or override them.
 
-- Artwork, ArtworkCategory, Service, ServiceGroup, Enquiry, and ImageAsset;
-- primary/additional image relations and their display order;
-- slugs, enquiry references, publication/availability/status enums;
-- core pricing, featured flags, display order, timestamps, and content links.
+## Database and migrations
 
-### JSON data
+The application uses Prisma ORM 7 with PostgreSQL hosted in a client-owned Supabase project:
 
-Use PostgreSQL JSON only for bounded structures that vary by configured item and are read as a whole:
+- Prisma owns application tables, migrations, generated types, and data access.
+- Supabase provides hosted PostgreSQL, Storage, and Auth. It is not a second application migration authority.
+- `DATABASE_URL` is the pooled runtime connection used by `src/db/client.ts`.
+- `DIRECT_URL` is the direct or session-pooled connection used by Prisma CLI migrations.
+- The initial migration lives in `src/db/migrations/`. It was verified against a disposable local PostgreSQL 16 database and has not been applied to a shared or production database.
 
-- selectable option arrays and additional structured questions;
-- delivery/pickup and timing overrides;
-- submitted structured answers, delivery/timing answers, and source context.
+The application tables are in PostgreSQL's `public` schema with RLS enabled and no Data API policies. Prisma's server-side database role is the only application data path; keep the Supabase Data API disabled or ungranted for these tables. Future schema changes must be made in Prisma and committed as Prisma migrations.
 
-This avoids premature option-table proliferation while keeping operationally important fields queryable. Runtime validation must be applied at every JSON write boundary. If product requirements later require cross-catalogue option analytics or option-level management, the demonstrated query pressure can justify normalization.
+## Image storage
 
-### Integrity and lifecycle rules
+Use one public Supabase Storage bucket for public Artwork and Service images. V1 stores one immutable object path directly on each catalogue row, with alt text and intrinsic width/height. The fixed bucket name is application configuration and signed URLs are not persisted.
 
-- Slugs, enquiry references, and storage object paths are unique.
-- Publishing validation must require a primary image and valid request configuration; draft rows may remain incomplete.
-- Price kind, amount, currency, and label combinations need application validation and database checks in the implementation step.
-- Additional image join rows own ordering; duplicate placements are rejected.
-- Categories and groups are restricted from deletion while used.
-- Images are restricted from deletion while referenced.
-- Enquiries never cascade-delete with Artwork or Service. Prefer unpublishing or archiving catalogue content over deletion when history exists.
-- All mutable models carry `createdAt` and `updatedAt`; publishable content also has optional `publishedAt`.
+An eventual replace flow should upload and validate the new object, update the catalogue record, then delete the old unreferenced object. Upload, replace, and delete remain authenticated Admin operations. No additional-image model or duplicate storage-metadata table exists.
 
-## Infrastructure decisions
+## Admin authentication
 
-### Database and Prisma
+The existing decision remains unchanged:
 
-Use a client-owned Supabase project for hosted PostgreSQL. This is the simplest coherent fit because the same platform supplies the three current infrastructure needs: PostgreSQL, object storage, and owner authentication. Deborah should own the Supabase organization/project and invite maintainers, avoiding a handoff from a developer-owned account.
+- Supabase Auth email OTP/magic link;
+- only Deborah's normalized configured email is authorized;
+- user creation is disabled for sign-in;
+- SSR cookie session;
+- protected `/admin` routes and every mutation repeat server-side allowlist checks;
+- local email is viewed through the Supabase local stack's Mailpit;
+- production uses client-owned SMTP.
 
-Prisma is the sole authority for application schema, migrations, and data access. Supabase supplies PostgreSQL and its platform-owned Auth/Storage schemas; do not create competing application migrations through the Supabase dashboard or migration files. If the application uses only Prisma for domain data, keep the Supabase Data API disabled for those tables.
+No roles, customer accounts, or permissions framework is required.
 
-When Prisma is implemented, use a pooled runtime connection and a direct session connection for migrations, following current Prisma/Supabase guidance. Prisma 7 keeps connection URLs in `prisma.config.ts`, not the schema file. Exact environment variables and secrets belong in the dedicated database setup step.
+## Intentional tradeoffs
 
-For local development, use the Supabase CLI's Docker-based local stack when database/Auth/Storage work begins. Prisma migrations target its local PostgreSQL instance. This gives realistic Auth and Storage behaviour without sharing a production database. No Supabase or Prisma tooling is installed in this step.
+- PostgreSQL text arrays are the simplest ordered representation for the three owner-managed option lists. Separate option tables would add lifecycle and query complexity with no V1 benefit.
+- Direct Enquiry answer columns make the bounded request model obvious and queryable. Adding a future question requires a deliberate schema change rather than silently turning the product into a form builder.
+- Item snapshots duplicate only the minimal historical label/slug needed after a catalogue record is removed; they are not duplicate domain models.
+- Prisma `Decimal` values must be converted at a real server-to-client boundary. Do not introduce public projection types before a feature needs one.
 
-### Image storage
+## Remaining production decisions
 
-Use a public Supabase Storage bucket for public Artwork and Service catalogue media. Public downloads are appropriate for website imagery; uploads, replacements, and deletes remain authenticated admin operations governed by Storage policies.
-
-Store stable bucket/object paths and image metadata in `ImageAsset`; derive the public delivery URL rather than persisting a signed URL. Use immutable object keys so replacements do not serve stale cached bytes. A safe replace flow uploads the new object, validates and records it, switches the content relation, and only then deletes the old unreferenced object. Delete flows must refuse referenced assets. Configure Next.js image remote patterns when image delivery is implemented.
-
-### Admin authentication
-
-Use Supabase Auth email OTP for the single owner account. Pre-provision Deborah's user, call passwordless sign-in with user creation disabled, and allow only the normalized configured admin email. Email matching must be enforced server-side for every protected admin page and mutation; hiding the sign-in form is not authorization.
-
-Use Supabase's SSR cookie session. Future `/admin` routes should refresh/reject sessions at the Next.js request boundary and repeat authorization in the server layout/data-access layer. No roles, customer accounts, or permissions framework is needed.
-
-Use local Mailpit through the Supabase local stack for development. Production OTP delivery requires a client-owned custom SMTP provider; Supabase's default sender is not a production delivery service.
-
-## Important tradeoffs
-
-- Supabase introduces one platform dependency, but consolidates three already-required capabilities and keeps the primary data in portable PostgreSQL.
-- Public media URLs improve catalogue delivery and caching; privacy must never depend on object-path secrecy.
-- Bounded JSON keeps V1 maintainable, but gives up arbitrary SQL querying inside request configuration. That is intentional until a real query requirement appears.
-- Email OTP is simpler than a role system for one owner, while server-side allowlisting prevents passwordless signup from becoming public access.
-
-## Unresolved before production
-
-- Confirm final catalogue categories, service groups, seeded content, and request option copy.
-- Approve the privacy/follow-up notice and enquiry retention/deletion policy.
-- Select the client-owned Supabase region/plan and production SMTP provider during infrastructure setup.
-- Confirm final delivery-area and turnaround language before request-flow implementation.
-
-## Implementation references
-
-- [Supabase with Prisma](https://supabase.com/docs/guides/database/prisma)
-- [Supabase local development](https://supabase.com/docs/guides/local-development)
-- [Supabase Storage buckets](https://supabase.com/docs/guides/storage/buckets/fundamentals)
-- [Supabase passwordless email auth](https://supabase.com/docs/guides/auth/auth-email-passwordless)
-- [Supabase custom SMTP](https://supabase.com/docs/guides/auth/auth-smtp)
-- [Prisma PostgreSQL connector](https://docs.prisma.io/docs/orm/core-concepts/supported-databases/postgresql)
-- [Prisma configuration](https://docs.prisma.io/docs/orm/reference/prisma-config-reference)
+- Confirm final category labels and seeded catalogue content.
+- Confirm the fixed Supabase Storage bucket name.
+- Approve enquiry retention/privacy wording.
+- Select the client-owned Supabase region/plan and production SMTP provider.

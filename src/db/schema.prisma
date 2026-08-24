@@ -1,0 +1,154 @@
+generator client {
+  provider     = "prisma-client"
+  output       = "./generated/prisma"
+  moduleFormat = "esm"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum PricingMode {
+  NONE
+  EXACT
+  STARTING_FROM
+}
+
+enum ArtworkCategory {
+  PAINTING
+  PENCIL_PORTRAIT
+  FRAMED_CUSTOM_ARTWORK
+  DIGITAL_ARTWORK
+}
+
+enum AvailabilityStatus {
+  AVAILABLE
+  MADE_TO_ORDER
+  SOLD
+  UNAVAILABLE
+}
+
+enum ServiceGroup {
+  PERSONALISED_PRODUCTS
+  PRINT_EVENT_MATERIALS
+  BRANDING_SIGNAGE
+}
+
+enum EnquiryStatus {
+  NEW
+  CONTACTED
+  RESOLVED
+}
+
+enum RequestKind {
+  ARTWORK
+  SERVICE
+}
+
+enum DesignReadiness {
+  FINISHED_DESIGN
+  NEEDS_DESIGN_HELP
+  NOT_SURE
+}
+
+enum FulfilmentMethod {
+  DELIVERY
+  PICKUP
+}
+
+model Artwork {
+  id                       String             @id @default(cuid())
+  slug                     String             @unique
+  title                    String
+  description              String             @db.Text
+  category                 ArtworkCategory
+  mediumFormat             String?
+  displayedPieceDimensions String?
+  availability             AvailabilityStatus @default(AVAILABLE)
+  primaryImagePath         String?            @unique
+  primaryImageAlt          String?
+  primaryImageWidth        Int?
+  primaryImageHeight       Int?
+  pricingMode              PricingMode        @default(NONE)
+  priceAmount              Decimal?           @db.Decimal(12, 2)
+  published                Boolean            @default(false)
+  featured                 Boolean            @default(false)
+  displayOrder             Int                @default(0)
+  availableSizes           String[]           @default([])
+  framingEnabled           Boolean            @default(false)
+  framingOptions           String[]           @default([])
+  askQuantity              Boolean            @default(false)
+  createdAt                DateTime           @default(now())
+  updatedAt                DateTime           @updatedAt
+
+  enquiries Enquiry[]
+
+  @@index([published, featured, displayOrder])
+  @@index([category, published, displayOrder])
+}
+
+model Service {
+  id                 String       @id @default(cuid())
+  slug               String       @unique
+  name               String
+  description        String       @db.Text
+  group              ServiceGroup
+  primaryImagePath   String?      @unique
+  primaryImageAlt    String?
+  primaryImageWidth  Int?
+  primaryImageHeight Int?
+  pricingMode        PricingMode  @default(NONE)
+  priceAmount        Decimal?     @db.Decimal(12, 2)
+  published          Boolean      @default(false)
+  displayOrder       Int          @default(0)
+  askQuantity        Boolean      @default(false)
+  askSizeFormat      Boolean      @default(false)
+  sizeFormatOptions  String[]     @default([])
+  askDesignReadiness Boolean      @default(false)
+  askColour          Boolean      @default(false)
+  askMaterial        Boolean      @default(false)
+  askFinish          Boolean      @default(false)
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+
+  enquiries Enquiry[]
+
+  @@index([published, displayOrder])
+  @@index([group, published, displayOrder])
+}
+
+model Enquiry {
+  id                 String            @id @default(cuid())
+  reference          String            @unique
+  status             EnquiryStatus     @default(NEW)
+  requestKind        RequestKind
+  artworkId          String?
+  artwork            Artwork?          @relation(fields: [artworkId], references: [id], onDelete: SetNull)
+  serviceId          String?
+  service            Service?          @relation(fields: [serviceId], references: [id], onDelete: SetNull)
+  itemNameSnapshot   String
+  itemSlugSnapshot   String
+  quantity           Int?
+  sizeFormat         String?
+  framing            String?
+  designReadiness    DesignReadiness?
+  colour             String?
+  material           String?
+  finish             String?
+  fulfilmentMethod   FulfilmentMethod?
+  location           String?
+  preferredDate      DateTime?         @db.Date
+  customerName       String
+  phoneWhatsApp      String
+  email              String?
+  customerNote       String?           @db.Text
+  whatsappSummary    String?           @db.Text
+  handoffInitiatedAt DateTime?
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+
+  @@index([status, createdAt])
+  @@index([requestKind, createdAt])
+  @@index([artworkId])
+  @@index([serviceId])
+}

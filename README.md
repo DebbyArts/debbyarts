@@ -25,3 +25,15 @@ npm run typecheck
 npm test
 npm run build
 ```
+
+## Database
+
+Copy the documented variable names from `.env.example` into your local secret environment file. Prisma uses a pooled `DATABASE_URL` at runtime and `DIRECT_URL` for migrations.
+
+```bash
+npm run db:validate
+npm run db:generate
+npm run db:migrate
+```
+
+The active schema and migration history live in `src/db/`. Do not use Supabase dashboard migrations for application tables.
