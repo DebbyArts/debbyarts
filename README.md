@@ -13,6 +13,10 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
+## Architecture
+
+Read [docs/engineering-architecture.md](docs/engineering-architecture.md) before adding routes, features, or shared infrastructure.
+
 ## Checks
 
 ```bash
