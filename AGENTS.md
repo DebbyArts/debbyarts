@@ -2,6 +2,7 @@
 
 - Read `docs/engineering-architecture.md` before changing project structure or shared areas.
 - Read `docs/domain-data-contracts.md` before changing domain, request, Prisma, storage, or admin-auth contracts.
+- Read `docs/design-foundations.md` before implementing or changing shared UI foundations.
 - Inspect existing code and patterns before adding files. Keep changes small and feature-owned.
 - Keep feature-specific UI, server logic, schemas, hooks, utilities, types, and tests in `src/features/<feature>/` until reuse is demonstrated.
 - Use `src/components/ui/` for low-level shadcn/base primitives and `src/components/shared/` only for proven cross-feature application UI.

@@ -101,7 +101,7 @@ Use descriptive, purpose-specific names. Avoid vague names such as `utils2.ts`, 
 
 Create a component when it owns a coherent visual unit or behaviour, improves readability materially, needs independent testing, or establishes a real feature boundary. Prefer small composable components, but do not fragment trivial markup into dozens of files.
 
-Use Tailwind CSS, shadcn/ui primitives where useful, and CSS variables/design tokens when the approved Paper visual system is translated. Do not add arbitrary design tokens or page-specific CSS architecture ahead of that work.
+Use Tailwind CSS, shadcn/ui primitives where useful, and the coded Paper tokens and conventions in `docs/design-foundations.md`. Do not add arbitrary design tokens or page-specific CSS architecture.
 
 ## Product and design sources of truth
 

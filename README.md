@@ -15,7 +15,7 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Architecture
 
-Read [docs/engineering-architecture.md](docs/engineering-architecture.md) before adding routes, features, or shared infrastructure. Read [docs/domain-data-contracts.md](docs/domain-data-contracts.md) before changing domain, request, persistence, storage, or admin-auth contracts.
+Read [docs/engineering-architecture.md](docs/engineering-architecture.md) before adding routes, features, or shared infrastructure. Read [docs/domain-data-contracts.md](docs/domain-data-contracts.md) before changing domain, request, persistence, storage, or admin-auth contracts. Read [docs/design-foundations.md](docs/design-foundations.md) before implementing UI.
 
 ## Checks
 
