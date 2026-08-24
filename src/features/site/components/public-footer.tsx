@@ -18,7 +18,7 @@ function FooterNavigation() {
         <Link
           key={item.href}
           href={item.href}
-          className="min-h-7 text-[0.8125rem] leading-7 font-bold hover:text-primary lg:text-sm lg:leading-[1.625rem]"
+          className="flex min-h-11 items-center text-[0.8125rem] leading-7 font-bold hover:text-primary lg:min-h-7 lg:text-sm lg:leading-[1.625rem]"
         >
           {item.label}
         </Link>
