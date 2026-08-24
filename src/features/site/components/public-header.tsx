@@ -70,7 +70,7 @@ function PublicHeader({ activePath }: PublicHeaderProps) {
         <Link
           href="/"
           aria-label="Debby Art & Prints home"
-          className="flex items-center gap-2"
+          className="flex min-h-11 items-center gap-2"
         >
           <SiteLogo eager className="h-[2.125rem] w-[3.625rem]" />
           <span className="text-xs leading-[0.9375rem] font-extrabold">
