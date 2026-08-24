@@ -72,7 +72,7 @@ Do not turn a page into a Client Component because one child is interactive. Cli
 - `src/server/` is reserved for cross-feature infrastructure such as authentication helpers, storage, mail/integration clients, and general server utilities.
 - Do not create a giant global server layer containing domain behaviour.
 - `src/db/` is reserved for shared database infrastructure: the client, schema/migration integration, and seed infrastructure.
-- Prisma is the selected application ORM, but it is not installed or configured yet. Schema and migration design belong to the dedicated database step.
+- Prisma is the selected application ORM, but it is not installed or configured yet. The locked domain and persistence proposition is documented in `docs/domain-data-contracts.md`; active schema and migration setup belongs to the dedicated database step.
 - Keep feature-specific database behaviour close to its owning feature while using the shared database infrastructure.
 - Domain types and runtime schemas stay with their domain. Use `src/types/` only for genuinely cross-domain contracts; do not create global dumping-ground `types` or `schemas` folders.
 

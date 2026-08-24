@@ -1,0 +1,257 @@
+// Architecture proposition only. Prisma is not installed or configured yet.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/db/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum PublicationStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum AvailabilityStatus {
+  AVAILABLE
+  MADE_TO_ORDER
+  SOLD
+  UNAVAILABLE
+}
+
+enum PriceKind {
+  FIXED
+  STARTING_AT
+  LABEL
+}
+
+enum CurrencyCode {
+  NGN
+}
+
+enum DimensionUnit {
+  CM
+  IN
+}
+
+enum RequestType {
+  ARTWORK
+  SERVICE
+  CUSTOM
+}
+
+enum RequestMode {
+  EXACT_PIECE
+  SOMETHING_SIMILAR
+  CUSTOM_COMMISSION
+  SERVICE_REQUEST
+  GENERAL_REQUEST
+}
+
+enum UnavailableRequestBehaviour {
+  DISABLE_ALL
+  ALLOW_CONFIGURED_NON_EXACT_MODES
+}
+
+enum EnquiryStatus {
+  NEW
+  CONTACTED
+  RESOLVED
+}
+
+model ImageAsset {
+  id          String   @id @default(cuid())
+  bucket      String
+  objectPath  String
+  altText     String
+  width       Int
+  height      Int
+  mimeType    String
+  byteSize    Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  primaryForArtwork Artwork[] @relation("ArtworkPrimaryImage")
+  primaryForService Service[] @relation("ServicePrimaryImage")
+  artworkPlacements ArtworkImage[]
+  servicePlacements ServiceImage[]
+
+  @@unique([bucket, objectPath])
+}
+
+model ArtworkCategory {
+  id           String   @id @default(cuid())
+  slug         String   @unique
+  name         String
+  displayOrder Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  artworks Artwork[]
+}
+
+model Artwork {
+  id                String             @id @default(cuid())
+  slug              String             @unique
+  title             String
+  description       String             @db.Text
+  categoryId        String
+  category          ArtworkCategory    @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  primaryImageId    String?
+  primaryImage      ImageAsset?        @relation("ArtworkPrimaryImage", fields: [primaryImageId], references: [id], onDelete: Restrict)
+  dimensionsLabel   String?
+  width             Decimal?           @db.Decimal(8, 2)
+  height            Decimal?           @db.Decimal(8, 2)
+  dimensionUnit     DimensionUnit?
+  medium            String?
+  format            String?
+  availability      AvailabilityStatus @default(AVAILABLE)
+  priceKind         PriceKind?
+  priceAmountMinor  Int?
+  priceCurrency     CurrencyCode        @default(NGN)
+  priceLabel        String?
+  featured          Boolean             @default(false)
+  displayOrder      Int                 @default(0)
+  publicationStatus PublicationStatus   @default(DRAFT)
+  publishedAt       DateTime?
+
+  acceptsRequests             Boolean                       @default(true)
+  requestModes               RequestMode[]                 @default([])
+  availableSizes             Json                          @default("[]")
+  framingSupported           Boolean                       @default(false)
+  framingOptions             Json                          @default("[]")
+  quantitySupported          Boolean                       @default(false)
+  quantityOptions            Json                          @default("[]")
+  unavailableRequestBehaviour UnavailableRequestBehaviour @default(DISABLE_ALL)
+  deliveryPickupOverride     Json?
+  timingOverride             Json?
+  additionalQuestions        Json                          @default("[]")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  additionalImages ArtworkImage[]
+  enquiries          Enquiry[]
+
+  @@index([categoryId, publicationStatus, displayOrder])
+  @@index([publicationStatus, featured, displayOrder])
+}
+
+model ArtworkImage {
+  artworkId   String
+  imageAssetId String
+  displayOrder Int @default(0)
+
+  artwork   Artwork    @relation(fields: [artworkId], references: [id], onDelete: Cascade)
+  imageAsset ImageAsset @relation(fields: [imageAssetId], references: [id], onDelete: Restrict)
+
+  @@id([artworkId, imageAssetId])
+  @@unique([artworkId, displayOrder])
+}
+
+model ServiceGroup {
+  id           String   @id @default(cuid())
+  slug         String   @unique
+  name         String
+  displayOrder Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  services Service[]
+}
+
+model Service {
+  id                    String            @id @default(cuid())
+  slug                  String            @unique
+  name                  String
+  groupId               String
+  group                 ServiceGroup      @relation(fields: [groupId], references: [id], onDelete: Restrict)
+  description           String            @db.Text
+  supportingInformation String?           @db.Text
+  primaryImageId        String?
+  primaryImage          ImageAsset?       @relation("ServicePrimaryImage", fields: [primaryImageId], references: [id], onDelete: Restrict)
+  priceKind             PriceKind?
+  priceAmountMinor      Int?
+  priceCurrency         CurrencyCode      @default(NGN)
+  priceLabel            String?
+  featured              Boolean           @default(false)
+  displayOrder          Int               @default(0)
+  publicationStatus     PublicationStatus @default(DRAFT)
+  publishedAt           DateTime?
+
+  acceptsRequests               Boolean @default(true)
+  quantityQuestionEnabled       Boolean @default(false)
+  quantityOptions               Json    @default("[]")
+  sizeOrFormatQuestionEnabled   Boolean @default(false)
+  sizeOrFormatOptions           Json    @default("[]")
+  designReadinessEnabled        Boolean @default(false)
+  designReadinessOptions        Json    @default("[]")
+  colourOptionsEnabled          Boolean @default(false)
+  colourOptions                 Json    @default("[]")
+  finishOptionsEnabled          Boolean @default(false)
+  finishOptions                 Json    @default("[]")
+  materialOptionsEnabled        Boolean @default(false)
+  materialOptions               Json    @default("[]")
+  deadlineEnabled               Boolean @default(false)
+  deadlineRequired              Boolean @default(false)
+  eventDateEnabled              Boolean @default(false)
+  eventDateRequired             Boolean @default(false)
+  deliveryPickupOverride        Json?
+  additionalQuestions           Json    @default("[]")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  additionalImages ServiceImage[]
+  enquiries          Enquiry[]
+
+  @@index([groupId, publicationStatus, displayOrder])
+  @@index([publicationStatus, featured, displayOrder])
+}
+
+model ServiceImage {
+  serviceId    String
+  imageAssetId String
+  displayOrder Int @default(0)
+
+  service    Service    @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  imageAsset ImageAsset @relation(fields: [imageAssetId], references: [id], onDelete: Restrict)
+
+  @@id([serviceId, imageAssetId])
+  @@unique([serviceId, displayOrder])
+}
+
+model Enquiry {
+  id                   String        @id @default(cuid())
+  reference            String        @unique
+  requestType          RequestType
+  requestMode          RequestMode?
+  artworkId            String?
+  artwork              Artwork?      @relation(fields: [artworkId], references: [id], onDelete: SetNull)
+  artworkSlugSnapshot  String?
+  artworkTitleSnapshot String?
+  serviceId            String?
+  service              Service?      @relation(fields: [serviceId], references: [id], onDelete: SetNull)
+  serviceSlugSnapshot  String?
+  serviceNameSnapshot  String?
+  structuredAnswers    Json          @default("[]")
+  deliveryTiming       Json
+  sourceContext        Json
+  customerName         String
+  phoneWhatsApp        String
+  email                String?
+  customerNote         String?       @db.Text
+  status               EnquiryStatus @default(NEW)
+  whatsappSummary      String?       @db.Text
+  handoffInitiatedAt   DateTime?
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
+
+  @@index([status, createdAt])
+  @@index([requestType, createdAt])
+  @@index([artworkId])
+  @@index([serviceId])
+}
