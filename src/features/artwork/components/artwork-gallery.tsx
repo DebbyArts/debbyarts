@@ -112,10 +112,17 @@ function ArtworkGallery({ artworks }: ArtworkGalleryProps) {
           <>
             <MasonryColumns
               artworks={filteredArtworks}
+              columnCount={1}
+              openerRef={openerRef}
+              onOpen={setSelectedIndex}
+              className="grid grid-cols-1 gap-4 min-[360px]:hidden"
+            />
+            <MasonryColumns
+              artworks={filteredArtworks}
               columnCount={2}
               openerRef={openerRef}
               onOpen={setSelectedIndex}
-              className="grid grid-cols-1 gap-4 min-[360px]:grid-cols-2 lg:hidden"
+              className="hidden grid-cols-2 gap-4 min-[360px]:grid lg:hidden"
             />
             <MasonryColumns
               artworks={filteredArtworks}

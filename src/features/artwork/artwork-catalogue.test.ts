@@ -83,6 +83,7 @@ describe("artwork catalogue rules", () => {
     expect(columns).toHaveLength(3)
     expect(columns.every((column) => column.length > 0)).toBe(true)
     expect(columns.flat()).toHaveLength(artworks.length)
+    expect(distributeArtworks(artworks, 1)[0]).toEqual(artworks)
   })
 
   test("builds stable encoded request destinations", () => {
