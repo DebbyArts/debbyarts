@@ -4,7 +4,7 @@
 - Read `docs/domain-data-contracts.md` before changing domain, request, Prisma, storage, or admin-auth contracts.
 - Read `docs/design-foundations.md` before implementing or changing shared UI foundations.
 - Inspect existing code and patterns before adding files. Keep changes small and feature-owned.
-- Keep feature-specific UI, server logic, schemas, hooks, utilities, types, and tests in `src/features/<feature>/` until reuse is demonstrated.
+- Keep feature-specific production code in `src/features/<feature>/` until reuse is demonstrated. Put every test under the root `tests/` directory, mirroring its subject's path under `src/`.
 - Treat `src/db/schema.prisma` and its generated Prisma types as the source of truth for persisted entities. Add a separate application type only for a real input, projection, serialization, or UI-state boundary.
 - Use `src/components/ui/` for low-level shadcn/base primitives and `src/components/shared/` only for proven cross-feature application UI.
 - Keep `src/app/` focused on routes, layouts, metadata, boundaries, and feature composition. Use React Server Components by default and small Client Component islands only where interactivity requires them.

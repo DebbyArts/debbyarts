@@ -19,14 +19,18 @@ src/
   server/              # Cross-feature server infrastructure
   db/                  # Shared database/Prisma infrastructure
   types/               # Genuinely cross-domain types only
-  test/                # Cross-cutting test infrastructure and the temporary smoke test
+tests/
+  app/                 # Route and route-composition tests, mirroring src/app
+  features/            # Feature tests, mirroring src/features
+  server/              # Shared server-infrastructure tests, mirroring src/server
+  support/             # Test-only shims and shared test infrastructure
 ```
 
 The reserved empty directories establish ownership; they do not imply that every feature needs the same internal structure.
 
 ## Ownership and sharing
 
-**Feature-specific code stays inside its feature until there is a demonstrated reason to share it.** A feature may own its components, server logic, schemas, hooks, utilities, types, and tests.
+**Feature-specific production code stays inside its feature until there is a demonstrated reason to share it.** A feature may own its components, server logic, schemas, hooks, utilities, and types. Its tests remain logically feature-owned but live under the matching path in the root `tests/` tree.
 
 A feature can evolve toward this shape as real needs appear:
 
@@ -123,6 +127,8 @@ Before implementing a feature, future agents should inspect its approved Paper s
 ## Testing
 
 Keep the suite deliberately small. Do not add tests for every component, route, utility, or framework wiring change, and do not optimise for a coverage percentage.
+
+All test files live under the root `tests/` directory, outside production `src/`. Mirror the tested module's source path so ownership remains obvious: `src/features/artwork/admin/actions.ts` is tested by `tests/features/artwork/admin/actions.test.ts`. Test-only shims and shared setup belong in `tests/support/`. Vitest is configured to discover tests only from this tree.
 
 Add tests when they protect clear long-term value:
 
