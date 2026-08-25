@@ -75,7 +75,7 @@ The system is deliberately flat. Standard controls use a 1px ink border; selecta
 
 ## Responsive container
 
-`Container` in `src/components/shared/container.tsx` is the single page-content convention. Its outer shell caps at 1440px, producing the approved 1280px content width with desktop gutters.
+`Container` in `src/components/ui/container.tsx` is the single page-content convention. Its outer shell caps at 1440px, producing the approved 1280px content width with desktop gutters.
 
 Gutters are:
 
@@ -112,7 +112,7 @@ Every control needs an accessible name. Use `Label` with matching `htmlFor`/`id`
 
 ## Shared application primitives
 
-The proven public shell lives in `src/features/site/`: `PublicHeader`, `PublicFooter`, `PublicShell`, and the small interactive mobile menu. It owns only the known `/`, `/art`, `/services`, and `/request` destinations. Public page content remains feature-owned.
+The proven public shell lives in `src/components/shared/public/`: `PublicHeader`, `PublicFooter`, `PublicShell`, and the small interactive mobile menu. It owns only the known `/`, `/art`, `/services`, and `/request` destinations. Public page content remains feature-owned.
 
 Cross-domain application primitives live in `src/components/shared/`:
 

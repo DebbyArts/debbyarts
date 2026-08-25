@@ -3,10 +3,10 @@
 import { useActionState, useEffect, useMemo, useRef, useState } from "react"
 import { AnimatePresence, motion, useReducedMotion } from "motion/react"
 
-import { Container } from "@/components/shared/container"
-import { EmptyState } from "@/components/shared/empty-state"
-import { MediaImage } from "@/components/shared/media-image"
-import { SelectableOption } from "@/components/shared/selectable-option"
+import { Container } from "@/components/ui/container"
+import { EmptyState } from "@/components/ui/states/empty"
+import { MediaImage } from "@/components/ui/media-image"
+import { SelectableOption } from "@/components/ui/selectable-option"
 import { Button } from "@/components/ui/button"
 import {
   Field,

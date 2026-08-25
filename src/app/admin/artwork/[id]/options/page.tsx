@@ -1,8 +1,8 @@
 import Link from "next/link"
 import { notFound } from "next/navigation"
 
-import { AdminPage, AdminPageHeader } from "@/components/shared/admin-page"
-import { AdminShell } from "@/components/shared/admin-shell"
+import { AdminPage, AdminPageHeader } from "@/components/shared/admin/admin-page"
+import { AdminShell } from "@/components/shared/admin/admin-shell"
 import { Button } from "@/components/ui/button"
 import { SignOutButton } from "@/features/admin-auth/components/sign-out-button"
 import { ArtworkOptionsForm } from "@/features/artwork/components/admin/artwork-options-form"

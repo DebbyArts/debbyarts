@@ -17,7 +17,7 @@ import { cn } from "@/lib/utils"
 import {
   PUBLIC_NAVIGATION,
   type PublicPath,
-} from "@/features/site/navigation"
+} from "@/components/shared/public/navigation"
 
 type PublicMobileMenuProps = {
   activePath: PublicPath

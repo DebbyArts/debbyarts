@@ -2,12 +2,12 @@ import Link from "next/link"
 
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-import { PublicMobileMenu } from "@/features/site/components/public-mobile-menu"
-import { SiteLogo } from "@/features/site/components/site-logo"
+import { PublicMobileMenu } from "@/components/shared/public/public-mobile-menu"
+import { SiteLogo } from "@/components/shared/public/site-logo"
 import {
   PUBLIC_NAVIGATION,
   type PublicPath,
-} from "@/features/site/navigation"
+} from "@/components/shared/public/navigation"
 
 type PublicHeaderProps = {
   activePath: PublicPath

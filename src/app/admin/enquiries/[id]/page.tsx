@@ -7,9 +7,9 @@ import {
   AdminPageHeader,
   AdminSectionCard,
   AdminStatusBadge,
-} from "@/components/shared/admin-page"
-import { AdminShell } from "@/components/shared/admin-shell"
-import { MediaImage } from "@/components/shared/media-image"
+} from "@/components/shared/admin/admin-page"
+import { AdminShell } from "@/components/shared/admin/admin-shell"
+import { MediaImage } from "@/components/ui/media-image"
 import { Button } from "@/components/ui/button"
 import { EnquiryStatus } from "@/db/generated/prisma/enums"
 import { SignOutButton } from "@/features/admin-auth/components/sign-out-button"

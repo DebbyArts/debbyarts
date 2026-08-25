@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react"
 import { describe, expect, test } from "vitest"
 
-import { HomePage } from "@/features/site/components/home-page"
+import { HomePage } from "@/features/home/home-page"
 
 describe("HomePage featured artwork states", () => {
   test("shows the intentional empty catalogue state", () => {

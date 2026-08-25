@@ -7,7 +7,7 @@ import type { ReactNode } from "react"
 import {
   ADMIN_NAVIGATION,
   type AdminSection,
-} from "@/components/shared/admin-navigation"
+} from "@/components/shared/admin/admin-navigation"
 import { Button } from "@/components/ui/button"
 import {
   Sheet,

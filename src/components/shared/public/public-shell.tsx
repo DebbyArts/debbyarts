@@ -1,8 +1,8 @@
 import type { ReactNode } from "react"
 
-import { PublicFooter } from "@/features/site/components/public-footer"
-import { PublicHeader } from "@/features/site/components/public-header"
-import type { PublicPath } from "@/features/site/navigation"
+import { PublicFooter } from "@/components/shared/public/public-footer"
+import { PublicHeader } from "@/components/shared/public/public-header"
+import type { PublicPath } from "@/components/shared/public/navigation"
 
 type PublicShellProps = {
   activePath: PublicPath

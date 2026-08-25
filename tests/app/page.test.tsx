@@ -5,7 +5,7 @@ const { getFeaturedArtwork } = vi.hoisted(() => ({
   getFeaturedArtwork: vi.fn(),
 }))
 
-vi.mock("@/features/site/server/get-featured-artwork", () => ({
+vi.mock("@/features/home/services/artwork.service", () => ({
   getFeaturedArtwork,
 }))
 

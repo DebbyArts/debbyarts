@@ -12,10 +12,8 @@ vi.mock("@/db/client", () => ({
   },
 }))
 
-import {
-  featuredArtworkQuery,
-  getFeaturedArtwork,
-} from "@/features/site/server/get-featured-artwork"
+import { FeaturedArtworkQuery } from "@/features/home/repositories/featured-artwork.repository"
+import { getFeaturedArtwork } from "@/features/home/services/artwork.service"
 
 describe("getFeaturedArtwork", () => {
   beforeEach(() => {
@@ -59,8 +57,8 @@ describe("getFeaturedArtwork", () => {
         },
       ],
     })
-    expect(findMany).toHaveBeenCalledWith(featuredArtworkQuery)
-    expect(featuredArtworkQuery).toMatchObject({
+    expect(findMany).toHaveBeenCalledWith(FeaturedArtworkQuery)
+    expect(FeaturedArtworkQuery).toMatchObject({
       where: { featured: true, published: true },
       orderBy: [{ displayOrder: "asc" }, { createdAt: "desc" }],
       take: 3,

@@ -4,11 +4,11 @@ import {
   AdminPage,
   AdminPageHeader,
   AdminStatusBadge,
-} from "@/components/shared/admin-page"
-import { AdminShell } from "@/components/shared/admin-shell"
-import { EmptyState } from "@/components/shared/empty-state"
-import { FeedbackBanner } from "@/components/shared/feedback-banner"
-import { MediaImage } from "@/components/shared/media-image"
+} from "@/components/shared/admin/admin-page"
+import { AdminShell } from "@/components/shared/admin/admin-shell"
+import { EmptyState } from "@/components/ui/states/empty"
+import { FeedbackBanner } from "@/components/ui/feedback-banner"
+import { MediaImage } from "@/components/ui/media-image"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { SignOutButton } from "@/features/admin-auth/components/sign-out-button"

@@ -1,6 +1,6 @@
 "use client"
 
-import { ErrorState } from "@/components/shared/error-state"
+import { ErrorState } from "@/components/ui/states/error"
 import { Button } from "@/components/ui/button"
 
 function AdminError({ reset }: { error: Error & { digest?: string }; reset: () => void }) {

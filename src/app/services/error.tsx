@@ -2,8 +2,8 @@
 
 import { useEffect } from "react"
 
-import { Container } from "@/components/shared/container"
-import { ErrorState } from "@/components/shared/error-state"
+import { Container } from "@/components/ui/container"
+import { ErrorState } from "@/components/ui/states/error"
 import { Button } from "@/components/ui/button"
 
 type ServicesErrorProps = {

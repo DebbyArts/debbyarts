@@ -3,8 +3,8 @@
 import Link from "next/link"
 import { useActionState } from "react"
 
-import { AdminSectionCard } from "@/components/shared/admin-page"
-import { FeedbackBanner } from "@/components/shared/feedback-banner"
+import { AdminSectionCard } from "@/components/shared/admin/admin-page"
+import { FeedbackBanner } from "@/components/ui/feedback-banner"
 import { Button } from "@/components/ui/button"
 import { Field, FieldDescription, FieldLabel } from "@/components/ui/field"
 import { Textarea } from "@/components/ui/textarea"

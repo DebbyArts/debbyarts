@@ -84,7 +84,7 @@ The client correction is mandatory: confirmed artwork/portraits belong in Art & 
 
 | Milestone | Primary ownership | Must avoid |
 | --- | --- | --- |
-| M1 Home | `src/features/site/**`, `src/app/page.tsx` | `features/artwork`, `features/services`, request/Admin implementation |
+| M1 Home | `src/features/home/**`, `src/app/page.tsx` | `features/artwork`, `features/services`, request/Admin implementation |
 | M2 Art & Gallery | `src/features/artwork/**`, `src/app/art/**` | Home, Services, Admin, request implementation |
 | M3 Services | `src/features/services/**`, `src/app/services/**` | Home, Artwork, Admin, request implementation |
 | M4 Make a Request | `src/features/enquiries/**`, `src/app/request/**` | Ownership of Artwork/Services internals, Admin/auth/storage |

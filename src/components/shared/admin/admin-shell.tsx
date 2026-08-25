@@ -1,11 +1,11 @@
 import Link from "next/link"
 import type { ReactNode } from "react"
 
-import { AdminMobileNavigation } from "@/components/shared/admin-mobile-navigation"
+import { AdminMobileNavigation } from "@/components/shared/admin/admin-mobile-navigation"
 import {
   ADMIN_NAVIGATION,
   type AdminSection,
-} from "@/components/shared/admin-navigation"
+} from "@/components/shared/admin/admin-navigation"
 import { cn } from "@/lib/utils"
 
 type AdminShellProps = {

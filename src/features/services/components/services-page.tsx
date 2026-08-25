@@ -1,9 +1,9 @@
 import Link from "next/link"
 import * as motion from "motion/react-client"
 
-import { Container } from "@/components/shared/container"
-import { EmptyState } from "@/components/shared/empty-state"
-import { MediaImage } from "@/components/shared/media-image"
+import { Container } from "@/components/ui/container"
+import { EmptyState } from "@/components/ui/states/empty"
+import { MediaImage } from "@/components/ui/media-image"
 import { Reveal } from "@/components/shared/motion/reveal"
 import { Button } from "@/components/ui/button"
 import type {

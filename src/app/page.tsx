@@ -1,6 +1,6 @@
-import { HomePage } from "@/features/site/components/home-page"
-import { PublicShell } from "@/features/site/components/public-shell"
-import { getFeaturedArtwork } from "@/features/site/server/get-featured-artwork"
+import { HomePage } from "@/features/home/home-page"
+import { PublicShell } from "@/components/shared/public/public-shell"
+import { getFeaturedArtwork } from "@/features/home/services/artwork.service"
 
 export const dynamic = "force-dynamic"
 

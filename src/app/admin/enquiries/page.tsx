@@ -4,9 +4,9 @@ import {
   AdminPage,
   AdminPageHeader,
   AdminStatusBadge,
-} from "@/components/shared/admin-page"
-import { AdminShell } from "@/components/shared/admin-shell"
-import { EmptyState } from "@/components/shared/empty-state"
+} from "@/components/shared/admin/admin-page"
+import { AdminShell } from "@/components/shared/admin/admin-shell"
+import { EmptyState } from "@/components/ui/states/empty"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { EnquiryStatus, RequestKind } from "@/db/generated/prisma/enums"

@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 
 import { ArtworkPage } from "@/features/artwork/artwork-page"
-import { PublicShell } from "@/features/site/components/public-shell"
+import { PublicShell } from "@/components/shared/public/public-shell"
 
 export const metadata: Metadata = {
   title: "Art & Gallery | Debby Art & Prints",

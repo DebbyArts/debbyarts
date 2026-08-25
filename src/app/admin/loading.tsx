@@ -1,4 +1,4 @@
-import { LoadingState } from "@/components/shared/loading-state"
+import { LoadingState } from "@/components/ui/states/loading"
 
 function AdminLoading() {
   return (

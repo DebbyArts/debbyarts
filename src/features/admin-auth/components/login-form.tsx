@@ -2,7 +2,7 @@
 
 import { useActionState } from "react"
 
-import { FeedbackBanner } from "@/components/shared/feedback-banner"
+import { FeedbackBanner } from "@/components/ui/feedback-banner"
 import { Button } from "@/components/ui/button"
 import { Field, FieldDescription, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"

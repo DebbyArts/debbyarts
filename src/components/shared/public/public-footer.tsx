@@ -1,11 +1,11 @@
 import Link from "next/link"
 
-import { SiteLogo } from "@/features/site/components/site-logo"
+import { SiteLogo } from "@/components/shared/public/site-logo"
 import {
   PUBLIC_NAVIGATION,
   PUBLIC_PAGE_LABELS,
   type PublicPath,
-} from "@/features/site/navigation"
+} from "@/components/shared/public/navigation"
 
 type PublicFooterProps = {
   activePath: PublicPath

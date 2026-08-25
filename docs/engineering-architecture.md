@@ -51,7 +51,7 @@ Shared UI follows **local first → prove reuse → promote intentionally**:
 
 - `src/components/ui/` owns low-level shadcn/base primitives.
 - `src/components/shared/` owns application-level UI that is genuinely used across features.
-- `src/features/site/components/` owns the repeated public header, footer, mobile navigation, and public shell because those remain public-site concerns rather than global domain components.
+- `src/components/shared/public/` owns the repeated public header, footer, mobile navigation, and public shell because those remain public-site concerns rather than global domain components.
 - A possible future use is not enough reason to promote a component.
 - Before adding shared code, check for an equivalent and prefer reusing or extending it.
 - Never place feature-specific behaviour in a global shared module.

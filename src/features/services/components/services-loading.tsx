@@ -1,4 +1,4 @@
-import { Container } from "@/components/shared/container"
+import { Container } from "@/components/ui/container"
 import { Skeleton } from "@/components/ui/skeleton"
 
 function ServicesLoading() {

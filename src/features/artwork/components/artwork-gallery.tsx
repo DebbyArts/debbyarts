@@ -4,7 +4,7 @@ import Link from "next/link"
 import { AnimatePresence, motion } from "motion/react"
 import { type RefObject, useMemo, useRef, useState } from "react"
 
-import { EmptyState } from "@/components/shared/empty-state"
+import { EmptyState } from "@/components/ui/states/empty"
 import { Button } from "@/components/ui/button"
 import {
   ALL_ARTWORK,
