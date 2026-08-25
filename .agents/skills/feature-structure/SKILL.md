@@ -18,7 +18,6 @@ Apply only the rules defined here. Preserve everything else.
 
 ## Feature organisation
 
-- Keep a genuine feature or page composition component at the feature root when it owns composition.
 - Keep feature-specific components in `components/`.
 - Give each meaningful component its own file.
 - Keep constants in `constants/index.ts`.
@@ -33,7 +32,7 @@ Apply only the rules defined here. Preserve everything else.
 - Feature-internal code imports its dependencies directly and does not use its own public entry point.
 - Features must not import from other features, including through their public entry points.
 - Move code genuinely shared by multiple features to the appropriate shared layer.
-- Do not create wrapper files whose only purpose is re-exporting public items. Keep real composition components and export them through the feature's `index.ts`.
+- Do not create wrapper files whose purpose can be handled by the feature's public `index.ts` and the external consumer.
 
 ## Shared components
 
