@@ -4,8 +4,8 @@ import { Container } from "@/components/ui/container"
 import { Reveal } from "@/components/shared/motion/reveal"
 import { Button } from "@/components/ui/button"
 import type { FeaturedArtworkResult } from "@/features/home/types"
-import { ArtworkCard } from "./artwork-card"
-import { Eyebrow } from "./eyebrow"
+import { ArtworkCard } from "./ArtworkCard"
+import { Eyebrow } from "./Eyebrow"
 
 function FeaturedArtwork({ result }: { result: FeaturedArtworkResult }) {
   const artwork = result.status === "ready" ? result.artwork : []

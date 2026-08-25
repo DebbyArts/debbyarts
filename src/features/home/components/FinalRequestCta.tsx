@@ -2,8 +2,8 @@ import Link from "next/link"
 
 import { Container } from "@/components/ui/container"
 import { Button } from "@/components/ui/button"
-import { HomeMagneticCta } from "./home-magnetic-cta"
-import { Eyebrow } from "./eyebrow"
+import { HomeMagneticCta } from "./HomeMagneticCta"
+import { Eyebrow } from "./Eyebrow"
 
 function FinalRequestCta() {
   return (

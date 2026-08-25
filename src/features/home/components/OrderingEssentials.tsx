@@ -3,7 +3,7 @@ import * as motion from "motion/react-client"
 import { Container } from "@/components/ui/container"
 import { essentials } from "@/features/home/constants"
 import { cn } from "@/lib/utils"
-import { Eyebrow } from "./eyebrow"
+import { Eyebrow } from "./Eyebrow"
 
 function OrderingEssentials() {
   return (

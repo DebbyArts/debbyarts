@@ -5,7 +5,7 @@ import { Container } from "@/components/ui/container"
 import { Button } from "@/components/ui/button"
 import { requestSteps } from "@/features/home/constants"
 import { cn } from "@/lib/utils"
-import { Eyebrow } from "./eyebrow"
+import { Eyebrow } from "./Eyebrow"
 
 function RequestProcess() {
   return (

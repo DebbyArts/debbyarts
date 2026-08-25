@@ -3,7 +3,7 @@ import Link from "next/link"
 import { Container } from "@/components/ui/container"
 import { MediaImage } from "@/components/ui/media-image"
 import { Reveal } from "@/components/shared/motion/reveal"
-import { Eyebrow } from "./eyebrow"
+import { Eyebrow } from "./Eyebrow"
 
 function OfferRoutes() {
   return (

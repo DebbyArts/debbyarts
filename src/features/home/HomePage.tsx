@@ -1,11 +1,11 @@
 import type { HomePageProps } from "@/features/home/types"
 
-import { FeaturedArtwork } from "./components/featured-artwork"
-import { FinalRequestCta } from "./components/final-request-cta"
-import { Hero } from "./components/hero"
-import { OfferRoutes } from "./components/offer-routes"
-import { OrderingEssentials } from "./components/ordering-essentials"
-import { RequestProcess } from "./components/request-process"
+import { FeaturedArtwork } from "./components/FeaturedArtwork"
+import { FinalRequestCta } from "./components/FinalRequestCta"
+import { Hero } from "./components/Hero"
+import { OfferRoutes } from "./components/OfferRoutes"
+import { OrderingEssentials } from "./components/OrderingEssentials"
+import { RequestProcess } from "./components/RequestProcess"
 
 function HomePage({ featuredArtwork }: HomePageProps) {
   return (
