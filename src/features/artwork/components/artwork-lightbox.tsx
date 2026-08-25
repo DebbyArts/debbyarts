@@ -2,12 +2,14 @@
 
 import { ArrowLeftIcon, ArrowRightIcon, XIcon } from "lucide-react"
 import Link from "next/link"
+import { AnimatePresence, motion, useReducedMotion } from "motion/react"
 import {
   type KeyboardEvent,
   type MouseEvent,
   type RefObject,
   useEffect,
   useRef,
+  useState,
 } from "react"
 
 import { Button } from "@/components/ui/button"
@@ -37,6 +39,8 @@ function ArtworkLightbox({
 }: ArtworkLightboxProps) {
   const dialogRef = useRef<HTMLDialogElement>(null)
   const closeButtonRef = useRef<HTMLButtonElement>(null)
+  const [direction, setDirection] = useState<1 | -1>(1)
+  const reduceMotion = useReducedMotion()
   const artwork = selectedIndex === null ? null : artworks[selectedIndex]
   const isOpen = selectedIndex !== null
 
@@ -77,6 +81,7 @@ function ArtworkLightbox({
     const nextIndex = selectedIndex + offset
 
     if (nextIndex >= 0 && nextIndex < artworks.length) {
+      setDirection(offset > 0 ? 1 : -1)
       onSelect(nextIndex)
     }
   }
@@ -119,10 +124,36 @@ function ArtworkLightbox({
       }}
       onClick={handleBackdropClick}
       onKeyDown={handleKeyDown}
-      className="fixed inset-0 m-0 h-dvh max-h-none w-screen max-w-none overflow-y-auto bg-transparent p-0 backdrop:bg-black/75 open:flex open:items-start open:justify-center lg:open:items-center"
+      className="fixed inset-0 m-0 h-dvh max-h-none w-screen max-w-none overflow-y-auto bg-transparent p-0 backdrop:bg-transparent open:flex open:items-start open:justify-center lg:open:items-center"
     >
+      <motion.div
+        aria-hidden="true"
+        className="fixed inset-0 bg-black/75"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: isOpen ? 1 : 0 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.16 }}
+        onClick={closeDialog}
+      />
+      <AnimatePresence mode="wait" custom={direction} initial={false}>
       {artwork ? (
-        <div className="relative flex min-h-dvh w-full max-w-[76.875rem] flex-col bg-background lg:min-h-0 lg:grid lg:h-[min(53.125rem,calc(100dvh-2rem))] lg:grid-cols-[minmax(0,47.5rem)_minmax(20rem,1fr)] lg:gap-7 lg:p-7">
+        <motion.div
+          key={artwork.slug}
+          custom={direction}
+          className="relative z-10 flex min-h-dvh w-full max-w-[76.875rem] flex-col bg-background lg:min-h-0 lg:grid lg:h-[min(53.125rem,calc(100dvh-2rem))] lg:grid-cols-[minmax(0,47.5rem)_minmax(20rem,1fr)] lg:gap-7 lg:p-7"
+          initial={{
+            opacity: 0,
+            x: reduceMotion ? 0 : direction * 18,
+            scale: 0.99,
+          }}
+          animate={{ opacity: 1, x: 0, scale: 1 }}
+          exit={{
+            opacity: 0,
+            x: reduceMotion ? 0 : direction * -14,
+            scale: 0.99,
+          }}
+          transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+        >
           <div className="flex min-h-[31.25rem] items-center justify-center bg-[#11110f] p-6 lg:min-h-0 lg:p-9">
             <ArtworkMedia
               key={artwork.slug}
@@ -197,8 +228,9 @@ function ArtworkLightbox({
           >
             <XIcon aria-hidden="true" />
           </Button>
-        </div>
+        </motion.div>
       ) : null}
+      </AnimatePresence>
     </dialog>
   )
 }

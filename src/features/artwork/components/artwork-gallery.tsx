@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { AnimatePresence, motion } from "motion/react"
 import { type RefObject, useMemo, useRef, useState } from "react"
 
 import { EmptyState } from "@/components/shared/empty-state"
@@ -48,7 +49,13 @@ function ArtworkGallery({ artworks }: ArtworkGalleryProps) {
         aria-labelledby="gallery-title"
         className="relative border-b-2 border-border py-14 lg:py-[4.5rem]"
       >
-        <div className="page-container flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between lg:gap-20">
+        <motion.div
+          className="page-container flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between lg:gap-20"
+          initial={{ opacity: 0, y: 18 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.46, ease: [0.22, 1, 0.36, 1] }}
+          viewport={{ once: true, amount: 0.3 }}
+        >
           <div className="flex max-w-[48.75rem] flex-col gap-5">
             <div className="flex items-center gap-3.5">
               <span aria-hidden="true" className="h-2 w-[3.625rem] bg-primary" />
@@ -69,7 +76,7 @@ function ArtworkGallery({ artworks }: ArtworkGalleryProps) {
               Open any piece to view it closely or ask about the artwork.
             </p>
           </div>
-        </div>
+        </motion.div>
         <span
           aria-hidden="true"
           className="absolute inset-y-0 right-0 w-2 bg-info lg:w-[1.125rem]"
@@ -109,29 +116,37 @@ function ArtworkGallery({ artworks }: ArtworkGalleryProps) {
 
       <section aria-label="Artwork catalogue" className="page-container py-10 lg:py-[4.5rem]">
         {filteredArtworks.length > 0 ? (
-          <>
-            <MasonryColumns
-              artworks={filteredArtworks}
-              columnCount={1}
-              openerRef={openerRef}
-              onOpen={setSelectedIndex}
-              className="grid grid-cols-1 gap-4 min-[360px]:hidden"
-            />
-            <MasonryColumns
-              artworks={filteredArtworks}
-              columnCount={2}
-              openerRef={openerRef}
-              onOpen={setSelectedIndex}
-              className="hidden grid-cols-2 gap-4 min-[360px]:grid lg:hidden"
-            />
-            <MasonryColumns
-              artworks={filteredArtworks}
-              columnCount={3}
-              openerRef={openerRef}
-              onOpen={setSelectedIndex}
-              className="hidden grid-cols-[minmax(0,0.947fr)_minmax(0,1.158fr)_minmax(0,1fr)] items-start gap-7 lg:grid"
-            />
-          </>
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={filter}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.18, ease: "easeOut" }}
+            >
+              <MasonryColumns
+                artworks={filteredArtworks}
+                columnCount={1}
+                openerRef={openerRef}
+                onOpen={setSelectedIndex}
+                className="grid grid-cols-1 gap-4 min-[360px]:hidden"
+              />
+              <MasonryColumns
+                artworks={filteredArtworks}
+                columnCount={2}
+                openerRef={openerRef}
+                onOpen={setSelectedIndex}
+                className="hidden grid-cols-2 gap-4 min-[360px]:grid lg:hidden"
+              />
+              <MasonryColumns
+                artworks={filteredArtworks}
+                columnCount={3}
+                openerRef={openerRef}
+                onOpen={setSelectedIndex}
+                className="hidden grid-cols-[minmax(0,0.947fr)_minmax(0,1.158fr)_minmax(0,1fr)] items-start gap-7 lg:grid"
+              />
+            </motion.div>
+          </AnimatePresence>
         ) : (
           <EmptyState
             visual="A"
@@ -206,7 +221,7 @@ function MasonryColumns({
                 : "4 / 5"
 
             return (
-              <button
+              <motion.button
                 key={artwork.slug}
                 type="button"
                 aria-label={`Open ${artwork.title}`}
@@ -214,16 +229,26 @@ function MasonryColumns({
                   openerRef.current = event.currentTarget
                   onOpen(artworkIndex)
                 }}
-                className="w-full text-left transition-transform duration-200 ease-out hover:-translate-y-1 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+                className="w-full text-left"
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                whileHover={{ y: -4 }}
+                whileTap={{ y: -1, scale: 0.99 }}
+                transition={{ duration: 0.38, delay: (artworkIndex % 4) * 0.08, ease: [0.22, 1, 0.36, 1] }}
+                viewport={{ once: true, amount: 0.2 }}
               >
-                <ArtworkMedia
-                  alt={artwork.imageAlt}
-                  src={artwork.imageSrc}
-                  sizes="(max-width: 359px) 100vw, (max-width: 1023px) 50vw, 33vw"
-                  eager={artworkIndex < 3}
-                  className="w-full bg-surface-subtle"
-                  style={{ aspectRatio }}
-                />
+                <span className="block overflow-hidden">
+                  <motion.span className="block" whileHover={{ scale: 1.025 }} transition={{ duration: 0.2 }}>
+                    <ArtworkMedia
+                      alt={artwork.imageAlt}
+                      src={artwork.imageSrc}
+                      sizes="(max-width: 359px) 100vw, (max-width: 1023px) 50vw, 33vw"
+                      eager={artworkIndex < 3}
+                      className="w-full bg-surface-subtle"
+                      style={{ aspectRatio }}
+                    />
+                  </motion.span>
+                </span>
                 <span className="mt-2 flex flex-col gap-1 lg:mt-3 lg:flex-row lg:items-center lg:justify-between">
                   <span className="font-display text-[1.1875rem] leading-[1.375rem] uppercase lg:text-[1.5625rem] lg:leading-7">
                     {artwork.title}
@@ -232,7 +257,7 @@ function MasonryColumns({
                     {getArtworkCategoryItemLabel(artwork.category)}
                   </span>
                 </span>
-              </button>
+              </motion.button>
             )
           })}
         </div>

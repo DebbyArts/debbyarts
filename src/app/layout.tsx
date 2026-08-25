@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import { MotionProvider } from "@/components/shared/motion/motion-provider";
 import { Archivo_Black, Manrope } from "next/font/google";
 import "./globals.css";
 
@@ -25,7 +26,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       lang="en"
       className={`${manrope.variable} ${archivoBlack.variable} h-full antialiased`}
     >
-      <body>{children}</body>
+      <body>
+        <MotionProvider>{children}</MotionProvider>
+      </body>
     </html>
   );
 }

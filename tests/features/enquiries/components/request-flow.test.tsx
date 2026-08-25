@@ -35,7 +35,7 @@ const defaultData: RequestPageData = {
   status: "ready",
 }
 
-function completeBroadRequest() {
+async function completeBroadRequest() {
   fireEvent.change(
     screen.getByRole("textbox", {
       name: "Tell us what you have in mind (optional)",
@@ -43,9 +43,9 @@ function completeBroadRequest() {
     { target: { value: "A family portrait commission." } }
   )
   fireEvent.click(screen.getByRole("button", { name: "Next →" }))
-  fireEvent.click(screen.getByRole("radio", { name: "Pickup" }))
+  fireEvent.click(await screen.findByRole("radio", { name: "Pickup" }))
   fireEvent.click(screen.getByRole("button", { name: "Next →" }))
-  fireEvent.change(screen.getByRole("textbox", { name: "Name" }), {
+  fireEvent.change(await screen.findByRole("textbox", { name: "Name" }), {
     target: { value: "Ada Okafor" },
   })
   fireEvent.change(screen.getByRole("textbox", { name: "Phone / WhatsApp" }), {
@@ -74,6 +74,32 @@ describe("RequestFlow accessibility and retry state", () => {
     expect(group.getAttribute("aria-describedby")).toBe(error.id)
   })
 
+  test("updates the compact progress indicator when moving forward and back", async () => {
+    render(<RequestFlow data={defaultData} />)
+
+    const progress = screen.getByRole("progressbar", { name: "Request progress" })
+    expect(progress.getAttribute("aria-valuenow")).toBe("1")
+    expect(progress.getAttribute("aria-valuemax")).toBe("5")
+    expect(progress.getAttribute("aria-valuetext")).toBe("Step 1 of 5: Interest")
+
+    fireEvent.click(screen.getByRole("radio", { name: /Art & Gallery/ }))
+    fireEvent.click(screen.getByRole("button", { name: "Next →" }))
+
+    await waitFor(() => {
+      expect(progress.getAttribute("aria-valuenow")).toBe("2")
+      expect(progress.getAttribute("aria-valuetext")).toBe(
+        "Step 2 of 5: Specific item"
+      )
+    })
+
+    fireEvent.click(await screen.findByRole("button", { name: /Back/ }))
+
+    await waitFor(() => {
+      expect(progress.getAttribute("aria-valuenow")).toBe("1")
+      expect(progress.getAttribute("aria-valuetext")).toBe("Step 1 of 5: Interest")
+    })
+  })
+
   test("keeps completed answers available after a failed save and retry", async () => {
     submitEnquiryAction
       .mockResolvedValueOnce({
@@ -89,7 +115,7 @@ describe("RequestFlow accessibility and retry state", () => {
       })
 
     render(<RequestFlow data={artCommissionData} />)
-    completeBroadRequest()
+    await completeBroadRequest()
 
     expect(screen.getByRole("textbox", { name: "Name" }).hasAttribute("required")).toBe(true)
     expect(
@@ -121,7 +147,7 @@ describe("RequestFlow accessibility and retry state", () => {
     })
 
     render(<RequestFlow data={artCommissionData} />)
-    completeBroadRequest()
+    await completeBroadRequest()
     fireEvent.click(screen.getByRole("button", { name: "Submit request" }))
 
     const note = await screen.findByRole("textbox", {

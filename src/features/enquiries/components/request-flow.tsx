@@ -1,6 +1,7 @@
 "use client"
 
 import { useActionState, useEffect, useMemo, useRef, useState } from "react"
+import { AnimatePresence, motion, useReducedMotion } from "motion/react"
 
 import { Container } from "@/components/shared/container"
 import { EmptyState } from "@/components/shared/empty-state"
@@ -69,6 +70,18 @@ const EMPTY_DETAIL_DRAFT = {
   material: "",
   finish: "",
 } as const
+
+const REQUEST_STAGE_VARIANTS = {
+  enter: (direction: number) => ({ opacity: 0, x: direction * 18 }),
+  centre: { opacity: 1, x: 0 },
+  exit: (direction: number) => ({ opacity: 0, x: direction * -14 }),
+}
+
+const COMPACT_PROGRESS_VARIANTS = {
+  enter: (direction: number) => ({ opacity: 0, x: direction * 8 }),
+  centre: { opacity: 1, x: 0 },
+  exit: (direction: number) => ({ opacity: 0, x: direction * -6 }),
+}
 
 function initialDraft(data: RequestPageData): RequestDraft {
   return {
@@ -286,17 +299,22 @@ function ChoiceField({
 function Progress({
   currentStep,
   contextual,
+  direction,
 }: {
   currentStep: RequestStep
   contextual: boolean
+  direction: 1 | -1
 }) {
+  const reduceMotion = useReducedMotion()
   const steps = getRequestSteps(contextual)
   const currentIndex = steps.indexOf(currentStep)
+  const currentLabel = STEP_LABELS[currentStep]
+  const progress = (currentIndex + 1) / steps.length
 
   return (
     <section className="border-y-2 border-border bg-card" aria-label="Request progress">
       <Container className="flex flex-col gap-6 py-8 lg:gap-7 lg:py-12">
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+        <div className="flex flex-col gap-2 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <p className="type-label text-primary">Your request</p>
             <h2 className="type-h3">A FEW QUICK STEPS</h2>
@@ -305,10 +323,61 @@ function Progress({
             Your answers stay here as you move backward and forward.
           </p>
         </div>
+        <div className="lg:hidden">
+          <div className="mb-3 flex min-h-7 items-baseline justify-between gap-4">
+            <AnimatePresence mode="wait" initial={false} custom={direction}>
+              <motion.div
+                key={currentStep}
+                custom={direction}
+                variants={COMPACT_PROGRESS_VARIANTS}
+                initial="enter"
+                animate="centre"
+                exit="exit"
+                transition={
+                  reduceMotion
+                    ? { duration: 0 }
+                    : { duration: 0.2, ease: [0.22, 1, 0.36, 1] }
+                }
+                className="flex min-w-0 items-baseline gap-2"
+              >
+                <span className="shrink-0 font-display text-lg text-primary">
+                  {String(currentIndex + 1).padStart(2, "0")}
+                </span>
+                <span className="truncate text-sm font-extrabold text-foreground">
+                  {currentLabel}
+                </span>
+              </motion.div>
+            </AnimatePresence>
+            <span aria-hidden="true" className="shrink-0 type-label text-muted-foreground">
+              {currentIndex + 1} / {steps.length}
+            </span>
+          </div>
+          <div
+            role="progressbar"
+            aria-label="Request progress"
+            aria-valuemin={1}
+            aria-valuemax={steps.length}
+            aria-valuenow={currentIndex + 1}
+            aria-valuetext={`Step ${currentIndex + 1} of ${steps.length}: ${currentLabel}`}
+            className="h-2 overflow-hidden bg-muted"
+          >
+            <motion.div
+              aria-hidden="true"
+              className="h-full origin-left bg-primary"
+              initial={false}
+              animate={{ scaleX: progress }}
+              transition={
+                reduceMotion
+                  ? { duration: 0 }
+                  : { duration: 0.24, ease: [0.22, 1, 0.36, 1] }
+              }
+            />
+          </div>
+        </div>
         <ol
           className={cn(
-            "grid gap-2",
-            contextual ? "grid-cols-3" : "grid-cols-2 sm:grid-cols-5"
+            "hidden gap-2 lg:grid",
+            contextual ? "lg:grid-cols-3" : "lg:grid-cols-5"
           )}
         >
           {steps.map((step, index) => {
@@ -317,12 +386,12 @@ function Progress({
 
             return (
               <li key={step} aria-current={active ? "step" : undefined}>
-                <div
+                <motion.div
                   aria-hidden="true"
-                  className={cn(
-                    "mb-2 h-2 bg-muted",
-                    reached && "bg-primary"
-                  )}
+                  className="mb-2 h-2 origin-left bg-primary"
+                  initial={false}
+                  animate={{ scaleX: reached ? 1 : 0 }}
+                  transition={reduceMotion ? { duration: 0 } : { duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
                 />
                 <div className="flex items-baseline gap-2">
                   <span
@@ -347,7 +416,7 @@ function Progress({
           })}
         </ol>
         <p className="sr-only" aria-live="polite">
-          Current step: {STEP_LABELS[currentStep]}, {currentIndex + 1} of {steps.length}.
+          Current step: {currentLabel}, {currentIndex + 1} of {steps.length}.
         </p>
       </Container>
     </section>
@@ -424,7 +493,7 @@ function ResultCard({
   tone: "primary" | "error" | "warning"
 }) {
   return (
-    <div
+    <motion.div
       role={tone === "error" ? "alert" : "status"}
       className={cn(
         "mx-auto flex w-full max-w-[35.625rem] flex-col gap-5 border-t-8 bg-background p-5 sm:gap-6 sm:p-8",
@@ -432,6 +501,9 @@ function ResultCard({
         tone === "warning" && "border-warning",
         tone === "error" && "border-destructive bg-card"
       )}
+      initial={{ opacity: 0, scale: 0.985 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
     >
       <p
         className={cn(
@@ -451,7 +523,7 @@ function ResultCard({
         </p>
       </div>
       {action}
-    </div>
+    </motion.div>
   )
 }
 
@@ -535,10 +607,15 @@ function RequestStage({
   showBack: boolean
 }) {
   const headingRef = useRef<HTMLHeadingElement>(null)
+  const reduceMotion = useReducedMotion()
 
   useEffect(() => {
-    headingRef.current?.focus()
-  }, [currentStep])
+    const timer = window.setTimeout(
+      () => headingRef.current?.focus(),
+      reduceMotion ? 0 : 230
+    )
+    return () => window.clearTimeout(timer)
+  }, [currentStep, reduceMotion])
 
   const candidates =
     draft.requestKind === "ARTWORK" ? data.artworks : data.services
@@ -890,6 +967,8 @@ function RequestFlow({ data }: { data: RequestPageData }) {
     initiallyContextual ? "details" : "interest"
   )
   const [errors, setErrors] = useState<RequestFieldErrors>({})
+  const [direction, setDirection] = useState<1 | -1>(1)
+  const reduceMotion = useReducedMotion()
   const [reviewingAfterError, setReviewingAfterError] = useState(false)
   const item = useMemo(() => requestItem(data, draft), [data, draft])
   const steps = getRequestSteps(contextual)
@@ -904,7 +983,10 @@ function RequestFlow({ data }: { data: RequestPageData }) {
       setErrors(nextState.fieldErrors)
       setReviewingAfterError(true)
       const step = stepForServerErrors(nextState.fieldErrors, draft)
-      if (steps.includes(step)) setCurrentStep(step)
+      if (steps.includes(step)) {
+        setDirection(steps.indexOf(step) < steps.indexOf(currentStep) ? -1 : 1)
+        setCurrentStep(step)
+      }
     } else if (
       nextState.status === "error" ||
       nextState.status === "context-error"
@@ -955,17 +1037,24 @@ function RequestFlow({ data }: { data: RequestPageData }) {
 
     const index = steps.indexOf(currentStep)
     const next = steps[index + 1]
-    if (next) setCurrentStep(next)
+    if (next) {
+      setDirection(1)
+      setCurrentStep(next)
+    }
   }
 
   function previousStep() {
     const index = steps.indexOf(currentStep)
     const previous = steps[index - 1]
-    if (previous) setCurrentStep(previous)
+    if (previous) {
+      setDirection(-1)
+      setCurrentStep(previous)
+    }
   }
 
   function changeSelection() {
     setContextual(false)
+    setDirection(-1)
     setCurrentStep("interest")
     setErrors({})
     setReviewingAfterError(true)
@@ -999,7 +1088,11 @@ function RequestFlow({ data }: { data: RequestPageData }) {
 
   return (
     <>
-      <Progress currentStep={currentStep} contextual={contextual} />
+      <Progress
+        currentStep={currentStep}
+        contextual={contextual}
+        direction={direction}
+      />
       {contextual ? (
         <ContextSummary draft={draft} item={item} onChange={changeSelection} />
       ) : null}
@@ -1061,18 +1154,34 @@ function RequestFlow({ data }: { data: RequestPageData }) {
             !showRetry &&
             !showContextError ? (
               <div className="grid gap-8 lg:grid-cols-[minmax(0,48.75rem)_minmax(18rem,26.25rem)] lg:gap-20">
-                <RequestStage
-                  currentStep={currentStep}
-                  data={data}
-                  draft={draft}
-                  errors={errors}
-                  item={item}
-                  onBack={previousStep}
-                  onChange={updateDraft}
-                  onNext={nextStep}
-                  pending={pending}
-                  showBack={steps.indexOf(currentStep) > 0}
-                />
+                <AnimatePresence mode="wait" initial={false} custom={direction}>
+                  <motion.div
+                    key={currentStep}
+                    custom={direction}
+                    variants={REQUEST_STAGE_VARIANTS}
+                    initial="enter"
+                    animate="centre"
+                    exit="exit"
+                    transition={
+                      reduceMotion
+                        ? { duration: 0 }
+                        : { duration: 0.24, ease: [0.22, 1, 0.36, 1] }
+                    }
+                  >
+                    <RequestStage
+                      currentStep={currentStep}
+                      data={data}
+                      draft={draft}
+                      errors={errors}
+                      item={item}
+                      onBack={previousStep}
+                      onChange={updateDraft}
+                      onNext={nextStep}
+                      pending={pending}
+                      showBack={steps.indexOf(currentStep) > 0}
+                    />
+                  </motion.div>
+                </AnimatePresence>
                 <aside className="hidden h-fit border-2 border-border bg-muted p-6 lg:block lg:p-8">
                   <span aria-hidden="true" className="mb-5 block h-2 w-14 bg-info" />
                   <h3 className="type-h3 mb-4">WHAT HAPPENS NEXT?</h3>

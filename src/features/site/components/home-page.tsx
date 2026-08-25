@@ -1,13 +1,16 @@
 import Link from "next/link"
+import * as motion from "motion/react-client"
 
 import { Container } from "@/components/shared/container"
 import { MediaImage } from "@/components/shared/media-image"
+import { Reveal } from "@/components/shared/motion/reveal"
 import { Button } from "@/components/ui/button"
 import type {
   FeaturedArtworkResult,
   HomeArtwork,
 } from "@/features/site/server/get-featured-artwork"
 import { cn } from "@/lib/utils"
+import { HomeMagneticCta } from "@/features/site/components/home-magnetic-cta"
 
 type HomePageProps = {
   featuredArtwork: FeaturedArtworkResult
@@ -75,49 +78,81 @@ function Hero() {
       />
       <Container className="grid min-h-[57.5rem] gap-14 py-16 pl-8 min-[1400px]:min-h-[52.75rem] min-[1400px]:grid-cols-[minmax(0,43.125rem)_minmax(0,1fr)] min-[1400px]:items-center min-[1400px]:gap-0 min-[1400px]:py-[4.75rem] min-[1400px]:pl-[5.125rem] min-[1400px]:pr-16">
         <div className="flex max-w-[43.125rem] flex-col gap-[1.875rem]">
-          <Eyebrow className="bg-accent text-accent-foreground">
-            ART + PRINT + BRAND + PERSONALISE
-          </Eyebrow>
+          <Reveal>
+            <Eyebrow className="bg-accent text-accent-foreground">
+              ART + PRINT + BRAND + PERSONALISE
+            </Eyebrow>
+          </Reveal>
           <div className="flex flex-col gap-1.5">
-            <p className="text-[0.75rem] leading-4 font-extrabold tracking-label text-primary min-[1400px]:text-[0.9375rem] min-[1400px]:leading-5">
-              DEBBY ART &amp; PRINTS
+            <Reveal delay={0.06}>
+              <p className="text-[0.75rem] leading-4 font-extrabold tracking-label text-primary min-[1400px]:text-[0.9375rem] min-[1400px]:leading-5">
+                DEBBY ART &amp; PRINTS
+              </p>
+            </Reveal>
+            <div className="overflow-hidden">
+              <motion.h1
+                className="type-display"
+                initial={{ opacity: 0, y: 22 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+              >
+                MAKE IT PERSONAL.
+              </motion.h1>
+            </div>
+          </div>
+          <Reveal delay={0.16}>
+            <p className="max-w-copy text-base leading-[1.625rem] text-muted-foreground min-[1400px]:text-xl min-[1400px]:leading-[1.875rem]">
+              Art, printing, branding and personalised creative work for
+              individuals, businesses and events across Lagos and nationwide.
             </p>
-            <h1 className="type-display">MAKE IT PERSONAL.</h1>
-          </div>
-          <p className="max-w-copy text-base leading-[1.625rem] text-muted-foreground min-[1400px]:text-xl min-[1400px]:leading-[1.875rem]">
-            Art, printing, branding and personalised creative work for
-            individuals, businesses and events across Lagos and nationwide.
-          </p>
-          <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
-            <Button asChild variant="secondary" size="lg">
-              <Link href="/art">Browse Art &amp; Gallery ↗</Link>
-            </Button>
-            <Button asChild variant="outline" size="lg">
-              <Link href="/services">Explore Services</Link>
-            </Button>
-          </div>
-          <div className="flex items-center gap-3 text-[0.6875rem] leading-3.5 font-extrabold tracking-label">
-            <span aria-hidden="true" className="h-0.5 w-12 bg-info" />
-            <span>ART · PRINT · BRANDING · PERSONALISATION</span>
-          </div>
+          </Reveal>
+          <Reveal delay={0.22}>
+            <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
+              <Button asChild variant="secondary" size="lg">
+                <Link href="/art">Browse Art &amp; Gallery ↗</Link>
+              </Button>
+              <Button asChild variant="outline" size="lg">
+                <Link href="/services">Explore Services</Link>
+              </Button>
+            </div>
+          </Reveal>
+          <Reveal delay={0.28}>
+            <div className="flex items-center gap-3 text-[0.6875rem] leading-3.5 font-extrabold tracking-label">
+              <span aria-hidden="true" className="h-0.5 w-12 bg-info" />
+              <span>ART · PRINT · BRANDING · PERSONALISATION</span>
+            </div>
+          </Reveal>
         </div>
 
         <div className="relative mx-auto h-[29.625rem] w-full max-w-[21.375rem] min-[1400px]:h-[43.125rem] min-[1400px]:max-w-[33.75rem]">
-          <span
+          <motion.span
             aria-hidden="true"
             className="absolute top-[1.875rem] bottom-0 left-0 w-[calc(100%-2.5rem)] rounded-[1.125rem] border border-border bg-info min-[1400px]:top-[2.375rem] min-[1400px]:w-[30.875rem]"
+            initial={{ opacity: 0, x: -16, y: 8 }}
+            animate={{ opacity: 1, x: 0, y: 0 }}
+            transition={{ type: "spring", visualDuration: 0.35, bounce: 0.12, delay: 0.12 }}
           />
-          <span
+          <motion.span
             aria-hidden="true"
             className="absolute top-2 right-0 bottom-6 w-[calc(100%-2.5rem)] rounded-[1.125rem] border border-border bg-primary min-[1400px]:top-2.5 min-[1400px]:bottom-12 min-[1400px]:w-[30.875rem]"
+            initial={{ opacity: 0, x: 16, y: -8 }}
+            animate={{ opacity: 1, x: 0, y: 0 }}
+            transition={{ type: "spring", visualDuration: 0.35, bounce: 0.12, delay: 0.16 }}
           />
-          <MediaImage
-            priority
-            src="/home-eagle.jpg"
-            alt="Bald eagle painting by Debby Art & Prints"
-            sizes="(min-width: 1024px) 480px, 302px"
-            className="absolute top-0 left-5 h-[25.375rem] w-[calc(100%-2.5rem)] rounded-[0.875rem] border border-border bg-card min-[1400px]:left-[1.375rem] min-[1400px]:h-[40rem] min-[1400px]:w-[30rem]"
-          />
+          <motion.div
+            className="absolute top-0 left-5 h-[25.375rem] w-[calc(100%-2.5rem)] min-[1400px]:left-[1.375rem] min-[1400px]:h-[40rem] min-[1400px]:w-[30rem]"
+            initial={{ opacity: 0, scale: 1.035, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.16, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <MediaImage
+              priority
+              src="/home-eagle.jpg"
+              alt="Bald eagle painting by Debby Art & Prints"
+              sizes="(min-width: 1024px) 480px, 302px"
+              className="h-full w-full rounded-[0.875rem] border border-border bg-card"
+            />
+          </motion.div>
           <span className="absolute bottom-2 left-9 inline-flex min-h-[1.875rem] items-center rounded-pill border border-border bg-accent px-3 text-[0.5625rem] leading-3 font-extrabold tracking-label min-[1400px]:bottom-1 min-[1400px]:left-10 min-[1400px]:min-h-[2.375rem] min-[1400px]:px-4 min-[1400px]:text-[0.6875rem] min-[1400px]:leading-3.5">
             EAGLE · ORIGINAL ARTWORK
           </span>
@@ -137,24 +172,33 @@ function ArtworkCard({
   const category = artworkCategoryLabels[artwork.category]
 
   return (
-    <article
+    <motion.article
       className={cn(
         "flex min-w-0 flex-col gap-3",
-        index === 0 && "min-[1400px]:translate-y-11",
-        index === 2 && "min-[1400px]:translate-y-[5.125rem]"
+        index === 0 && "desktop:mt-11",
+        index === 2 && "desktop:mt-[5.125rem]"
       )}
+      initial={{ opacity: 0, y: 18 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      whileHover={{ y: -4 }}
+      transition={{ duration: 0.42, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
+      viewport={{ once: true, amount: 0.25 }}
     >
-      <MediaImage
-        src={artwork.primaryImageUrl ?? undefined}
-        alt={artwork.primaryImageAlt ?? artwork.title}
-        sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 90vw"
-        fit="contain"
-        fallback="Artwork image unavailable"
-        className={cn(
-          "aspect-[3/4] rounded-[0.625rem] border border-border bg-card",
-          index === 1 && "min-[1400px]:aspect-square min-[1400px]:rounded-[0.75rem]"
-        )}
-      />
+      <div className="overflow-hidden rounded-[0.625rem]">
+        <motion.div whileHover={{ scale: 1.025 }} transition={{ duration: 0.2 }}>
+          <MediaImage
+            src={artwork.primaryImageUrl ?? undefined}
+            alt={artwork.primaryImageAlt ?? artwork.title}
+            sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 90vw"
+            fit="contain"
+            fallback="Artwork image unavailable"
+            className={cn(
+              "aspect-[3/4] rounded-[0.625rem] border border-border bg-card",
+              index === 1 && "min-[1400px]:aspect-square min-[1400px]:rounded-[0.75rem]"
+            )}
+          />
+        </motion.div>
+      </div>
       <div className="flex items-center justify-between gap-3 text-[0.6875rem] leading-3.5">
         <p
           className={cn(
@@ -170,7 +214,7 @@ function ArtworkCard({
         </p>
       </div>
       <h3 className="font-display text-[1.75rem] leading-8">{artwork.title}</h3>
-    </article>
+    </motion.article>
   )
 }
 
@@ -180,7 +224,7 @@ function FeaturedArtwork({ result }: { result: FeaturedArtworkResult }) {
   return (
     <section aria-labelledby="featured-artwork-heading" className="bg-background">
       <Container className="border-t border-border py-20 min-[1400px]:min-h-[68.75rem] min-[1400px]:px-[4.25rem] min-[1400px]:pt-28 min-[1400px]:pb-[7.5rem]">
-        <div className="flex flex-col gap-6 min-[1400px]:flex-row min-[1400px]:items-end min-[1400px]:justify-between">
+        <Reveal className="flex flex-col gap-6 min-[1400px]:flex-row min-[1400px]:items-end min-[1400px]:justify-between">
           <div className="flex flex-col gap-[1.125rem]">
             <Eyebrow className="bg-info text-info-foreground">
               A CURATED SELECTION
@@ -198,7 +242,7 @@ function FeaturedArtwork({ result }: { result: FeaturedArtworkResult }) {
             </p>
             <span aria-hidden="true" className="h-2 w-[7.5rem] bg-primary" />
           </div>
-        </div>
+        </Reveal>
 
         {result.status === "unavailable" ? (
           <div
@@ -214,7 +258,7 @@ function FeaturedArtwork({ result }: { result: FeaturedArtworkResult }) {
             </p>
           </div>
         ) : artwork.length > 0 ? (
-          <div className="mt-14 grid gap-12 sm:grid-cols-2 min-[1400px]:h-[38.75rem] min-[1400px]:grid-cols-[minmax(0,20.375rem)_minmax(0,25.875rem)_minmax(0,18.75rem)] min-[1400px]:items-start min-[1400px]:justify-between">
+          <div className="mt-14 grid gap-12 sm:grid-cols-2 desktop:grid-cols-[minmax(0,20.375rem)_minmax(0,25.875rem)_minmax(0,18.75rem)] desktop:items-start desktop:justify-between">
             {artwork.map((item, index) => (
               <ArtworkCard key={item.id} artwork={item} index={index} />
             ))}
@@ -232,7 +276,7 @@ function FeaturedArtwork({ result }: { result: FeaturedArtworkResult }) {
           </div>
         )}
 
-        <div className="mt-14 flex flex-col items-start justify-end gap-4 sm:flex-row sm:items-center min-[1400px]:mt-0">
+        <div className="mt-14 flex flex-col items-start justify-end gap-4 sm:flex-row sm:items-center desktop:mt-4">
           <p className="text-[0.8125rem] leading-[1.125rem] text-muted-foreground">
             Explore more original artwork and portrait work.
           </p>
@@ -263,7 +307,7 @@ function OfferRoutes() {
           </p>
         </div>
 
-        <div className="mt-11 flex flex-col gap-5 border-y border-border bg-muted p-5 min-[1400px]:relative min-[1400px]:h-[53.75rem] min-[1400px]:block min-[1400px]:p-0">
+        <Reveal className="mt-11 flex flex-col gap-5 border-y border-border bg-muted p-5 min-[1400px]:relative min-[1400px]:h-[53.75rem] min-[1400px]:block min-[1400px]:p-0">
           <Link
             href="/art"
             className="group flex items-end gap-4 rounded-md focus-visible:ring-3 focus-visible:ring-ring min-[1400px]:absolute min-[1400px]:top-[3.875rem] min-[1400px]:left-10 min-[1400px]:h-[24.375rem] min-[1400px]:w-[45rem] min-[1400px]:gap-[1.875rem]"
@@ -378,7 +422,7 @@ function OfferRoutes() {
               </span>
             </div>
           </Link>
-        </div>
+        </Reveal>
       </Container>
     </section>
   )
@@ -417,17 +461,25 @@ function RequestProcess() {
           </div>
         </div>
 
-        <ol className="flex flex-1 flex-col min-[1400px]:pt-[1.375rem]">
+        <motion.ol
+          className="flex flex-1 flex-col min-[1400px]:pt-[1.375rem]"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+          variants={{ visible: { transition: { staggerChildren: 0.09 } } }}
+        >
           {requestSteps.map(([description, action], index) => (
-            <li
+            <motion.li
               key={action}
               className={cn(
                 "flex min-h-36 items-center gap-5 border-t border-muted-foreground py-6 min-[1400px]:min-h-[9.25rem] min-[1400px]:gap-6",
                 index % 2 === 1 && "min-[1400px]:pl-10",
                 index === requestSteps.length - 1 && "border-b"
               )}
+              variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0 } }}
+              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
             >
-              <span
+              <motion.span
                 className={cn(
                   "flex size-12 shrink-0 items-center justify-center rounded-pill border border-white font-display text-lg leading-6 min-[1400px]:size-16 min-[1400px]:text-2xl min-[1400px]:leading-[1.875rem]",
                   index === 0 && "bg-info text-info-foreground",
@@ -435,18 +487,22 @@ function RequestProcess() {
                   index === 2 && "bg-accent text-foreground",
                   index === 3 && "bg-white text-foreground"
                 )}
+                initial={{ scale: 0.82 }}
+                whileInView={{ scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ type: "spring", visualDuration: 0.35, bounce: 0.12, delay: index * 0.09 }}
               >
                 {String(index + 1).padStart(2, "0")}
-              </span>
+              </motion.span>
               <p className="flex-1 text-base leading-6 font-bold min-[1400px]:text-[1.375rem] min-[1400px]:leading-[1.875rem]">
                 {description}
               </p>
               <span className="hidden w-[9.375rem] shrink-0 text-[0.6875rem] leading-[0.9375rem] font-extrabold tracking-label text-accent sm:block">
                 {action}
               </span>
-            </li>
+            </motion.li>
           ))}
-        </ol>
+        </motion.ol>
 
         <Button asChild size="lg" className="border-white min-[1400px]:hidden">
           <Link href="/request">Make a Request ↗</Link>
@@ -461,7 +517,13 @@ function OrderingEssentials() {
     <section aria-labelledby="ordering-heading" className="relative bg-background">
       <span aria-hidden="true" className="absolute top-0 right-0 h-3.5 w-[9.375rem] bg-info" />
       <Container className="flex flex-col gap-12 py-20 min-[1400px]:min-h-[45rem] min-[1400px]:flex-row min-[1400px]:items-center min-[1400px]:gap-[4.5rem] min-[1400px]:px-[4.25rem] min-[1400px]:py-24">
-        <div className="flex min-h-[16.25rem] flex-col justify-between rounded-sm border border-border bg-primary p-8 text-white min-[1400px]:h-[31.25rem] min-[1400px]:w-[25.625rem] min-[1400px]:shrink-0 min-[1400px]:p-[2.125rem]">
+        <motion.div
+          className="flex min-h-[16.25rem] flex-col justify-between rounded-sm border border-border bg-primary p-8 text-white min-[1400px]:h-[31.25rem] min-[1400px]:w-[25.625rem] min-[1400px]:shrink-0 min-[1400px]:p-[2.125rem]"
+          initial={{ opacity: 0, x: -20 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.46, ease: [0.22, 1, 0.36, 1] }}
+          viewport={{ once: true, amount: 0.2 }}
+        >
           <div className="flex flex-col gap-[1.375rem]">
             <Eyebrow className="bg-accent text-accent-foreground">GOOD TO KNOW</Eyebrow>
             <h2 id="ordering-heading" className="type-h2">
@@ -473,27 +535,35 @@ function OrderingEssentials() {
             <span aria-hidden="true" className="h-2 w-21 bg-accent" />
             <p>A few helpful details before you make a request.</p>
           </div>
-        </div>
+        </motion.div>
 
         <ol className="flex flex-1 flex-col">
           {essentials.map((item, index) => (
-            <li
+            <motion.li
               key={item.title}
               className={cn(
                 "flex min-h-[9.75rem] items-center gap-5 border-t border-border py-[1.125rem]",
                 index === essentials.length - 1 && "border-b"
               )}
+              initial={{ opacity: 0, x: 16 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.4, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
+              viewport={{ once: true, amount: 0.2 }}
             >
-              <span
+              <motion.span
                 className={cn(
                   "flex size-14 shrink-0 items-center justify-center rounded-pill border border-border font-display text-lg min-[1400px]:size-[4.5rem] min-[1400px]:text-[1.375rem]",
                   index === 0 && "bg-info",
                   index === 1 && "bg-accent",
                   index === 2 && "bg-card"
                 )}
+                initial={{ scale: 0.85 }}
+                whileInView={{ scale: 1 }}
+                transition={{ type: "spring", visualDuration: 0.35, bounce: 0.12, delay: index * 0.08 }}
+                viewport={{ once: true }}
               >
                 {String(index + 1).padStart(2, "0")}
-              </span>
+              </motion.span>
               <div className="flex min-w-0 flex-col gap-2">
                 <p className="text-[0.6875rem] leading-3.5 font-extrabold tracking-label text-primary">
                   {item.eyebrow}
@@ -505,7 +575,7 @@ function OrderingEssentials() {
                   {item.description}
                 </p>
               </div>
-            </li>
+            </motion.li>
           ))}
         </ol>
       </Container>
@@ -536,18 +606,7 @@ function FinalRequestCta() {
           </Button>
         </div>
 
-        <div aria-hidden="true" className="relative h-[13.125rem] w-[13.125rem] shrink-0 self-center min-[1400px]:h-[18.75rem] min-[1400px]:w-[18.75rem]">
-          <span className="absolute bottom-0 left-0 size-[10.75rem] rounded-pill border border-border bg-info min-[1400px]:size-[15.625rem]" />
-          <span className="absolute top-0 right-0 flex size-[10.75rem] rotate-6 flex-col items-center justify-center gap-2 rounded-pill border-2 border-primary text-center min-[1400px]:size-[15.625rem] min-[1400px]:gap-3.5">
-            <span className="font-display text-[1.75rem] leading-[1.875rem] min-[1400px]:text-[2.125rem] min-[1400px]:leading-9">
-              MAKE
-              <br /> IT REAL
-            </span>
-            <span className="text-[0.5625rem] leading-3 font-extrabold tracking-label min-[1400px]:text-[0.6875rem] min-[1400px]:leading-3.5">
-              ART · PRINT · PERSONAL
-            </span>
-          </span>
-        </div>
+        <HomeMagneticCta />
       </Container>
     </section>
   )

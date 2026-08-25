@@ -1,8 +1,10 @@
 import Link from "next/link"
+import * as motion from "motion/react-client"
 
 import { Container } from "@/components/shared/container"
 import { EmptyState } from "@/components/shared/empty-state"
 import { MediaImage } from "@/components/shared/media-image"
+import { Reveal } from "@/components/shared/motion/reveal"
 import { Button } from "@/components/ui/button"
 import type {
   ServiceGroupPresentation,
@@ -49,27 +51,35 @@ function ServiceCard({
   service,
 }: ServiceCardProps) {
   return (
-    <article
+    <motion.article
       className={cn(
         "grid gap-5 border-b-2 border-border py-8 lg:grid-cols-[minmax(18rem,23.75rem)_minmax(0,1fr)] lg:gap-10 lg:py-11",
         emphasized && "bg-muted px-5 lg:px-7",
         imageOnRight &&
           "lg:grid-cols-[minmax(0,1fr)_minmax(18rem,26.875rem)]"
       )}
+      initial={{ opacity: 0, x: imageOnRight ? 20 : -20 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.46, ease: [0.22, 1, 0.36, 1] }}
+      viewport={{ once: true, amount: 0.15 }}
     >
-      <MediaImage
-        alt={service.imageAlt}
-        src={service.imageSrc}
-        sizes="(min-width: 1024px) 430px, calc(100vw - 40px)"
-        unoptimized={service.imageSrc?.startsWith("https://")}
-        fallback={<ServiceImageFallback service={service} />}
-        className={cn(
-          "h-[15.625rem] border-2 border-border bg-card lg:h-[18.75rem]",
-          emphasized && "h-[12.5rem]",
-          service.imageSrc && "h-[13.125rem]",
-          imageOnRight && "lg:order-2"
-        )}
-      />
+      <div className={cn("overflow-hidden", imageOnRight && "lg:order-2")}>
+        <motion.div whileHover={{ scale: 1.02 }} transition={{ duration: 0.2 }}>
+          <MediaImage
+            alt={service.imageAlt}
+            src={service.imageSrc}
+            sizes="(min-width: 1024px) 430px, calc(100vw - 40px)"
+            unoptimized={service.imageSrc?.startsWith("https://")}
+            fallback={<ServiceImageFallback service={service} />}
+            className={cn(
+              "h-[15.625rem] border-2 border-border bg-card lg:h-[18.75rem]",
+              emphasized && "h-[12.5rem]",
+              service.imageSrc && "h-[13.125rem]",
+              imageOnRight && "lg:order-2"
+            )}
+          />
+        </motion.div>
+      </div>
       <div
         className={cn(
           "flex min-w-0 flex-col justify-between gap-7 py-1 lg:py-2.5",
@@ -112,7 +122,7 @@ function ServiceCard({
           Request this service ↗
         </Link>
       </div>
-    </article>
+    </motion.article>
   )
 }
 
@@ -159,7 +169,7 @@ function ServicesHero() {
         className="absolute inset-y-0 left-0 w-2 bg-primary lg:w-[1.125rem]"
       />
       <Container className="flex flex-col gap-6 py-14 pl-8 lg:flex-row lg:items-end lg:justify-between lg:py-24 lg:pl-20">
-        <div className="flex flex-col gap-5">
+        <Reveal className="flex flex-col gap-5">
           <div className="flex items-center gap-3.5">
             <span aria-hidden="true" className="h-2 w-11 bg-info lg:w-[3.625rem]" />
             <p className="text-[0.6875rem] leading-4 font-extrabold tracking-label lg:text-xs">
@@ -169,8 +179,8 @@ function ServicesHero() {
           <h1 id="services-heading" className="type-display">
             SERVICES
           </h1>
-        </div>
-        <div className="flex max-w-[26.875rem] flex-col gap-4 lg:gap-5">
+        </Reveal>
+        <Reveal className="flex max-w-[26.875rem] flex-col gap-4 lg:gap-5" delay={0.08}>
           <p className="text-[1.0625rem] leading-[1.625rem] lg:text-xl lg:leading-body-lg">
             Printed and custom-production work, organised by what you need.
           </p>
@@ -180,7 +190,7 @@ function ServicesHero() {
           >
             Looking for artwork? Browse Art &amp; Gallery ↗
           </Link>
-        </div>
+        </Reveal>
       </Container>
     </section>
   )
@@ -221,7 +231,7 @@ function ServicesCatalogue({ groups }: ServicesPageProps) {
   return (
     <section aria-labelledby="services-catalogue-heading">
       <Container className="py-12 lg:py-20">
-        <div className="flex flex-col gap-2 border-b-2 border-border pb-6 sm:flex-row sm:items-end sm:justify-between lg:pb-9">
+        <Reveal className="flex flex-col gap-2 border-b-2 border-border pb-6 sm:flex-row sm:items-end sm:justify-between lg:pb-9">
           <div className="flex flex-col gap-2.5">
             <p className="text-[0.625rem] leading-4 font-extrabold tracking-label text-primary lg:text-xs">
               PERSONALISED · PRINT · BRANDING
@@ -233,7 +243,7 @@ function ServicesCatalogue({ groups }: ServicesPageProps) {
           <p className="max-w-sm text-xs leading-[1.1875rem] text-muted-foreground sm:text-right lg:text-[0.8125rem] lg:leading-5">
             Published pricing appears below. Final request details are confirmed with you.
           </p>
-        </div>
+        </Reveal>
 
         {groups.length > 0 ? (
           groups.map((group, index) => (
@@ -244,17 +254,19 @@ function ServicesCatalogue({ groups }: ServicesPageProps) {
             />
           ))
         ) : (
-          <EmptyState
-            className="my-10 min-h-72 bg-card"
-            visual="01"
-            title="Services are being prepared"
-            description="There are no published services to show yet. You can still start a general request and describe what you need."
-            action={
-              <Button asChild size="sm" className="mt-2">
-                <Link href="/request">Make a Request ↗</Link>
-              </Button>
-            }
-          />
+          <Reveal className="my-10">
+            <EmptyState
+              className="min-h-72 bg-card"
+              visual="01"
+              title="Services are being prepared"
+              description="There are no published services to show yet. You can still start a general request and describe what you need."
+              action={
+                <Button asChild size="sm" className="mt-2">
+                  <Link href="/request">Make a Request ↗</Link>
+                </Button>
+              }
+            />
+          </Reveal>
         )}
       </Container>
     </section>
@@ -268,7 +280,7 @@ function BeforeYouRequest() {
       className="border-y-2 border-border bg-muted"
     >
       <Container className="grid gap-8 py-12 lg:grid-cols-[26.25rem_minmax(0,1fr)] lg:gap-[4.5rem] lg:py-20">
-        <div className="flex flex-col items-start gap-[1.125rem]">
+        <Reveal className="flex flex-col items-start gap-[1.125rem]">
           <p className="text-[0.625rem] leading-4 font-extrabold tracking-label text-primary lg:text-xs">
             BEFORE YOU REQUEST
           </p>
@@ -282,20 +294,28 @@ function BeforeYouRequest() {
           <Button asChild>
             <Link href="/request">Make a Request ↗</Link>
           </Button>
-        </div>
-        <ol className="grid grid-cols-2 gap-2 sm:gap-3 lg:grid-cols-3">
+        </Reveal>
+        <motion.ol
+          className="grid grid-cols-2 gap-2 sm:gap-3 lg:grid-cols-3"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.25 }}
+          variants={{ visible: { transition: { staggerChildren: 0.08 } } }}
+        >
           {REQUEST_PREPARATION_DETAILS.map((detail, index) => (
-            <li
+            <motion.li
               key={detail}
               className="flex min-h-16 items-center border border-border bg-background p-3.5 text-xs leading-[1.125rem] font-bold sm:p-5 lg:min-h-[4.125rem] lg:p-[1.375rem] lg:text-[0.9375rem] lg:leading-[1.375rem]"
+              variants={{ hidden: { opacity: 0, y: 14 }, visible: { opacity: 1, y: 0 } }}
+              transition={{ duration: 0.34, ease: [0.22, 1, 0.36, 1] }}
             >
               <span className="hidden sm:inline">
                 {String(index + 1).padStart(2, "0")} ·&nbsp;
               </span>
               {detail}
-            </li>
+            </motion.li>
           ))}
-        </ol>
+        </motion.ol>
       </Container>
     </section>
   )
@@ -304,16 +324,18 @@ function BeforeYouRequest() {
 function FinalServicesCallToAction() {
   return (
     <section aria-labelledby="services-final-cta" className="border-b-2 border-border bg-accent">
-      <Container className="flex flex-col items-start gap-6 py-12 lg:flex-row lg:items-center lg:justify-between lg:py-[4.25rem]">
-        <h2
-          id="services-final-cta"
-          className="max-w-[51.25rem] font-display text-[2.375rem] leading-[2.4375rem] tracking-[-0.04em] lg:text-[3.5rem] lg:leading-[3.5rem]"
-        >
-          KNOW THE SERVICE YOU NEED?
-        </h2>
-        <Button asChild variant="secondary" size="lg">
-          <Link href="/request">Make a Request ↗</Link>
-        </Button>
+      <Container>
+        <Reveal className="flex flex-col items-start gap-6 py-12 lg:flex-row lg:items-center lg:justify-between lg:py-[4.25rem]">
+          <h2
+            id="services-final-cta"
+            className="max-w-[51.25rem] font-display text-[2.375rem] leading-[2.4375rem] tracking-[-0.04em] lg:text-[3.5rem] lg:leading-[3.5rem]"
+          >
+            KNOW THE SERVICE YOU NEED?
+          </h2>
+          <Button asChild variant="secondary" size="lg">
+            <Link href="/request">Make a Request ↗</Link>
+          </Button>
+        </Reveal>
       </Container>
     </section>
   )
