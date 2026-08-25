@@ -1,5 +1,10 @@
 import type { NextConfig } from "next";
 
+const localSupabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const allowLocalSupabaseImages =
+  localSupabaseUrl === "http://127.0.0.1:54321" ||
+  localSupabaseUrl === "http://localhost:54321";
+
 const nextConfig: NextConfig = {
   experimental: {
     serverActions: {
@@ -7,6 +12,7 @@ const nextConfig: NextConfig = {
     },
   },
   images: {
+    dangerouslyAllowLocalIP: allowLocalSupabaseImages,
     remotePatterns: [
       {
         protocol: "https",
