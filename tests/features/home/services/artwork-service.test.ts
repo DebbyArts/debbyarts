@@ -19,7 +19,6 @@ describe("getFeaturedArtwork", () => {
   beforeEach(() => {
     vi.stubEnv("DATABASE_URL", "postgresql://example.invalid/debbyarts")
     vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "https://example.supabase.co")
-    vi.stubEnv("NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET", "catalogue")
     findMany.mockReset()
     vi.restoreAllMocks()
   })
@@ -50,7 +49,7 @@ describe("getFeaturedArtwork", () => {
           category: "PAINTING",
           mediumFormat: "Acrylic on canvas",
           primaryImageUrl:
-            "https://example.supabase.co/storage/v1/object/public/catalogue/artwork/quiet-strength.jpg",
+            "https://example.supabase.co/storage/v1/object/public/catalogue-media/artwork/quiet-strength.jpg",
           primaryImageAlt: "A portrait titled Quiet Strength",
           primaryImageWidth: 800,
           primaryImageHeight: 1000,

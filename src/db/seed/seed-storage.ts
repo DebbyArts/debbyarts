@@ -1,10 +1,8 @@
 import { SeedManifestError } from "@/db/seed/manifest-validation"
 import { isSeedStoragePath } from "@/db/seed/storage-paths"
 import { validateImageBuffer } from "@/server/storage/image-validation"
-import {
-  createStorageAdminClient,
-  getStorageBucket,
-} from "@/server/storage/storage-admin"
+import { createStorageAdminClient } from "@/server/storage/storage-admin"
+import { CATALOGUE_MEDIA_BUCKET } from "@/shared/constants/storage"
 
 async function uploadSeedCatalogueImage(path: string, buffer: Buffer) {
   if (!isSeedStoragePath(path)) {
@@ -17,7 +15,7 @@ async function uploadSeedCatalogueImage(path: string, buffer: Buffer) {
   }
 
   const { error } = await createStorageAdminClient().storage
-    .from(getStorageBucket())
+    .from(CATALOGUE_MEDIA_BUCKET)
     .upload(path, image.buffer, {
       cacheControl: "31536000",
       contentType: image.contentType,

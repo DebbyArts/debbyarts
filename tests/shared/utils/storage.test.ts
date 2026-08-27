@@ -8,7 +8,6 @@ afterEach(() => {
 
 describe("resolvePublicStorageObjectUrl", () => {
   test("builds encoded public URLs for hosted and approved local Supabase projects", () => {
-    vi.stubEnv("NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET", "catalogue-media")
     vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "https://debbyarts.supabase.co")
 
     expect(resolvePublicStorageObjectUrl("artwork/blue horse.jpg")).toBe(
@@ -25,7 +24,6 @@ describe("resolvePublicStorageObjectUrl", () => {
   test("fails safely for missing configuration, unapproved origins, and malformed paths", () => {
     expect(resolvePublicStorageObjectUrl("artwork/blue-horse.jpg")).toBeNull()
 
-    vi.stubEnv("NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET", "catalogue-media")
     vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "http://images.example.com")
 
     expect(resolvePublicStorageObjectUrl("artwork/blue-horse.jpg")).toBeNull()

@@ -112,14 +112,14 @@ The application uses Prisma ORM 7 with PostgreSQL hosted in a client-owned Supab
 - Prisma owns application tables, migrations, generated types, and data access.
 - Supabase provides hosted PostgreSQL, Storage, and Auth. It is not a second application migration authority.
 - `DATABASE_URL` is the pooled runtime connection used by `src/db/client.ts`.
-- `DIRECT_URL` is the direct or session-pooled connection used by Prisma CLI migrations.
+- `DIRECT_URL` is the direct or session-pooled connection used by Prisma CLI migrations. It is optional locally because the CLI falls back to `DATABASE_URL`, but recommended for hosted migrations.
 - The initial migration lives in `src/db/migrations/`. It was verified against a disposable local PostgreSQL 16 database and has not been applied to a shared or production database.
 
 The application tables are in PostgreSQL's `public` schema with RLS enabled and no Data API policies. Prisma's server-side database role is the only application data path; keep the Supabase Data API disabled or ungranted for these tables. Future schema changes must be made in Prisma and committed as Prisma migrations.
 
 ## Image storage
 
-Use one public Supabase Storage bucket for public Artwork and Service images. Artwork keeps its immutable primary/cover object path directly on the catalogue row and stores any additional gallery images in its feature-owned relational table. Every object has alt text and intrinsic dimensions. The fixed bucket name is application configuration and signed URLs are not persisted.
+Use the `catalogue-media` public Supabase Storage bucket for public Artwork and Service images. The Supabase infrastructure migration creates this repository-owned invariant; it is not an environment setting. Artwork keeps its immutable primary/cover object path directly on the catalogue row and stores any additional gallery images in its feature-owned relational table. Every object has alt text and intrinsic dimensions. Signed URLs are not persisted.
 
 An eventual replace flow should upload and validate the new object, update the catalogue record, then delete the old unreferenced object. Upload, replace, and delete remain authenticated Admin operations. `ArtworkImage` is the only additional-image relation; there is no generic media framework or duplicate storage-metadata table.
 
@@ -147,6 +147,5 @@ No roles, customer accounts, or permissions framework is required.
 ## Remaining production decisions
 
 - Confirm final category labels and seeded catalogue content.
-- Confirm the fixed Supabase Storage bucket name.
 - Approve enquiry retention/privacy wording.
 - Select the client-owned Supabase region/plan and production SMTP provider.

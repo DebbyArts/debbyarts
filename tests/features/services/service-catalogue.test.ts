@@ -191,7 +191,6 @@ describe("Service catalogue projection", () => {
 
   test("uses the shared public-storage URL across public, request, and Admin projections", () => {
     vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "http://127.0.0.1:54321")
-    vi.stubEnv("NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET", "catalogue-media")
     const service = serviceRecord({
       primaryImagePath: "service/custom shirt.jpg",
       primaryImageAlt: "A printed custom shirt",
@@ -207,7 +206,6 @@ describe("Service catalogue projection", () => {
 
   test("uses an intentional fallback when the persisted image path is unusable", () => {
     vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "http://localhost:54321")
-    vi.stubEnv("NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET", "catalogue-media")
 
     const groups = projectServiceGroups([
       serviceRecord({ primaryImagePath: "service/../example.jpg" }),

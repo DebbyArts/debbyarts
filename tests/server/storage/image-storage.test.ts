@@ -1,5 +1,5 @@
 import sharp from "sharp"
-import { beforeEach, describe, expect, it, vi } from "vitest"
+import { describe, expect, it } from "vitest"
 
 import {
   assertOwnedImagePath,
@@ -10,10 +10,6 @@ import {
 } from "@/server/storage/image-storage"
 
 describe("catalogue image safety", () => {
-  beforeEach(() => {
-    vi.stubEnv("NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET", "catalogue-media")
-  })
-
   it("decodes accepted content and returns intrinsic dimensions", async () => {
     const buffer = await sharp({
       create: {

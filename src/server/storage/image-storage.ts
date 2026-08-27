@@ -12,11 +12,8 @@ import {
   validateImageFile,
   type ValidatedImage,
 } from "@/server/storage/image-validation"
-import {
-  createStorageAdminClient,
-  getStorageBucket,
-  STORAGE_BUCKET,
-} from "@/server/storage/storage-admin"
+import { createStorageAdminClient } from "@/server/storage/storage-admin"
+import { CATALOGUE_MEDIA_BUCKET } from "@/shared/constants/storage"
 
 type CatalogueImageKind = "artwork" | "service"
 
@@ -63,7 +60,7 @@ async function uploadCatalogueImage(
   const image = await validateImageFile(file)
   const path = immutableImagePath(admin.id, kind, image.extension)
   const { error } = await createStorageAdminClient().storage
-    .from(getStorageBucket())
+    .from(CATALOGUE_MEDIA_BUCKET)
     .upload(path, image.buffer, {
       cacheControl: "31536000",
       contentType: image.contentType,
@@ -112,7 +109,7 @@ async function deleteCatalogueImage(
   }
 
   const { data, error } = await createStorageAdminClient().storage
-    .from(getStorageBucket())
+    .from(CATALOGUE_MEDIA_BUCKET)
     .remove([path])
 
   if (error || !data.some((object) => object.name === path)) {
@@ -128,7 +125,6 @@ export {
   MAX_IMAGE_BYTES,
   MAX_IMAGE_DIMENSION,
   MIN_IMAGE_DIMENSION,
-  STORAGE_BUCKET,
   assertOwnedImagePath,
   deleteCatalogueImage,
   immutableImagePath,

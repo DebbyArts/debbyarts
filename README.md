@@ -4,10 +4,12 @@ Next.js application for the Debby Art & Prints website.
 
 ## Getting Started
 
-Install dependencies and run the development server:
+Use Node.js 22 or later. Create an ignored `.env` file from the documented
+names, fill it with local values, then install dependencies and run the server:
 
 ```bash
-npm install
+cp .env.example .env
+npm ci
 npm run dev
 ```
 
@@ -28,7 +30,8 @@ npm run build
 
 ## Database
 
-Copy the documented variable names from `.env.example` into your local secret environment file. Prisma uses a pooled `DATABASE_URL` at runtime and `DIRECT_URL` for migrations.
+Prisma uses a pooled `DATABASE_URL` at runtime. `DIRECT_URL` is optional locally
+(the CLI falls back to `DATABASE_URL`) and recommended for hosted migrations.
 
 ```bash
 npm run db:validate
@@ -40,3 +43,6 @@ npm run db:seed
 The active schema and migration history live in `src/db/`. Do not use Supabase dashboard migrations for application tables.
 
 `npm run db:deploy` applies pending Prisma migrations without seeding. Use `npm run db:setup` for a fresh non-destructive deployment followed by the curated catalogue seed. `npm run db:reset-local` is destructive and refuses non-local database hosts; it resets a local database, then seeds it. The seed uploads deterministic public Storage paths before one database transaction, so a partial failure leaves no broken database image references and a rerun recovers any already-uploaded objects.
+
+For a new Supabase project, migration ownership, Auth/Storage configuration,
+Vercel deployment, and account handover, read [docs/deployment.md](docs/deployment.md).

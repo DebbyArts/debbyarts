@@ -35,7 +35,6 @@ describe("catalogue image deletion", () => {
 
   beforeEach(() => {
     vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "https://example.supabase.co")
-    vi.stubEnv("NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET", "catalogue-media")
     vi.stubEnv("SUPABASE_SECRET_KEY", "test-secret")
     artworkFindFirst.mockReset()
     artworkImageFindFirst.mockReset()

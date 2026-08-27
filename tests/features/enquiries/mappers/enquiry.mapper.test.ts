@@ -48,7 +48,6 @@ function detailRecord(
 describe("enquiry detail mapper", () => {
   test("creates the ready-to-render projection for a linked artwork", () => {
     vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "https://project.supabase.co")
-    vi.stubEnv("NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET", "public-assets")
 
     const result = mapToEnquiryDetail(detailRecord())
 
@@ -61,7 +60,7 @@ describe("enquiry detail mapper", () => {
         href: "/admin/artwork/artwork-1",
         imageAlt: "Family portrait in charcoal",
         imageUrl:
-          "https://project.supabase.co/storage/v1/object/public/public-assets/owner/artwork/family.webp",
+          "https://project.supabase.co/storage/v1/object/public/catalogue-media/owner/artwork/family.webp",
         hasLinkedRecord: true,
         sourceLabel: "Linked record",
       },

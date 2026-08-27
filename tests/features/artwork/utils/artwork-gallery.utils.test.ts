@@ -112,7 +112,6 @@ describe("artwork catalogue rules", () => {
 
   test("maps persisted artwork into fields ready for the gallery", () => {
     vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "https://example.supabase.co")
-    vi.stubEnv("NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET", "catalogue")
 
     const projection = mapToArtworkProjection({
       slug: "blue-horse",
@@ -144,7 +143,7 @@ describe("artwork catalogue rules", () => {
       categoryItemLabel: "Painting",
       availabilityLabel: "Available",
       imageSrc:
-        "https://example.supabase.co/storage/v1/object/public/catalogue/artwork/blue%20horse.jpg",
+        "https://example.supabase.co/storage/v1/object/public/catalogue-media/artwork/blue%20horse.jpg",
       imageAlt: "Blue Horse, an artwork by Debby Art & Prints",
       priceLabel: "Price on request",
       requestHref: "/request?artwork=blue-horse",
@@ -154,7 +153,6 @@ describe("artwork catalogue rules", () => {
 
   test("uses the shared public-storage URL for request and Admin artwork projections", () => {
     vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "http://localhost:54321")
-    vi.stubEnv("NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET", "catalogue-media")
     const expectedUrl =
       "http://localhost:54321/storage/v1/object/public/catalogue-media/artwork/blue%20horse.jpg"
 

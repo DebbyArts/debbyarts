@@ -1,3 +1,5 @@
+import { CATALOGUE_MEDIA_BUCKET } from "@/shared/constants/storage"
+
 const LOCAL_SUPABASE_STORAGE_ORIGINS = new Set([
   "http://127.0.0.1:54321",
   "http://localhost:54321",
@@ -30,12 +32,9 @@ function resolvePublicStorageObjectUrl(
   objectPath: string | null | undefined
 ): string | null {
   const projectUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const bucketSegments = getSafePathSegments(
-    process.env.NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET
-  )
   const objectPathSegments = getSafePathSegments(objectPath)
 
-  if (!projectUrl || !bucketSegments || bucketSegments.length !== 1 || !objectPathSegments) {
+  if (!projectUrl || !objectPathSegments) {
     return null
   }
 
@@ -44,7 +43,7 @@ function resolvePublicStorageObjectUrl(
 
     if (!isApprovedSupabaseProjectUrl(publicObjectUrl)) return null
 
-    const encodedBucket = encodeURIComponent(bucketSegments[0])
+    const encodedBucket = encodeURIComponent(CATALOGUE_MEDIA_BUCKET)
     const encodedPath = objectPathSegments.map(encodeURIComponent).join("/")
 
     publicObjectUrl.pathname = `/storage/v1/object/public/${encodedBucket}/${encodedPath}`
