@@ -1,3 +1,5 @@
+import "dotenv/config"
+
 import { spawn } from "node:child_process"
 
 import { assertLocalDatabaseTargets } from "@/db/seed/local-database-guard"

@@ -95,7 +95,7 @@ describe("catalogue seed orchestration", () => {
   it("stops before Storage uploads when an Admin image owns a curated display order", async () => {
     const dependencies = seedDependencies()
     dependencies.artworkFindUnique.mockResolvedValue({
-      artworkImages: [
+      additionalImages: [
         {
           displayOrder: 1,
           storagePath: "admin-id/artwork/admin-image.webp",

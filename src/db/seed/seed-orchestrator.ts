@@ -46,12 +46,12 @@ type SeedDatabase = {
     findUnique: (args: {
       where: { slug: string }
       select: {
-        artworkImages: {
+        additionalImages: {
           select: { displayOrder: true; storagePath: true }
         }
       }
     }) => Promise<{
-      artworkImages: { displayOrder: number; storagePath: string }[]
+      additionalImages: { displayOrder: number; storagePath: string }[]
     } | null>
   }
   $transaction: <T>(
@@ -190,7 +190,7 @@ async function assertNoAdditionalImageOrderConflicts(
     const existing = await database.artwork.findUnique({
       where: { slug: item.slug },
       select: {
-        artworkImages: {
+        additionalImages: {
           select: { displayOrder: true, storagePath: true },
         },
       },
@@ -201,7 +201,7 @@ async function assertNoAdditionalImageOrderConflicts(
     const curatedOrders = new Set(
       item.additionalImages.map((_, index) => index + 1)
     )
-    const conflict = existing.artworkImages.find(
+    const conflict = existing.additionalImages.find(
       (image) =>
         curatedOrders.has(image.displayOrder) &&
         !image.storagePath.startsWith(seedPrefix)
