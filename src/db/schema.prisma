@@ -107,6 +107,7 @@ model Service {
   askDesignReadiness Boolean      @default(false)
   askColour          Boolean      @default(false)
   askMaterial        Boolean      @default(false)
+  materialOptions    String[]     @default([])
   askFinish          Boolean      @default(false)
   createdAt          DateTime     @default(now())
   updatedAt          DateTime     @updatedAt

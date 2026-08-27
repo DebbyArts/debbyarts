@@ -163,6 +163,8 @@ describe("Service Admin action boundaries", () => {
     const options = new FormData()
     options.set("askSizeFormat", "on")
     options.set("sizeFormatOptions", "A4, A3")
+    options.set("askMaterial", "on")
+    options.set("materialOptions", "Cotton, Polyester")
 
     await saveServiceOptionsAction(
       existingService.id,
@@ -178,9 +180,10 @@ describe("Service Admin action boundaries", () => {
         askColour: false,
         askDesignReadiness: false,
         askFinish: false,
-        askMaterial: false,
+        askMaterial: true,
         askQuantity: false,
         askSizeFormat: true,
+        materialOptions: ["Cotton", "Polyester"],
         sizeFormatOptions: ["A4", "A3"],
       },
     })

@@ -155,6 +155,10 @@ function parseArtworkMutation(
 function parseArtworkRequestOptions(
   formData: FormData
 ): ArtworkRequestOptionsInput {
+  const availableSizesEnabled = checked(formData, "availableSizesEnabled")
+  const availableSizes = availableSizesEnabled
+    ? parseOptionList(optionValues(formData, "availableSizes"), "Available sizes")
+    : []
   const framingEnabled = checked(formData, "framingEnabled")
   const framingOptions = framingEnabled
     ? parseOptionList(optionValues(formData, "framingOptions"), "Framing options")
@@ -165,13 +169,15 @@ function parseArtworkRequestOptions(
       "Add at least one framing option or turn framing off."
     )
   }
+  if (availableSizesEnabled && availableSizes.length === 0) {
+    throw new ArtworkValidationError(
+      "Add at least one size option or turn size choices off."
+    )
+  }
 
   return {
     askQuantity: checked(formData, "askQuantity"),
-    availableSizes: parseOptionList(
-      optionValues(formData, "availableSizes"),
-      "Available sizes"
-    ),
+    availableSizes,
     framingEnabled,
     framingOptions,
   }

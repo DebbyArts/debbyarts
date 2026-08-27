@@ -22,6 +22,7 @@ type RequestServiceOption = {
   id: string
   imageAlt: string
   imageSrc: string | null
+  materialOptions: string[]
   name: string
   sizeFormatOptions: string[]
   slug: string

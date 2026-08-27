@@ -32,6 +32,15 @@ describe("Service Admin validation", () => {
     )
   })
 
+  it("requires material options when material is enabled", () => {
+    const form = new FormData()
+    form.set("askMaterial", "on")
+
+    expect(() => parseServiceRequestOptions(form)).toThrow(
+      ServiceValidationError
+    )
+  })
+
   it("accepts ordered repeated size / format fields and deduplicates values", () => {
     const form = new FormData()
     form.set("askSizeFormat", "on")
@@ -41,6 +50,18 @@ describe("Service Admin validation", () => {
     expect(parseServiceRequestOptions(form).sizeFormatOptions).toEqual([
       "A4",
       "Landscape",
+    ])
+  })
+
+  it("accepts ordered repeated material fields", () => {
+    const form = new FormData()
+    form.set("askMaterial", "on")
+    form.append("materialOptions", "Cotton")
+    form.append("materialOptions", "Polyester")
+
+    expect(parseServiceRequestOptions(form).materialOptions).toEqual([
+      "Cotton",
+      "Polyester",
     ])
   })
 })

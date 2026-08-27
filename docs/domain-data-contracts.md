@@ -56,10 +56,10 @@ Service request configuration contains six fixed questions:
 - `askSizeFormat` plus `sizeFormatOptions: String[]`
 - `askDesignReadiness`
 - `askColour`
-- `askMaterial`
+- `askMaterial` plus `materialOptions: String[]`
 - `askFinish`
 
-Only the size/format question has owner-configured text options. Design Readiness uses the fixed labels in `src/features/services/design-readiness.ts`. Quantity is a number, not a preset list. Colour, material, and finish collect the customer's relevant value without owner-built option sets.
+Only the size/format and material questions have owner-configured text options. Design Readiness uses the fixed labels in `src/features/services/design-readiness.ts`. Quantity is a number, not a preset list. Colour and finish collect the customer's relevant value without owner-built option sets.
 
 ## Enquiry
 
@@ -138,7 +138,7 @@ No roles, customer accounts, or permissions framework is required.
 
 ## Intentional tradeoffs
 
-- PostgreSQL text arrays are the simplest ordered representation for the three owner-managed option lists. Separate option tables would add lifecycle and query complexity with no V1 benefit.
+- PostgreSQL text arrays are the simplest ordered representation for the four owner-managed option lists. Separate option tables would add lifecycle and query complexity with no V1 benefit.
 - Direct Enquiry answer columns make the bounded request model obvious and queryable. Adding a future question requires a deliberate schema change rather than silently turning the product into a form builder.
 - Item snapshots duplicate only the minimal historical label/slug needed after a catalogue record is removed; they are not duplicate domain models.
 - Prisma `Decimal` values must be converted at a real server-to-client boundary. Do not introduce public projection types before a feature needs one.

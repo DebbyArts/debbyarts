@@ -35,7 +35,8 @@ const service: RequestServiceOption = {
   sizeFormatOptions: ["Adult", "Child"],
   askDesignReadiness: true,
   askColour: true,
-  askMaterial: false,
+  askMaterial: true,
+  materialOptions: ["Cotton", "Polyester"],
   askFinish: true,
 }
 
@@ -93,6 +94,7 @@ describe("request flow derivation", () => {
       "sizeFormat",
       "designReadiness",
       "colour",
+      "material",
       "finish",
     ])
     expect(getEnabledDetailFields(null)).toEqual([])

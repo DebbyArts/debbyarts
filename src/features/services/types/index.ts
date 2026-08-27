@@ -62,6 +62,7 @@ type ServiceOptionsValue = {
   askQuantity: boolean
   askSizeFormat: boolean
   id: string
+  materialOptions: string[]
   name: string
   sizeFormatOptions: string[]
 }
@@ -85,6 +86,7 @@ type ServiceRequestOptionsInput = {
   askMaterial: boolean
   askQuantity: boolean
   askSizeFormat: boolean
+  materialOptions: string[]
   sizeFormatOptions: string[]
 }
 

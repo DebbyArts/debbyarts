@@ -27,7 +27,7 @@ function draft(overrides: Partial<RequestDraft> = {}): RequestDraft {
     framing: "",
     designReadiness: "FINISHED_DESIGN",
     colour: "Magenta",
-    material: "",
+    material: "Cotton",
     finish: "Matte",
     fulfilmentMethod: "DELIVERY",
     location: "Lagos",
@@ -52,7 +52,8 @@ const service: RequestServiceOption = {
   sizeFormatOptions: ["Adult", "Child"],
   askDesignReadiness: true,
   askColour: true,
-  askMaterial: false,
+  askMaterial: true,
+  materialOptions: ["Cotton", "Polyester"],
   askFinish: true,
 }
 
@@ -112,7 +113,7 @@ describe("authoritative request validation", () => {
       sizeFormat: "Adult",
       designReadiness: "FINISHED_DESIGN",
       colour: "Magenta",
-      material: null,
+      material: "Cotton",
       finish: "Matte",
       customerName: "Ada Okafor",
       phoneWhatsApp: "+2348141234567",
@@ -120,10 +121,10 @@ describe("authoritative request validation", () => {
     })
   })
 
-  test("rejects tampered and disabled Service answers", () => {
+  test("rejects tampered configured Service answers", () => {
     expect(() =>
       validateEnquiryInput(
-        draft({ sizeFormat: "Unconfigured", material: "Cotton", framing: "Black" }),
+        draft({ sizeFormat: "Unconfigured", material: "Silk", framing: "Black" }),
         serviceAuthority,
         NOW
       )
@@ -131,7 +132,7 @@ describe("authoritative request validation", () => {
 
     try {
       validateEnquiryInput(
-        draft({ sizeFormat: "Unconfigured", material: "Cotton", framing: "Black" }),
+        draft({ sizeFormat: "Unconfigured", material: "Silk", framing: "Black" }),
         serviceAuthority,
         NOW
       )
@@ -162,6 +163,7 @@ describe("authoritative request validation", () => {
         framing: "Black",
         designReadiness: "",
         colour: "",
+        material: "",
         finish: "",
       }),
       authority,

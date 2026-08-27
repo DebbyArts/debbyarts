@@ -58,7 +58,7 @@ function parsePrice(mode: PricingMode, value: string) {
   return number.toFixed(2)
 }
 
-function parseOptionList(values: string[]) {
+function parseOptionList(values: string[], label: string) {
   const options = values
     .flatMap((value) => value.split(/[\n,]/))
     .map((option) => option.trim())
@@ -67,7 +67,7 @@ function parseOptionList(values: string[]) {
 
   if (unique.length > 20 || unique.some((option) => option.length > 80)) {
     throw new ServiceValidationError(
-      "Size / format supports up to 20 unique entries of 80 characters each."
+      `${label} supports up to 20 unique entries of 80 characters each.`
     )
   }
   return unique
@@ -131,7 +131,11 @@ function parseServiceRequestOptions(
 ): ServiceRequestOptionsInput {
   const askSizeFormat = checked(formData, "askSizeFormat")
   const sizeFormatOptions = askSizeFormat
-    ? parseOptionList(optionValues(formData, "sizeFormatOptions"))
+    ? parseOptionList(optionValues(formData, "sizeFormatOptions"), "Size / format")
+    : []
+  const askMaterial = checked(formData, "askMaterial")
+  const materialOptions = askMaterial
+    ? parseOptionList(optionValues(formData, "materialOptions"), "Material options")
     : []
 
   if (askSizeFormat && sizeFormatOptions.length === 0) {
@@ -139,14 +143,20 @@ function parseServiceRequestOptions(
       "Add at least one size / format option or turn that question off."
     )
   }
+  if (askMaterial && materialOptions.length === 0) {
+    throw new ServiceValidationError(
+      "Add at least one material option or turn that question off."
+    )
+  }
 
   return {
     askColour: checked(formData, "askColour"),
     askDesignReadiness: checked(formData, "askDesignReadiness"),
     askFinish: checked(formData, "askFinish"),
-    askMaterial: checked(formData, "askMaterial"),
+    askMaterial,
     askQuantity: checked(formData, "askQuantity"),
     askSizeFormat,
+    materialOptions,
     sizeFormatOptions,
   }
 }

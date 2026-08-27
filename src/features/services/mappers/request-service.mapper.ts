@@ -35,6 +35,7 @@ function mapToRequestServiceOption(
     askDesignReadiness: service.askDesignReadiness,
     askColour: service.askColour,
     askMaterial: service.askMaterial,
+    materialOptions: service.materialOptions,
     askFinish: service.askFinish,
   }
 }

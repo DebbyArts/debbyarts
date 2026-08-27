@@ -40,6 +40,7 @@ function serviceRecord(
     askDesignReadiness: false,
     askColour: false,
     askMaterial: false,
+    materialOptions: [],
     askFinish: false,
     ...overrides,
   }
@@ -153,6 +154,7 @@ describe("Service catalogue projection", () => {
         askDesignReadiness: true,
         askColour: true,
         askMaterial: true,
+        materialOptions: ["Cotton", "Polyester"],
         askFinish: true,
       })
     )
@@ -165,6 +167,20 @@ describe("Service catalogue projection", () => {
       "Material",
       "Finish",
     ])
+  })
+
+  test("projects configured material choices for the request flow", () => {
+    expect(
+      mapToRequestServiceOption(
+        serviceRecord({
+          askMaterial: true,
+          materialOptions: ["Cotton", "Polyester"],
+        })
+      )
+    ).toMatchObject({
+      askMaterial: true,
+      materialOptions: ["Cotton", "Polyester"],
+    })
   })
 
   test("builds stable encoded request URLs", () => {

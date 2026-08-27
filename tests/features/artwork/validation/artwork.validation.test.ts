@@ -43,8 +43,25 @@ describe("Artwork Admin validation", () => {
     expect(result.framingOptions).toEqual([])
   })
 
+  it("clears sizes when size choices are disabled", () => {
+    const form = new FormData()
+    form.append("availableSizes", "A3")
+
+    expect(parseArtworkRequestOptions(form).availableSizes).toEqual([])
+  })
+
+  it("requires a size when size choices are enabled", () => {
+    const form = new FormData()
+    form.set("availableSizesEnabled", "on")
+
+    expect(() => parseArtworkRequestOptions(form)).toThrow(
+      ArtworkValidationError
+    )
+  })
+
   it("accepts ordered repeated option fields", () => {
     const form = new FormData()
+    form.set("availableSizesEnabled", "on")
     form.append("availableSizes", "A3")
     form.append("availableSizes", "A2")
     form.set("framingEnabled", "on")

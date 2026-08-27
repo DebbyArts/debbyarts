@@ -33,6 +33,7 @@ const SERVICE_OPTIONS_SELECT = {
   askDesignReadiness: true,
   askColour: true,
   askMaterial: true,
+  materialOptions: true,
   askFinish: true,
 } satisfies Prisma.ServiceSelect
 
@@ -56,6 +57,7 @@ const PUBLISHED_SERVICES_QUERY = {
     askDesignReadiness: true,
     askColour: true,
     askMaterial: true,
+    materialOptions: true,
     askFinish: true,
   },
   orderBy: [
@@ -82,6 +84,7 @@ const REQUEST_SERVICE_SELECT = {
   askDesignReadiness: true,
   askColour: true,
   askMaterial: true,
+  materialOptions: true,
   askFinish: true,
 } satisfies Prisma.ServiceSelect
 

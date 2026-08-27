@@ -16,6 +16,9 @@ function ArtworkOptionsForm({ artwork }: { artwork: ArtworkOptionsValue }) {
     saveArtworkOptionsAction.bind(null, artwork.id),
     INITIAL_ARTWORK_ACTION_STATE
   )
+  const [availableSizesEnabled, setAvailableSizesEnabled] = useState(
+    artwork.availableSizes.length > 0
+  )
   const [framingEnabled, setFramingEnabled] = useState(artwork.framingEnabled)
 
   return (
@@ -33,31 +36,35 @@ function ArtworkOptionsForm({ artwork }: { artwork: ArtworkOptionsValue }) {
           {state.message}
         </FeedbackBanner>
       ) : null}
-      <AdminSectionCard
-        title="Available Sizes"
-        description="Customers only see the values listed here. Leave empty when size is fixed or discussed later."
-      >
+      <AdminSectionCard title="Available Sizes" description="Offer size choices?">
+        <input
+          aria-label="Offer size choices?"
+          type="checkbox"
+          name="availableSizesEnabled"
+          checked={availableSizesEnabled}
+          onChange={(event) => setAvailableSizesEnabled(event.target.checked)}
+          className="size-6 accent-primary"
+        />
         <OptionListInput
           id="availableSizes"
           name="availableSizes"
           label="Size values"
           defaultValue={artwork.availableSizes}
           placeholder="e.g. A3"
+          disabled={!availableSizesEnabled}
           description="Add each size in the order customers should see it."
         />
       </AdminSectionCard>
       <div className="grid gap-5 md:grid-cols-2">
         <AdminSectionCard title="Framing" description="Offer framing choices?">
-          <label className="flex min-h-11 items-center gap-3 text-sm font-extrabold">
-            <input
-              type="checkbox"
-              name="framingEnabled"
-              checked={framingEnabled}
-              onChange={(event) => setFramingEnabled(event.target.checked)}
-              className="size-6 accent-primary"
-            />
-            Framing enabled
-          </label>
+          <input
+            aria-label="Offer framing choices?"
+            type="checkbox"
+            name="framingEnabled"
+            checked={framingEnabled}
+            onChange={(event) => setFramingEnabled(event.target.checked)}
+            className="size-6 accent-primary"
+          />
           <OptionListInput
             id="framingOptions"
             name="framingOptions"
@@ -68,22 +75,17 @@ function ArtworkOptionsForm({ artwork }: { artwork: ArtworkOptionsValue }) {
             description="Add each framing choice in the order customers should see it."
           />
         </AdminSectionCard>
-        <AdminSectionCard title="Quantity">
-          <label className="flex min-h-11 items-start gap-3 text-sm font-extrabold">
-            <input
-              type="checkbox"
-              name="askQuantity"
-              defaultChecked={artwork.askQuantity}
-              className="mt-1 size-6 accent-primary"
-            />
-            <span>
-              Ask for quantity?
-              <span className="mt-1 block text-xs leading-5 font-normal text-muted-foreground">
-                The public request form asks for one positive number. There are
-                no preset quantity choices.
-              </span>
-            </span>
-          </label>
+        <AdminSectionCard
+          title="Ask for Quantity?"
+          description="Customers enter one positive number; there are no preset quantity choices."
+        >
+          <input
+            aria-label="Ask for Quantity?"
+            type="checkbox"
+            name="askQuantity"
+            defaultChecked={artwork.askQuantity}
+            className="size-6 accent-primary"
+          />
         </AdminSectionCard>
       </div>
       <div className="flex flex-col-reverse gap-3 border-t border-border pt-5 sm:flex-row sm:justify-end">

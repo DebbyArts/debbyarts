@@ -207,9 +207,23 @@ function validateEnquiryInput(
       errors.designReadiness = "Design readiness does not apply to this service."
     }
 
+    const materialValue = cleanText(draft.material, 200)
+    if (service.askMaterial) {
+      if (
+        service.materialOptions.length === 0 ||
+        !materialValue ||
+        !service.materialOptions.includes(materialValue)
+      ) {
+        errors.material = "Choose one of the available material options."
+      } else {
+        material = materialValue
+      }
+    } else if (draft.material.trim()) {
+      errors.material = "Material does not apply to this service."
+    }
+
     const optionalServiceFields = [
       ["colour", service.askColour],
-      ["material", service.askMaterial],
       ["finish", service.askFinish],
     ] as const
 
@@ -221,7 +235,6 @@ function validateEnquiryInput(
         errors[field] = `Keep ${field} under 200 characters.`
       } else if (enabled) {
         if (field === "colour") colour = value || null
-        if (field === "material") material = value || null
         if (field === "finish") finish = value || null
       }
     }

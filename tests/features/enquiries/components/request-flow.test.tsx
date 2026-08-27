@@ -37,6 +37,34 @@ const defaultData: RequestPageData = {
   status: "ready",
 }
 
+const configuredServiceData: RequestPageData = {
+  artworks: [],
+  services: [
+    {
+      id: "service-1",
+      slug: "custom-clothing",
+      name: "Custom clothing",
+      groupLabel: "Personalised Products",
+      imageSrc: null,
+      imageAlt: "Custom clothing",
+      askQuantity: true,
+      askSizeFormat: true,
+      sizeFormatOptions: ["Adult", "Child"],
+      askDesignReadiness: false,
+      askColour: true,
+      askMaterial: true,
+      materialOptions: ["Cotton", "Polyester"],
+      askFinish: true,
+    },
+  ],
+  initialContext: {
+    mode: "service",
+    kind: "SERVICE",
+    itemSlug: "custom-clothing",
+  },
+  status: "ready",
+}
+
 async function completeBroadRequest() {
   fireEvent.change(
     screen.getByRole("textbox", {
@@ -74,6 +102,18 @@ describe("RequestFlow accessibility and retry state", () => {
     const error = screen.getByText("Choose Art & Gallery or Services.")
     expect(error.id).toBe("request-kind-error")
     expect(group.getAttribute("aria-describedby")).toBe(error.id)
+  })
+
+  test("renders configured material choices and useful detail-field guidance", () => {
+    render(<RequestFlow data={configuredServiceData} />)
+
+    const quantity = screen.getByRole("spinbutton", { name: "Quantity required" })
+    expect(quantity.getAttribute("placeholder")).toBe("e.g. 12")
+    expect(screen.getByText("Enter a whole number greater than zero.")).toBeDefined()
+    expect(screen.getByRole("radio", { name: "Cotton" })).toBeDefined()
+    expect(screen.getByRole("radio", { name: "Polyester" })).toBeDefined()
+    expect(screen.getByText("e.g. magenta and cream, or a brand colour.")).toBeDefined()
+    expect(screen.getByText("e.g. matte, gloss, or no preference.")).toBeDefined()
   })
 
   test("updates the compact progress indicator when moving forward and back", async () => {

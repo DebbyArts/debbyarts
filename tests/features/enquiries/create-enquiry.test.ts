@@ -26,6 +26,7 @@ const service: RequestServiceOption = {
   askDesignReadiness: true,
   askColour: false,
   askMaterial: false,
+  materialOptions: [],
   askFinish: false,
 }
 

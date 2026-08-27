@@ -118,6 +118,9 @@ function validateClientStep(
     if (fields.includes("designReadiness") && !draft.designReadiness) {
       errors.designReadiness = "Choose your design readiness."
     }
+    if (fields.includes("material") && !draft.material) {
+      errors.material = "Choose a material."
+    }
     if (draft.broadRequest && draft.customerNote.length > 2_000) {
       errors.customerNote = "Keep the note under 2,000 characters."
     }
@@ -699,7 +702,13 @@ function RequestStage({
       {currentStep === "details" ? (
         <FieldGroup>
           {detailFields.includes("quantity") ? (
-            <FieldShell id="request-quantity" label="Quantity required" required error={errors.quantity}>
+            <FieldShell
+              id="request-quantity"
+              label="Quantity required"
+              required
+              description="Enter a whole number greater than zero."
+              error={errors.quantity}
+            >
               <Input
                 id="request-quantity"
                 type="number"
@@ -709,8 +718,13 @@ function RequestStage({
                 inputMode="numeric"
                 value={draft.quantity}
                 onChange={(event) => onChange("quantity", event.target.value)}
+                placeholder="e.g. 12"
                 aria-invalid={Boolean(errors.quantity)}
-                aria-describedby={errors.quantity ? "request-quantity-error" : undefined}
+                aria-describedby={
+                  errors.quantity
+                    ? "request-quantity-description request-quantity-error"
+                    : "request-quantity-description"
+                }
               />
             </FieldShell>
           ) : null}
@@ -757,24 +771,63 @@ function RequestStage({
             />
           ) : null}
 
-          {(["colour", "material", "finish"] as const).map((field) =>
-            detailFields.includes(field) ? (
-              <FieldShell
-                key={field}
-                id={`request-${field}`}
-                label={`${field[0].toUpperCase()}${field.slice(1)} (optional)`}
-                error={errors[field]}
-              >
-                <Input
-                  id={`request-${field}`}
-                  value={draft[field]}
-                  onChange={(event) => onChange(field, event.target.value)}
-                  aria-invalid={Boolean(errors[field])}
-                  aria-describedby={errors[field] ? `request-${field}-error` : undefined}
-                />
-              </FieldShell>
-            ) : null
-          )}
+          {detailFields.includes("material") && item?.kind === "SERVICE" ? (
+            <ChoiceField
+              label="Material"
+              required
+              value={draft.material}
+              onChange={(value) => onChange("material", value)}
+              error={errors.material}
+              options={item.record.materialOptions.map((value) => ({
+                value,
+                label: value,
+              }))}
+            />
+          ) : null}
+
+          {detailFields.includes("colour") ? (
+            <FieldShell
+              id="request-colour"
+              label="Colour (optional)"
+              description="e.g. magenta and cream, or a brand colour."
+              error={errors.colour}
+            >
+              <Input
+                id="request-colour"
+                value={draft.colour}
+                onChange={(event) => onChange("colour", event.target.value)}
+                placeholder="e.g. magenta and cream"
+                aria-invalid={Boolean(errors.colour)}
+                aria-describedby={
+                  errors.colour
+                    ? "request-colour-description request-colour-error"
+                    : "request-colour-description"
+                }
+              />
+            </FieldShell>
+          ) : null}
+
+          {detailFields.includes("finish") ? (
+            <FieldShell
+              id="request-finish"
+              label="Finish (optional)"
+              description="e.g. matte, gloss, or no preference."
+              error={errors.finish}
+            >
+              <Input
+                id="request-finish"
+                value={draft.finish}
+                onChange={(event) => onChange("finish", event.target.value)}
+                placeholder="e.g. matte"
+                aria-invalid={Boolean(errors.finish)}
+                aria-describedby={
+                  errors.finish
+                    ? "request-finish-description request-finish-error"
+                    : "request-finish-description"
+                }
+              />
+            </FieldShell>
+          ) : null}
 
           {detailFields.length === 0 ? (
             <FieldShell

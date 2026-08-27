@@ -20,6 +20,7 @@ function ServiceOptionsForm({ service }: { service: ServiceOptionsValue }) {
     INITIAL_SERVICE_ACTION_STATE
   )
   const [askSizeFormat, setAskSizeFormat] = useState(service.askSizeFormat)
+  const [askMaterial, setAskMaterial] = useState(service.askMaterial)
 
   return (
     <form action={action} className="flex flex-col gap-6">
@@ -73,7 +74,29 @@ function ServiceOptionsForm({ service }: { service: ServiceOptionsValue }) {
               description="Add each choice in the order customers should see it."
             />
           </AdminSectionCard>
-          {SERVICE_REQUEST_OPTION_QUESTIONS.slice(3).map(([name, label, description]) => (
+          <AdminSectionCard
+            title="Ask for Material?"
+            description="Customers choose from the enabled material values."
+          >
+            <input
+              aria-label="Ask for Material?"
+              type="checkbox"
+              name="askMaterial"
+              checked={askMaterial}
+              onChange={(event) => setAskMaterial(event.target.checked)}
+              className="size-6 accent-primary"
+            />
+            <OptionListInput
+              id="materialOptions"
+              name="materialOptions"
+              label="Material options"
+              defaultValue={service.materialOptions}
+              placeholder="e.g. Cotton"
+              disabled={!askMaterial}
+              description="Add each material in the order customers should see it."
+            />
+          </AdminSectionCard>
+          {SERVICE_REQUEST_OPTION_QUESTIONS.slice(4).map(([name, label, description]) => (
             <AdminSectionCard key={name} title={label} description={description}>
               <input
                 aria-label={label}

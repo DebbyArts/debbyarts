@@ -155,6 +155,7 @@ describe("Artwork Admin action boundaries", () => {
 
   it("authorizes publication and request-option mutations", async () => {
     const options = new FormData()
+    options.set("availableSizesEnabled", "on")
     options.set("availableSizes", "A4, A3")
 
     await saveArtworkOptionsAction(
