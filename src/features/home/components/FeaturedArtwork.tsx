@@ -47,7 +47,7 @@ function FeaturedArtwork({ result }: { result: FeaturedArtworkResult }) {
             </p>
           </div>
         ) : artwork.length > 0 ? (
-          <div className="mt-14 grid gap-12 sm:grid-cols-2 md:grid-cols-3 desktop:grid-cols-[minmax(0,20.375rem)_minmax(0,25.875rem)_minmax(0,18.75rem)] desktop:items-start desktop:justify-between">
+          <div className="mt-14 grid gap-12 sm:grid-cols-2 min-[1200px]:grid-cols-3 desktop:grid-cols-[minmax(0,20.375rem)_minmax(0,25.875rem)_minmax(0,18.75rem)] desktop:items-start desktop:justify-between">
             {artwork.map((item, index) => (
               <ArtworkCard key={item.id} artwork={item} index={index} />
             ))}

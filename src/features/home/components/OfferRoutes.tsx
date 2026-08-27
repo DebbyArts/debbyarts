@@ -23,10 +23,10 @@ function OfferRoutes() {
           </p>
         </div>
 
-        <Reveal className="mt-11 flex flex-col gap-5 border-y border-border bg-muted p-5 sm:grid sm:grid-cols-2 sm:items-start min-[1400px]:relative min-[1400px]:h-[53.75rem] min-[1400px]:block min-[1400px]:p-0">
+        <Reveal className="mt-11 flex flex-col gap-5 border-y border-border bg-muted p-5 min-[768px]:grid min-[768px]:grid-cols-2 min-[768px]:items-start min-[1400px]:relative min-[1400px]:h-[53.75rem] min-[1400px]:block min-[1400px]:p-0">
           <Link
             href="/art"
-            className="group flex items-end gap-4 rounded-md focus-visible:ring-3 focus-visible:ring-ring sm:col-span-2 min-[1400px]:absolute min-[1400px]:top-[3.875rem] min-[1400px]:left-10 min-[1400px]:h-[24.375rem] min-[1400px]:w-[45rem] min-[1400px]:gap-[1.875rem]"
+            className="group flex items-end gap-4 rounded-md focus-visible:ring-3 focus-visible:ring-ring min-[768px]:col-span-2 min-[1400px]:absolute min-[1400px]:top-[3.875rem] min-[1400px]:left-10 min-[1400px]:h-[24.375rem] min-[1400px]:w-[45rem] min-[1400px]:gap-[1.875rem]"
           >
             <MediaImage
               loading="eager"

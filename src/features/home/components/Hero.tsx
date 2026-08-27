@@ -14,8 +14,8 @@ function Hero() {
         aria-hidden="true"
         className="absolute inset-y-0 left-0 w-2 bg-info min-[1400px]:w-[1.125rem]"
       />
-      <Container className="grid min-h-[57.5rem] gap-14 py-16 pl-8 sm:grid-cols-2 sm:items-center sm:gap-8 min-[1400px]:min-h-[52.75rem] min-[1400px]:grid-cols-[minmax(0,43.125rem)_minmax(0,1fr)] min-[1400px]:gap-0 min-[1400px]:py-[4.75rem] min-[1400px]:pl-[5.125rem] min-[1400px]:pr-16">
-        <div className="flex max-w-[43.125rem] flex-col gap-[1.875rem]">
+      <Container className="grid min-h-[57.5rem] gap-14 py-16 pl-8 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] sm:items-center sm:gap-10 min-[1400px]:min-h-[52.75rem] min-[1400px]:grid-cols-[minmax(0,43.125rem)_minmax(0,1fr)] min-[1400px]:gap-0 min-[1400px]:py-[4.75rem] min-[1400px]:pl-[5.125rem] min-[1400px]:pr-16">
+        <div className="flex min-w-0 max-w-[43.125rem] flex-col gap-[1.875rem]">
           <Reveal>
             <Eyebrow className="bg-accent text-accent-foreground">
               ART + PRINT + BRAND + PERSONALISE
@@ -29,7 +29,7 @@ function Hero() {
             </Reveal>
             <div className="overflow-hidden">
               <motion.h1
-                className="type-display"
+                className="type-display !text-[clamp(2.875rem,7.2vw,3.375rem)] !leading-[0.96] min-[1024px]:!text-[clamp(4.6rem,7.2vw,6rem)] min-[1024px]:!leading-[0.9375]"
                 initial={{ opacity: 0, y: 22 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
@@ -45,7 +45,7 @@ function Hero() {
             </p>
           </Reveal>
           <Reveal delay={0.22}>
-            <div className="flex flex-col gap-3 md:flex-row md:gap-4">
+            <div className="flex flex-col gap-3 min-[900px]:flex-row min-[900px]:gap-4">
               <Button asChild variant="secondary" size="lg">
                 <Link href="/art">Browse Art &amp; Gallery ↗</Link>
               </Button>

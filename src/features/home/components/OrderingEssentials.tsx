@@ -9,7 +9,7 @@ function OrderingEssentials() {
   return (
     <section aria-labelledby="ordering-heading" className="relative bg-background">
       <span aria-hidden="true" className="absolute top-0 right-0 h-3.5 w-[9.375rem] bg-info" />
-      <Container className="grid gap-12 py-20 sm:grid-cols-2 sm:items-center sm:gap-8 min-[1400px]:min-h-[45rem] min-[1400px]:grid-cols-[25.625rem_minmax(0,1fr)] min-[1400px]:gap-[4.5rem] min-[1400px]:px-[4.25rem] min-[1400px]:py-24">
+      <Container className="grid gap-12 py-20 min-[900px]:grid-cols-2 min-[900px]:items-center min-[900px]:gap-8 min-[1400px]:min-h-[45rem] min-[1400px]:grid-cols-[25.625rem_minmax(0,1fr)] min-[1400px]:gap-[4.5rem] min-[1400px]:px-[4.25rem] min-[1400px]:py-24">
         <motion.div
           className="flex min-h-[16.25rem] flex-col justify-between rounded-sm border border-border bg-primary p-8 text-white min-[1400px]:h-[31.25rem] min-[1400px]:w-[25.625rem] min-[1400px]:shrink-0 min-[1400px]:p-[2.125rem]"
           initial={{ opacity: 0, x: -20 }}

@@ -14,7 +14,7 @@ function RequestProcess() {
         aria-hidden="true"
         className="absolute inset-y-0 right-0 w-2 bg-info min-[1400px]:w-[1.125rem]"
       />
-      <Container className="grid gap-12 py-20 pr-8 sm:grid-cols-2 sm:gap-8 min-[1400px]:min-h-[56.25rem] min-[1400px]:grid-cols-[26.875rem_minmax(0,1fr)] min-[1400px]:gap-[4.875rem] min-[1400px]:px-[4.5rem] min-[1400px]:py-[7rem]">
+      <Container className="grid gap-12 py-20 pr-8 min-[900px]:grid-cols-2 min-[900px]:gap-8 min-[1400px]:min-h-[56.25rem] min-[1400px]:grid-cols-[26.875rem_minmax(0,1fr)] min-[1400px]:gap-[4.875rem] min-[1400px]:px-[4.5rem] min-[1400px]:py-[7rem]">
         <div className="flex flex-col justify-between gap-12 min-[1400px]:w-[26.875rem]">
           <div className="flex flex-col gap-6">
             <Eyebrow className="border-white bg-accent text-accent-foreground">
@@ -83,7 +83,7 @@ function RequestProcess() {
           ))}
         </motion.ol>
 
-        <Button asChild size="lg" className="border-white sm:col-span-2 min-[1400px]:hidden">
+        <Button asChild size="lg" className="border-white min-[900px]:col-span-2 min-[1400px]:hidden">
           <Link href="/request">Make a Request ↗</Link>
         </Button>
       </Container>
