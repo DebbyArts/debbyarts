@@ -21,6 +21,7 @@ import { Input } from "@/components/ui/input"
 import { RadioGroup } from "@/components/ui/radio-group"
 import { Textarea } from "@/components/ui/textarea"
 import { submitEnquiryAction } from "@/features/enquiries/actions"
+import { DESIGN_READINESS_OPTIONS } from "@/features/enquiries/constants"
 import {
   getEnabledDetailFields,
   getRequestSteps,
@@ -40,7 +41,6 @@ import {
   normalizePhone,
   normalizePreferredDate,
 } from "@/features/enquiries/request-validation"
-import { DESIGN_READINESS_OPTIONS } from "@/features/services/design-readiness"
 import { cn } from "@/lib/utils"
 
 const INITIAL_ACTION_STATE: EnquiryActionState = { status: "idle" }
