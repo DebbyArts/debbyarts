@@ -95,7 +95,7 @@ function resolveArtworkImageSource(objectPath: string | null, storage: StorageCo
   } catch {
     return null
   }
-}§
+}
 
 export {
   ALL_ARTWORK,
