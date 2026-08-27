@@ -85,7 +85,7 @@ function Hero() {
           >
             <MediaImage
               priority
-              src="/home-eagle.jpg"
+              src="/seed-home/eagle-painting.webp"
               alt="Bald eagle painting by Debby Art & Prints"
               sizes="(min-width: 1024px) 480px, 302px"
               className="h-full w-full rounded-[0.875rem] border border-border bg-card"

@@ -30,8 +30,8 @@ function OfferRoutes() {
           >
             <MediaImage
               loading="eager"
-              src="/home-framed-portrait.jpg"
-              alt="Framed portrait artwork by Debby Art & Prints"
+              src="/seed-home/portrait-in-yellow-headwrap.webp"
+              alt="Framed painted portrait by Debby Art & Prints"
               sizes="(min-width: 1024px) 292px, 140px"
               fit="contain"
               className="h-[11.6875rem] w-[8.75rem] shrink-0 rounded-[0.625rem] border border-border bg-card min-[1400px]:h-[24.25rem] min-[1400px]:w-[18.25rem]"
@@ -59,8 +59,8 @@ function OfferRoutes() {
           >
             <MediaImage
               loading="eager"
-              src="/home-personalised-products.jpg"
-              alt="Personalised printed product example"
+              src="/seed-home/customised-t-shirt.webp"
+              alt="Customised T-shirt example"
               sizes="(min-width: 1024px) 166px, 140px"
               fit="contain"
               className="h-full w-[6.75rem] shrink-0 rounded-sm border border-border min-[1400px]:h-auto min-[1400px]:w-[10.375rem]"
@@ -89,8 +89,8 @@ function OfferRoutes() {
           >
             <MediaImage
               loading="eager"
-              src="/home-print-event-materials.jpg"
-              alt="Printed event materials and award plaques"
+              src="/seed-home/award-plaques.webp"
+              alt="Collection of custom award plaques"
               sizes="(min-width: 1024px) 254px, 220px"
               fit="contain"
               className="aspect-[16/9] w-full shrink-0 rounded-sm border border-border min-[1400px]:w-[15.875rem]"
@@ -117,7 +117,7 @@ function OfferRoutes() {
           >
             <MediaImage
               loading="eager"
-              src="/debby-art-prints-logo.jpg"
+              src="/debby-art-prints-logo.webp"
               alt="Debby Art & Prints branding example"
               sizes="134px"
               fit="contain"

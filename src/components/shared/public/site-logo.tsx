@@ -11,7 +11,7 @@ function SiteLogo({ className, eager = false }: SiteLogoProps) {
   return (
     <span
       className={cn(
-        "relative block shrink-0 overflow-hidden rounded-xs border border-border-subtle bg-card",
+        "relative block shrink-0",
         className
       )}
     >
@@ -20,7 +20,7 @@ function SiteLogo({ className, eager = false }: SiteLogoProps) {
         alt=""
         loading={eager ? "eager" : "lazy"}
         sizes="112px"
-        src="/debby-art-prints-logo.jpg"
+        src="/debby-art-prints-logo.webp"
         className="object-contain"
       />
     </span>

@@ -1,0 +1,632 @@
+type SeedImage = {
+  path: string
+  alt: string
+  width: number
+  height: number
+}
+
+type ArtworkManifestItem = {
+  slug: string
+  title: string
+  description: string
+  category:
+    | "PAINTING"
+    | "PENCIL_PORTRAIT"
+    | "FRAMED_CUSTOM_ARTWORK"
+    | "DIGITAL_ARTWORK"
+  mediumFormat: null
+  displayedPieceDimensions: null
+  availability: null
+  pricingMode: "NONE"
+  priceAmount: null
+  published: boolean
+  featured: boolean
+  displayOrder: number
+  primaryImage: SeedImage
+  additionalImages: SeedImage[]
+  availableSizes: []
+  framingEnabled: false
+  framingOptions: []
+  askQuantity: false
+}
+
+type ServiceRequestDefaults = {
+  askQuantity: boolean
+  askSizeFormat: boolean
+  sizeFormatOptions: readonly []
+  askDesignReadiness: boolean
+  askColour: boolean
+  askMaterial: false
+  materialOptions: readonly []
+  askFinish: boolean
+}
+
+type ServiceManifestItem = {
+  slug: string
+  name: string
+  description: string
+  group: "PERSONALISED_PRODUCTS" | "PRINT_EVENT_MATERIALS" | "BRANDING_SIGNAGE"
+  pricingMode: "NONE"
+  priceAmount: null
+  published: boolean
+  displayOrder: number
+  primaryImage: SeedImage | null
+  requestDefaults: ServiceRequestDefaults
+}
+
+const NO_SERVICE_OPTIONS = {
+  sizeFormatOptions: [],
+  askMaterial: false,
+  materialOptions: [],
+} as const
+
+const seedArtwork: ArtworkManifestItem[] = [
+  {
+    slug: "leopard-painting",
+    title: "Leopard Painting",
+    description:
+      "A submitted photograph of a textured leopard painting, shown as a finished studio piece.",
+    category: "PAINTING",
+    mediumFormat: null,
+    displayedPieceDimensions: null,
+    availability: null,
+    pricingMode: "NONE",
+    priceAmount: null,
+    published: true,
+    featured: true,
+    displayOrder: 1,
+    primaryImage: {
+      path: "images/seed/artwork/leopard-painting/cover.webp",
+      alt: "Finished leopard painting displayed beside its owner",
+      width: 1000,
+      height: 1000,
+    },
+    additionalImages: [
+      {
+        path: "images/seed/artwork/leopard-painting/additional-01.webp",
+        alt: "Finished leopard painting in the studio",
+        width: 1350,
+        height: 1800,
+      },
+      {
+        path: "images/seed/artwork/leopard-painting/additional-02.webp",
+        alt: "Artist painting a leopard artwork in progress",
+        width: 1350,
+        height: 1800,
+      },
+    ],
+    availableSizes: [],
+    framingEnabled: false,
+    framingOptions: [],
+    askQuantity: false,
+  },
+  {
+    slug: "eagle-painting",
+    title: "Eagle Painting",
+    description: "A submitted studio photograph of a bald eagle painting.",
+    category: "PAINTING",
+    mediumFormat: null,
+    displayedPieceDimensions: null,
+    availability: null,
+    pricingMode: "NONE",
+    priceAmount: null,
+    published: true,
+    featured: true,
+    displayOrder: 2,
+    primaryImage: {
+      path: "images/seed/artwork/eagle-painting/cover.webp",
+      alt: "Bald eagle painting on a blue background",
+      width: 1350,
+      height: 1800,
+    },
+    additionalImages: [],
+    availableSizes: [],
+    framingEnabled: false,
+    framingOptions: [],
+    askQuantity: false,
+  },
+  {
+    slug: "running-horses-painting",
+    title: "Running Horses Painting",
+    description: "A submitted painting of two horses running through water.",
+    category: "PAINTING",
+    mediumFormat: null,
+    displayedPieceDimensions: null,
+    availability: null,
+    pricingMode: "NONE",
+    priceAmount: null,
+    published: true,
+    featured: true,
+    displayOrder: 3,
+    primaryImage: {
+      path: "images/seed/artwork/running-horses-painting/cover.webp",
+      alt: "Painting of two horses running through water",
+      width: 1350,
+      height: 1800,
+    },
+    additionalImages: [],
+    availableSizes: [],
+    framingEnabled: false,
+    framingOptions: [],
+    askQuantity: false,
+  },
+  {
+    slug: "family-portrait-painting",
+    title: "Family Portrait Painting",
+    description: "A submitted painted family portrait on a blue background.",
+    category: "PAINTING",
+    mediumFormat: null,
+    displayedPieceDimensions: null,
+    availability: null,
+    pricingMode: "NONE",
+    priceAmount: null,
+    published: true,
+    featured: false,
+    displayOrder: 4,
+    primaryImage: {
+      path: "images/seed/artwork/family-portrait-painting/cover.webp",
+      alt: "Painted portrait of a family against a blue background",
+      width: 1800,
+      height: 1350,
+    },
+    additionalImages: [],
+    availableSizes: [],
+    framingEnabled: false,
+    framingOptions: [],
+    askQuantity: false,
+  },
+  {
+    slug: "portrait-in-yellow-headwrap",
+    title: "Portrait in a Yellow Headwrap",
+    description: "A submitted framed portrait of a woman wearing a yellow headwrap.",
+    category: "PAINTING",
+    mediumFormat: null,
+    displayedPieceDimensions: null,
+    availability: null,
+    pricingMode: "NONE",
+    priceAmount: null,
+    published: true,
+    featured: false,
+    displayOrder: 5,
+    primaryImage: {
+      path: "images/seed/artwork/portrait-in-yellow-headwrap/cover.webp",
+      alt: "Framed portrait of a woman wearing a yellow headwrap",
+      width: 1350,
+      height: 1800,
+    },
+    additionalImages: [],
+    availableSizes: [],
+    framingEnabled: false,
+    framingOptions: [],
+    askQuantity: false,
+  },
+  {
+    slug: "pencil-portrait-in-black-frame",
+    title: "Pencil Portrait in a Black Frame",
+    description: "A submitted framed pencil portrait.",
+    category: "PENCIL_PORTRAIT",
+    mediumFormat: null,
+    displayedPieceDimensions: null,
+    availability: null,
+    pricingMode: "NONE",
+    priceAmount: null,
+    published: true,
+    featured: false,
+    displayOrder: 6,
+    primaryImage: {
+      path: "images/seed/artwork/pencil-portrait-in-black-frame/cover.webp",
+      alt: "Pencil portrait displayed in a black frame",
+      width: 750,
+      height: 1000,
+    },
+    additionalImages: [],
+    availableSizes: [],
+    framingEnabled: false,
+    framingOptions: [],
+    askQuantity: false,
+  },
+  {
+    slug: "framed-flute-art-print",
+    title: "Framed Flute Art Print",
+    description: "A submitted framed artwork depicting a figure playing a flute.",
+    category: "FRAMED_CUSTOM_ARTWORK",
+    mediumFormat: null,
+    displayedPieceDimensions: null,
+    availability: null,
+    pricingMode: "NONE",
+    priceAmount: null,
+    published: true,
+    featured: false,
+    displayOrder: 7,
+    primaryImage: {
+      path: "images/seed/artwork/framed-flute-art-print/cover.webp",
+      alt: "Framed artwork of a figure playing a flute",
+      width: 1350,
+      height: 1800,
+    },
+    additionalImages: [],
+    availableSizes: [],
+    framingEnabled: false,
+    framingOptions: [],
+    askQuantity: false,
+  },
+  {
+    slug: "framed-figure-at-sunset",
+    title: "Framed Figure at Sunset",
+    description: "A submitted framed artwork of a seated figure against a yellow sky.",
+    category: "FRAMED_CUSTOM_ARTWORK",
+    mediumFormat: null,
+    displayedPieceDimensions: null,
+    availability: null,
+    pricingMode: "NONE",
+    priceAmount: null,
+    published: true,
+    featured: false,
+    displayOrder: 8,
+    primaryImage: {
+      path: "images/seed/artwork/framed-figure-at-sunset/cover.webp",
+      alt: "Framed artwork of a seated figure against a yellow sky",
+      width: 1350,
+      height: 1800,
+    },
+    additionalImages: [],
+    availableSizes: [],
+    framingEnabled: false,
+    framingOptions: [],
+    askQuantity: false,
+  },
+  {
+    slug: "framed-woman-and-bird-art-print",
+    title: "Framed Woman and Bird Art Print",
+    description: "A submitted framed artwork depicting a woman beside a bird.",
+    category: "FRAMED_CUSTOM_ARTWORK",
+    mediumFormat: null,
+    displayedPieceDimensions: null,
+    availability: null,
+    pricingMode: "NONE",
+    priceAmount: null,
+    published: true,
+    featured: false,
+    displayOrder: 9,
+    primaryImage: {
+      path: "images/seed/artwork/framed-woman-and-bird-art-print/cover.webp",
+      alt: "Framed artwork depicting a woman and a bird",
+      width: 1350,
+      height: 1800,
+    },
+    additionalImages: [],
+    availableSizes: [],
+    framingEnabled: false,
+    framingOptions: [],
+    askQuantity: false,
+  },
+  {
+    slug: "framed-guitarist-art-print",
+    title: "Framed Guitarist Art Print",
+    description: "A submitted framed artwork depicting a guitarist.",
+    category: "FRAMED_CUSTOM_ARTWORK",
+    mediumFormat: null,
+    displayedPieceDimensions: null,
+    availability: null,
+    pricingMode: "NONE",
+    priceAmount: null,
+    published: true,
+    featured: false,
+    displayOrder: 10,
+    primaryImage: {
+      path: "images/seed/artwork/framed-guitarist-art-print/cover.webp",
+      alt: "Framed artwork depicting a guitarist",
+      width: 1350,
+      height: 1800,
+    },
+    additionalImages: [],
+    availableSizes: [],
+    framingEnabled: false,
+    framingOptions: [],
+    askQuantity: false,
+  },
+  {
+    slug: "framed-red-umbrella-art-print",
+    title: "Framed Red Umbrella Art Print",
+    description: "A submitted framed artwork of a figure with a red umbrella.",
+    category: "FRAMED_CUSTOM_ARTWORK",
+    mediumFormat: null,
+    displayedPieceDimensions: null,
+    availability: null,
+    pricingMode: "NONE",
+    priceAmount: null,
+    published: true,
+    featured: false,
+    displayOrder: 11,
+    primaryImage: {
+      path: "images/seed/artwork/framed-red-umbrella-art-print/cover.webp",
+      alt: "Framed artwork of a figure carrying a red umbrella",
+      width: 1350,
+      height: 1800,
+    },
+    additionalImages: [],
+    availableSizes: [],
+    framingEnabled: false,
+    framingOptions: [],
+    askQuantity: false,
+  },
+]
+
+const seedServices: ServiceManifestItem[] = [
+  {
+    slug: "painting-pencil-portraits",
+    name: "Painting & Pencil Portraits",
+    description:
+      "Commissioned paintings and pencil portraits developed from a customer brief or reference.",
+    group: "PERSONALISED_PRODUCTS",
+    pricingMode: "NONE",
+    priceAmount: null,
+    published: true,
+    displayOrder: 1,
+    primaryImage: null,
+    requestDefaults: {
+      askQuantity: false,
+      askSizeFormat: true,
+      askDesignReadiness: true,
+      askColour: false,
+      askFinish: false,
+      ...NO_SERVICE_OPTIONS,
+    },
+  },
+  {
+    slug: "custom-artwork-framed-art-prints",
+    name: "Custom Artwork & Framed Art Prints",
+    description:
+      "Custom artwork and framed art-print pieces for personal gifts, display and special projects.",
+    group: "PERSONALISED_PRODUCTS",
+    pricingMode: "NONE",
+    priceAmount: null,
+    published: true,
+    displayOrder: 2,
+    primaryImage: null,
+    requestDefaults: {
+      askQuantity: false,
+      askSizeFormat: true,
+      askDesignReadiness: true,
+      askColour: true,
+      askFinish: true,
+      ...NO_SERVICE_OPTIONS,
+    },
+  },
+  {
+    slug: "digital-artwork-designs",
+    name: "Digital Artwork & Designs",
+    description: "Digital artwork and design work created around a customer brief.",
+    group: "BRANDING_SIGNAGE",
+    pricingMode: "NONE",
+    priceAmount: null,
+    published: true,
+    displayOrder: 3,
+    primaryImage: null,
+    requestDefaults: {
+      askQuantity: false,
+      askSizeFormat: false,
+      askDesignReadiness: true,
+      askColour: true,
+      askFinish: false,
+      ...NO_SERVICE_OPTIONS,
+    },
+  },
+  {
+    slug: "customised-t-shirts",
+    name: "Customized T-Shirts",
+    description: "Customized T-shirts for individual, group and branded orders.",
+    group: "PERSONALISED_PRODUCTS",
+    pricingMode: "NONE",
+    priceAmount: null,
+    published: true,
+    displayOrder: 4,
+    primaryImage: {
+      path: "images/seed/services/customised-t-shirts/cover.webp",
+      alt: "White customized T-shirt with a name and number",
+      width: 1350,
+      height: 1800,
+    },
+    requestDefaults: {
+      askQuantity: true,
+      askSizeFormat: true,
+      askDesignReadiness: true,
+      askColour: true,
+      askFinish: false,
+      ...NO_SERVICE_OPTIONS,
+    },
+  },
+  {
+    slug: "photo-frames-throw-pillows",
+    name: "Photo Frames & Throw Pillows",
+    description: "Photo-led gifts, framed pieces and customized throw pillows.",
+    group: "PERSONALISED_PRODUCTS",
+    pricingMode: "NONE",
+    priceAmount: null,
+    published: true,
+    displayOrder: 5,
+    primaryImage: {
+      path: "images/seed/services/photo-gifts-and-pillows/cover.webp",
+      alt: "Customized throw pillow with a birthday message",
+      width: 1080,
+      height: 809,
+    },
+    requestDefaults: {
+      askQuantity: true,
+      askSizeFormat: true,
+      askDesignReadiness: true,
+      askColour: false,
+      askFinish: false,
+      ...NO_SERVICE_OPTIONS,
+    },
+  },
+  {
+    slug: "invitation-cards-programmes",
+    name: "Invitation Cards & Programmes",
+    description: "Invitation cards and programmes for events and occasions.",
+    group: "PRINT_EVENT_MATERIALS",
+    pricingMode: "NONE",
+    priceAmount: null,
+    published: true,
+    displayOrder: 6,
+    primaryImage: null,
+    requestDefaults: {
+      askQuantity: true,
+      askSizeFormat: true,
+      askDesignReadiness: true,
+      askColour: true,
+      askFinish: false,
+      ...NO_SERVICE_OPTIONS,
+    },
+  },
+  {
+    slug: "business-cards-general-printing",
+    name: "Business Cards & General Printing",
+    description: "Business cards and general print materials for businesses and events.",
+    group: "PRINT_EVENT_MATERIALS",
+    pricingMode: "NONE",
+    priceAmount: null,
+    published: true,
+    displayOrder: 7,
+    primaryImage: null,
+    requestDefaults: {
+      askQuantity: true,
+      askSizeFormat: true,
+      askDesignReadiness: true,
+      askColour: true,
+      askFinish: true,
+      ...NO_SERVICE_OPTIONS,
+    },
+  },
+  {
+    slug: "paper-bags-packaging",
+    name: "Paper Bags & Packaging",
+    description: "Paper bags and packaging for branded products and events.",
+    group: "PRINT_EVENT_MATERIALS",
+    pricingMode: "NONE",
+    priceAmount: null,
+    published: true,
+    displayOrder: 8,
+    primaryImage: null,
+    requestDefaults: {
+      askQuantity: true,
+      askSizeFormat: true,
+      askDesignReadiness: true,
+      askColour: true,
+      askFinish: false,
+      ...NO_SERVICE_OPTIONS,
+    },
+  },
+  {
+    slug: "rubber-stamps-company-seals",
+    name: "Rubber Stamps & Company Seals",
+    description: "Rubber stamps and company seals for business use.",
+    group: "BRANDING_SIGNAGE",
+    pricingMode: "NONE",
+    priceAmount: null,
+    published: true,
+    displayOrder: 9,
+    primaryImage: null,
+    requestDefaults: {
+      askQuantity: true,
+      askSizeFormat: true,
+      askDesignReadiness: true,
+      askColour: false,
+      askFinish: false,
+      ...NO_SERVICE_OPTIONS,
+    },
+  },
+  {
+    slug: "award-plaques",
+    name: "Award Plaques",
+    description: "Custom award plaques for recognition and presentation occasions.",
+    group: "PRINT_EVENT_MATERIALS",
+    pricingMode: "NONE",
+    priceAmount: null,
+    published: true,
+    displayOrder: 10,
+    primaryImage: {
+      path: "images/seed/services/award-plaques/cover.webp",
+      alt: "Collection of custom award plaques",
+      width: 960,
+      height: 540,
+    },
+    requestDefaults: {
+      askQuantity: true,
+      askSizeFormat: true,
+      askDesignReadiness: true,
+      askColour: false,
+      askFinish: true,
+      ...NO_SERVICE_OPTIONS,
+    },
+  },
+  {
+    slug: "digital-banners",
+    name: "Digital Banners",
+    description: "Digital banners designed for business, event and promotional needs.",
+    group: "BRANDING_SIGNAGE",
+    pricingMode: "NONE",
+    priceAmount: null,
+    published: true,
+    displayOrder: 11,
+    primaryImage: null,
+    requestDefaults: {
+      askQuantity: false,
+      askSizeFormat: true,
+      askDesignReadiness: true,
+      askColour: true,
+      askFinish: false,
+      ...NO_SERVICE_OPTIONS,
+    },
+  },
+  {
+    slug: "screen-printing",
+    name: "Screen Printing",
+    description: "Screen printing for customised clothing and branded print orders.",
+    group: "PRINT_EVENT_MATERIALS",
+    pricingMode: "NONE",
+    priceAmount: null,
+    published: true,
+    displayOrder: 12,
+    primaryImage: {
+      path: "images/seed/services/screen-printing/cover.webp",
+      alt: "Batch of printed black garments in the studio",
+      width: 1350,
+      height: 1800,
+    },
+    requestDefaults: {
+      askQuantity: true,
+      askSizeFormat: true,
+      askDesignReadiness: true,
+      askColour: true,
+      askFinish: false,
+      ...NO_SERVICE_OPTIONS,
+    },
+  },
+  {
+    slug: "signage-creative-painting",
+    name: "Signage & Creative Painting",
+    description: "Signage and creative painting for brands, spaces and projects.",
+    group: "BRANDING_SIGNAGE",
+    pricingMode: "NONE",
+    priceAmount: null,
+    published: true,
+    displayOrder: 13,
+    primaryImage: {
+      path: "images/seed/services/branded-products/cover.webp",
+      alt: "White hard hat with a printed brand mark",
+      width: 1350,
+      height: 1800,
+    },
+    requestDefaults: {
+      askQuantity: true,
+      askSizeFormat: true,
+      askDesignReadiness: true,
+      askColour: true,
+      askFinish: false,
+      ...NO_SERVICE_OPTIONS,
+    },
+  },
+]
+
+export { seedArtwork, seedServices }
