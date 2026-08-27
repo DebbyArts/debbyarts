@@ -55,14 +55,34 @@ Apply these rules only where the corresponding responsibility already exists or 
 
 Do not introduce repositories, mappers, or services when the feature does not need them. Keep them as simple functions unless the existing implementation genuinely requires something more.
 
+## Feature utilities and projections
+
+- Keep feature-specific pure utilities in `utils/`.
+- Utilities serving one component use `utils/<component>.utils.ts`.
+- Use the component's lowercase filename without its extension.
+
+Example:
+
+```text
+components/ArtworkGallery.tsx
+utils/artwork-gallery.utils.ts
+```
+
+- Do not create catch-all modules such as `helpers.ts`, `utils.ts`, or `<feature>-catalogue.ts` for unrelated responsibilities.
+- Import constants and types directly from `constants/` and `types/`. Do not re-export them through utility files.
+- Mappers should derive ready-to-render projection fields from persisted or external data, including labels, formatted values, and destination URLs where appropriate.
+- Components should consume those derived projection fields instead of repeating presentation logic.
+- Move a utility to `shared/utils/` only when multiple features genuinely use it.
+- Export a utility through the feature's root `index.ts` only when it is intentionally part of the feature's external API.
+
 ## Naming
 
-- React component names use `PascalCase`.
+- React component names and component filenames use `PascalCase`.
 - Repository files use `<name>.repository.ts`.
 - Service files use `<name>.service.ts`.
 - Mapper files use `<name>.mapper.ts`.
-- Use lowercase filenames.
-- Avoid unnecessary hyphenation. Use kebab-case only for genuine multiword names.
+- Non-component filenames use lowercase.
+- Avoid unnecessary hyphenation. Use kebab-case only for genuine multiword non-component names.
 
 Examples:
 
@@ -71,7 +91,7 @@ artwork.repository.ts
 featured-artwork.repository.ts
 artwork.service.ts
 artwork.mapper.ts
-featured-artwork.tsx → FeaturedArtwork
+FeaturedArtwork.tsx → FeaturedArtwork
 ```
 
 ## Refactoring behaviour
