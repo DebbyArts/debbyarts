@@ -81,7 +81,36 @@ type ArtworkOptionsValue = {
   title: string
 }
 
+type ArtworkActionState = {
+  message: string
+  status: "idle" | "success" | "error" | "warning"
+}
+
+type ArtworkMutationInput = {
+  availability: AvailabilityStatus
+  category: ArtworkCategory
+  description: string
+  displayedPieceDimensions: string | null
+  displayOrder: number
+  featured: boolean
+  mediumFormat: string | null
+  priceAmount: string | null
+  pricingMode: PricingMode
+  primaryImageAlt: string | null
+  published: boolean
+  slug: string
+  title: string
+}
+
+type ArtworkRequestOptionsInput = {
+  askQuantity: boolean
+  availableSizes: string[]
+  framingEnabled: boolean
+  framingOptions: string[]
+}
+
 export type {
+  ArtworkActionState,
   ArtworkAdminListFilters,
   ArtworkAdminListItem,
   ArtworkCategory,
@@ -89,7 +118,9 @@ export type {
   ArtworkEditorValue,
   ArtworkFilter,
   ArtworkListSearchParams,
+  ArtworkMutationInput,
   ArtworkOptionsValue,
   ArtworkProjection,
+  ArtworkRequestOptionsInput,
   PricingMode as ArtworkPricingMode,
 }

@@ -5,7 +5,7 @@ import {
   parseArtworkMutation,
   parseArtworkRequestOptions,
   slugify,
-} from "@/features/artwork/admin/artwork-validation"
+} from "@/features/artwork/validation/artwork.validation"
 
 function validArtworkForm() {
   const form = new FormData()

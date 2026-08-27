@@ -31,13 +31,11 @@ vi.mock("@/server/storage/image-storage", async (importOriginal) => ({
   uploadCatalogueImage: mocks.uploadCatalogueImage,
 }))
 
-import {
-  deleteArtworkAction,
-  saveArtworkAction,
-  saveArtworkOptionsAction,
-  unpublishArtworkAction,
-} from "@/features/artwork/admin/actions"
-import { INITIAL_ARTWORK_ACTION_STATE } from "@/features/artwork/admin/state"
+import { deleteArtworkAction } from "@/features/artwork/actions/delete-artwork.admin.action"
+import { saveArtworkOptionsAction } from "@/features/artwork/actions/save-artwork-options.admin.action"
+import { saveArtworkAction } from "@/features/artwork/actions/save-artwork.admin.action"
+import { unpublishArtworkAction } from "@/features/artwork/actions/unpublish-artwork.admin.action"
+import { INITIAL_ARTWORK_ACTION_STATE } from "@/features/artwork/constants"
 
 const admin = { email: "owner@example.com", id: "owner-id" }
 const existingArtwork = {

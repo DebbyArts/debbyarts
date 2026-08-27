@@ -8,10 +8,8 @@ import { FeedbackBanner } from "@/components/ui/feedback-banner"
 import { Button } from "@/components/ui/button"
 import { Field, FieldDescription, FieldLabel } from "@/components/ui/field"
 import { Textarea } from "@/components/ui/textarea"
-import {
-  saveArtworkOptionsAction,
-} from "@/features/artwork/admin/actions"
-import { INITIAL_ARTWORK_ACTION_STATE } from "@/features/artwork/admin/state"
+import { saveArtworkOptionsAction } from "@/features/artwork/actions/save-artwork-options.admin.action"
+import { INITIAL_ARTWORK_ACTION_STATE } from "@/features/artwork/constants"
 import type { ArtworkOptionsValue } from "@/features/artwork/types"
 
 function ArtworkOptionsForm({ artwork }: { artwork: ArtworkOptionsValue }) {

@@ -10,16 +10,40 @@ import {
   mapToRequestArtworkOption,
 } from "@/features/artwork/mappers/artwork.mapper"
 import {
+  createArtwork,
+  deleteArtwork,
+  findAdminArtworks,
+  findArtworkById,
+  findArtworkForEditor,
+  findArtworkForOptions,
+  findArtworkImagePath,
   findPublishedArtworks,
   findPublishedRequestArtwork,
   findPublishedRequestArtworks,
+  updateArtwork,
 } from "@/features/artwork/repositories/artwork.repository"
+import type {
+  ArtworkAdminListFilters,
+  ArtworkMutationInput,
+  ArtworkRequestOptionsInput,
+} from "@/features/artwork/types"
+import type { VerifiedAdmin } from "@/server/auth/authorize"
 import {
-  findAdminArtworks,
-  findArtworkForEditor,
-  findArtworkForOptions,
-} from "@/features/artwork/repositories/artwork-admin.repository"
-import type { ArtworkAdminListFilters } from "@/features/artwork/types"
+  deleteCatalogueImage,
+  uploadCatalogueImage,
+} from "@/server/storage/image-storage"
+
+type ArtworkSaveInput = {
+  admin: VerifiedAdmin
+  data: ArtworkMutationInput
+  existing: NonNullable<Awaited<ReturnType<typeof findArtworkById>>> | null
+  file: File | null
+  removeImage: boolean
+}
+
+type ArtworkSaveResult =
+  | { status: "saved"; warning?: string }
+  | { status: "not-saved"; warning: string }
 
 async function getPublishedArtworks() {
   await connection()
@@ -53,11 +77,110 @@ async function getArtworkOptions(id: string) {
   return artwork ? mapToArtworkOptionsValue(artwork) : null
 }
 
+async function getArtworkForSave(id: string) {
+  return findArtworkById(id)
+}
+
+async function saveArtwork({
+  admin,
+  data,
+  existing,
+  file,
+  removeImage,
+}: ArtworkSaveInput): Promise<ArtworkSaveResult> {
+  const uploaded = file
+    ? await uploadCatalogueImage(admin, "artwork", file)
+    : null
+  const imageData = uploaded
+    ? {
+        primaryImageHeight: uploaded.height,
+        primaryImagePath: uploaded.path,
+        primaryImageWidth: uploaded.width,
+      }
+    : removeImage
+      ? {
+          primaryImageHeight: null,
+          primaryImagePath: null,
+          primaryImageWidth: null,
+        }
+      : {}
+
+  try {
+    if (existing) {
+      await updateArtwork(existing.id, { ...data, ...imageData })
+    } else {
+      await createArtwork({ ...data, ...imageData })
+    }
+  } catch (error) {
+    if (uploaded) {
+      try {
+        await deleteCatalogueImage(admin, "artwork", uploaded.path)
+      } catch {
+        return {
+          status: "not-saved",
+          warning:
+            "The database save failed and the new image needs manual Storage cleanup.",
+        }
+      }
+    }
+    throw error
+  }
+
+  const oldPath = existing?.primaryImagePath
+  if (oldPath && (uploaded || removeImage)) {
+    try {
+      await deleteCatalogueImage(admin, "artwork", oldPath)
+    } catch (error) {
+      return {
+        status: "saved",
+        warning:
+          error instanceof Error
+            ? error.message
+            : "Artwork saved, but the old image needs Storage cleanup.",
+      }
+    }
+  }
+
+  return { status: "saved" }
+}
+
+async function saveArtworkOptions(
+  artworkId: string,
+  data: ArtworkRequestOptionsInput
+) {
+  return updateArtwork(artworkId, data)
+}
+
+async function unpublishArtwork(artworkId: string) {
+  return updateArtwork(artworkId, { published: false })
+}
+
+async function removeArtwork(admin: VerifiedAdmin, artworkId: string) {
+  const artwork = await findArtworkImagePath(artworkId)
+  if (!artwork) return null
+
+  await deleteArtwork(artworkId)
+
+  if (!artwork.primaryImagePath) return { cleanupPath: null }
+
+  try {
+    await deleteCatalogueImage(admin, "artwork", artwork.primaryImagePath)
+    return { cleanupPath: null }
+  } catch {
+    return { cleanupPath: artwork.primaryImagePath }
+  }
+}
+
 export {
   getAdminArtworks,
   getArtworkEditor,
+  getArtworkForSave,
   getArtworkOptions,
   getPublishedArtworks,
   getPublishedRequestArtwork,
   getPublishedRequestArtworks,
+  removeArtwork,
+  saveArtwork,
+  saveArtworkOptions,
+  unpublishArtwork,
 }

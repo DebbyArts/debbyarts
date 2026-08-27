@@ -6,14 +6,12 @@ import {
 } from "@/features/artwork/constants"
 import type { RequestArtworkOption } from "@/types/request-catalogue"
 import {
-  PUBLISHED_ARTWORK_QUERY,
-  REQUEST_ARTWORK_SELECT,
-} from "@/features/artwork/repositories/artwork.repository"
-import {
   ADMIN_ARTWORK_LIST_SELECT,
   ARTWORK_EDITOR_SELECT,
   ARTWORK_OPTIONS_SELECT,
-} from "@/features/artwork/repositories/artwork-admin.repository"
+  PUBLISHED_ARTWORK_QUERY,
+  REQUEST_ARTWORK_SELECT,
+} from "@/features/artwork/repositories/artwork.repository"
 import type {
   ArtworkAdminListItem,
   ArtworkEditorValue,

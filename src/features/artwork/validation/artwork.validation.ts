@@ -3,29 +3,10 @@ import {
   AvailabilityStatus,
   PricingMode,
 } from "@/db/generated/prisma/enums"
-
-type ArtworkMutationInput = {
-  availability: AvailabilityStatus
-  category: ArtworkCategory
-  description: string
-  displayedPieceDimensions: string | null
-  displayOrder: number
-  featured: boolean
-  mediumFormat: string | null
-  priceAmount: string | null
-  pricingMode: PricingMode
-  primaryImageAlt: string | null
-  published: boolean
-  slug: string
-  title: string
-}
-
-type ArtworkRequestOptionsInput = {
-  askQuantity: boolean
-  availableSizes: string[]
-  framingEnabled: boolean
-  framingOptions: string[]
-}
+import type {
+  ArtworkMutationInput,
+  ArtworkRequestOptionsInput,
+} from "@/features/artwork/types"
 
 class ArtworkValidationError extends Error {
   constructor(message: string) {
@@ -197,6 +178,4 @@ export {
   parseArtworkRequestOptions,
   parseOptionList,
   slugify,
-  type ArtworkMutationInput,
-  type ArtworkRequestOptionsInput,
 }

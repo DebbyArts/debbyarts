@@ -12,15 +12,13 @@ import { Field, FieldDescription, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import {
-  deleteArtworkAction,
-  saveArtworkAction,
-  unpublishArtworkAction,
-} from "@/features/artwork/admin/actions"
-import { INITIAL_ARTWORK_ACTION_STATE } from "@/features/artwork/admin/state"
+  ARTWORK_ADMIN_SELECT_CLASS,
+  INITIAL_ARTWORK_ACTION_STATE,
+} from "@/features/artwork/constants"
+import { deleteArtworkAction } from "@/features/artwork/actions/delete-artwork.admin.action"
+import { saveArtworkAction } from "@/features/artwork/actions/save-artwork.admin.action"
+import { unpublishArtworkAction } from "@/features/artwork/actions/unpublish-artwork.admin.action"
 import type { ArtworkEditorValue } from "@/features/artwork/types"
-
-const SELECT_CLASS =
-  "h-12 w-full rounded-sm border border-input bg-card px-4 text-base focus-visible:border-info focus-visible:ring-[3px] focus-visible:ring-ring/70"
 
 function CheckField({
   defaultChecked,
@@ -101,7 +99,7 @@ function ArtworkEditor({ artwork }: { artwork: ArtworkEditorValue | null }) {
                 id="category"
                 name="category"
                 required
-                className={SELECT_CLASS}
+                className={ARTWORK_ADMIN_SELECT_CLASS}
                 defaultValue={artwork?.category ?? "PAINTING"}
               >
                 <option value="PAINTING">Painting</option>
@@ -147,7 +145,7 @@ function ArtworkEditor({ artwork }: { artwork: ArtworkEditorValue | null }) {
               <select
                 id="availability"
                 name="availability"
-                className={SELECT_CLASS}
+                className={ARTWORK_ADMIN_SELECT_CLASS}
                 defaultValue={artwork?.availability ?? "AVAILABLE"}
               >
                 <option value="AVAILABLE">Available</option>
@@ -222,7 +220,7 @@ function ArtworkEditor({ artwork }: { artwork: ArtworkEditorValue | null }) {
               <select
                 id="pricingMode"
                 name="pricingMode"
-                className={SELECT_CLASS}
+                className={ARTWORK_ADMIN_SELECT_CLASS}
                 defaultValue={artwork?.pricingMode ?? "NONE"}
               >
                 <option value="NONE">No public price</option>
