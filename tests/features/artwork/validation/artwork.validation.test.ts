@@ -42,4 +42,18 @@ describe("Artwork Admin validation", () => {
     const result = parseArtworkRequestOptions(form)
     expect(result.framingOptions).toEqual([])
   })
+
+  it("accepts ordered repeated option fields", () => {
+    const form = new FormData()
+    form.append("availableSizes", "A3")
+    form.append("availableSizes", "A2")
+    form.set("framingEnabled", "on")
+    form.append("framingOptions", "Black frame")
+    form.append("framingOptions", "Natural wood")
+
+    expect(parseArtworkRequestOptions(form)).toMatchObject({
+      availableSizes: ["A3", "A2"],
+      framingOptions: ["Black frame", "Natural wood"],
+    })
+  })
 })

@@ -24,6 +24,12 @@ function checked(formData: FormData, name: string) {
   return formData.get(name) === "on" || formData.get(name) === "true"
 }
 
+function optionValues(formData: FormData, name: string) {
+  return formData
+    .getAll(name)
+    .filter((value): value is string => typeof value === "string")
+}
+
 function slugify(value: string) {
   return value
     .normalize("NFKD")
@@ -68,9 +74,9 @@ function parsePrice(mode: PricingMode, value: string) {
   return number.toFixed(2)
 }
 
-function parseOptionList(value: string, label: string) {
-  const options = value
-    .split(/[\n,]/)
+function parseOptionList(values: string[], label: string) {
+  const options = values
+    .flatMap((value) => value.split(/[\n,]/))
     .map((option) => option.trim())
     .filter(Boolean)
   const unique = [...new Set(options)]
@@ -151,7 +157,7 @@ function parseArtworkRequestOptions(
 ): ArtworkRequestOptionsInput {
   const framingEnabled = checked(formData, "framingEnabled")
   const framingOptions = framingEnabled
-    ? parseOptionList(text(formData, "framingOptions"), "Framing options")
+    ? parseOptionList(optionValues(formData, "framingOptions"), "Framing options")
     : []
 
   if (framingEnabled && framingOptions.length === 0) {
@@ -163,7 +169,7 @@ function parseArtworkRequestOptions(
   return {
     askQuantity: checked(formData, "askQuantity"),
     availableSizes: parseOptionList(
-      text(formData, "availableSizes"),
+      optionValues(formData, "availableSizes"),
       "Available sizes"
     ),
     framingEnabled,

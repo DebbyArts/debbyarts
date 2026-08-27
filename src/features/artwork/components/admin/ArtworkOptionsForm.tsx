@@ -1,13 +1,12 @@
 "use client"
 
 import Link from "next/link"
-import { useActionState } from "react"
+import { useActionState, useState } from "react"
 
 import { AdminSectionCard } from "@/components/shared/admin/admin-page"
 import { FeedbackBanner } from "@/components/ui/feedback-banner"
 import { Button } from "@/components/ui/button"
-import { Field, FieldDescription, FieldLabel } from "@/components/ui/field"
-import { Textarea } from "@/components/ui/textarea"
+import { OptionListInput } from "@/components/ui/OptionListInput"
 import { saveArtworkOptionsAction } from "@/features/artwork/actions/save-artwork-options.admin.action"
 import { INITIAL_ARTWORK_ACTION_STATE } from "@/features/artwork/constants"
 import type { ArtworkOptionsValue } from "@/features/artwork/types"
@@ -17,6 +16,7 @@ function ArtworkOptionsForm({ artwork }: { artwork: ArtworkOptionsValue }) {
     saveArtworkOptionsAction.bind(null, artwork.id),
     INITIAL_ARTWORK_ACTION_STATE
   )
+  const [framingEnabled, setFramingEnabled] = useState(artwork.framingEnabled)
 
   return (
     <form action={action} className="flex flex-col gap-6">
@@ -37,16 +37,14 @@ function ArtworkOptionsForm({ artwork }: { artwork: ArtworkOptionsValue }) {
         title="Available Sizes"
         description="Customers only see the values listed here. Leave empty when size is fixed or discussed later."
       >
-        <Field>
-          <FieldLabel htmlFor="availableSizes">Size values</FieldLabel>
-          <Textarea
-            id="availableSizes"
-            name="availableSizes"
-            defaultValue={artwork.availableSizes.join("\n")}
-            placeholder={"A3\n60 × 90 cm\nExtra Large"}
-          />
-          <FieldDescription>One value per line.</FieldDescription>
-        </Field>
+        <OptionListInput
+          id="availableSizes"
+          name="availableSizes"
+          label="Size values"
+          defaultValue={artwork.availableSizes}
+          placeholder="e.g. A3"
+          description="Add each size in the order customers should see it."
+        />
       </AdminSectionCard>
       <div className="grid gap-5 md:grid-cols-2">
         <AdminSectionCard title="Framing" description="Offer framing choices?">
@@ -54,21 +52,21 @@ function ArtworkOptionsForm({ artwork }: { artwork: ArtworkOptionsValue }) {
             <input
               type="checkbox"
               name="framingEnabled"
-              defaultChecked={artwork.framingEnabled}
+              checked={framingEnabled}
+              onChange={(event) => setFramingEnabled(event.target.checked)}
               className="size-6 accent-primary"
             />
             Framing enabled
           </label>
-          <Field>
-            <FieldLabel htmlFor="framingOptions">Framing options</FieldLabel>
-            <Textarea
-              id="framingOptions"
-              name="framingOptions"
-              defaultValue={artwork.framingOptions.join("\n")}
-              placeholder={"Black frame\nNatural wood frame\nUnframed"}
-            />
-            <FieldDescription>One value per line.</FieldDescription>
-          </Field>
+          <OptionListInput
+            id="framingOptions"
+            name="framingOptions"
+            label="Framing options"
+            defaultValue={artwork.framingOptions}
+            placeholder="e.g. Black frame"
+            disabled={!framingEnabled}
+            description="Add each framing choice in the order customers should see it."
+          />
         </AdminSectionCard>
         <AdminSectionCard title="Quantity">
           <label className="flex min-h-11 items-start gap-3 text-sm font-extrabold">

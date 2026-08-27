@@ -32,10 +32,12 @@ describe("Service Admin validation", () => {
     )
   })
 
-  it("deduplicates owner-managed size / format text", () => {
+  it("accepts ordered repeated size / format fields and deduplicates values", () => {
     const form = new FormData()
     form.set("askSizeFormat", "on")
-    form.set("sizeFormatOptions", "A4\nA4\nLandscape")
+    form.append("sizeFormatOptions", "A4")
+    form.append("sizeFormatOptions", "A4")
+    form.append("sizeFormatOptions", "Landscape")
     expect(parseServiceRequestOptions(form).sizeFormatOptions).toEqual([
       "A4",
       "Landscape",

@@ -1,13 +1,12 @@
 "use client"
 
 import Link from "next/link"
-import { useActionState } from "react"
+import { useActionState, useState } from "react"
 
 import { AdminSectionCard } from "@/components/shared/admin/admin-page"
 import { FeedbackBanner } from "@/components/ui/feedback-banner"
 import { Button } from "@/components/ui/button"
-import { Field, FieldDescription, FieldLabel } from "@/components/ui/field"
-import { Textarea } from "@/components/ui/textarea"
+import { OptionListInput } from "@/components/ui/OptionListInput"
 import { saveServiceOptionsAction } from "@/features/services/actions/save-service-options.admin.action"
 import {
   INITIAL_SERVICE_ACTION_STATE,
@@ -20,6 +19,7 @@ function ServiceOptionsForm({ service }: { service: ServiceOptionsValue }) {
     saveServiceOptionsAction.bind(null, service.id),
     INITIAL_SERVICE_ACTION_STATE
   )
+  const [askSizeFormat, setAskSizeFormat] = useState(service.askSizeFormat)
 
   return (
     <form action={action} className="flex flex-col gap-6">
@@ -59,21 +59,19 @@ function ServiceOptionsForm({ service }: { service: ServiceOptionsValue }) {
               aria-label="Ask for Size / Format?"
               type="checkbox"
               name="askSizeFormat"
-              defaultChecked={service.askSizeFormat}
+              checked={askSizeFormat}
+              onChange={(event) => setAskSizeFormat(event.target.checked)}
               className="size-6 accent-primary"
             />
-            <Field>
-              <FieldLabel htmlFor="sizeFormatOptions">
-                Size / format options
-              </FieldLabel>
-              <Textarea
-                id="sizeFormatOptions"
-                name="sizeFormatOptions"
-                defaultValue={service.sizeFormatOptions.join("\n")}
-                placeholder={"A4\nBusiness Card\nLandscape"}
-              />
-              <FieldDescription>One value per line.</FieldDescription>
-            </Field>
+            <OptionListInput
+              id="sizeFormatOptions"
+              name="sizeFormatOptions"
+              label="Size / format options"
+              defaultValue={service.sizeFormatOptions}
+              placeholder="e.g. A4"
+              disabled={!askSizeFormat}
+              description="Add each choice in the order customers should see it."
+            />
           </AdminSectionCard>
           {SERVICE_REQUEST_OPTION_QUESTIONS.slice(3).map(([name, label, description]) => (
             <AdminSectionCard key={name} title={label} description={description}>

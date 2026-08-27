@@ -20,6 +20,12 @@ function checked(formData: FormData, name: string) {
   return formData.get(name) === "on" || formData.get(name) === "true"
 }
 
+function optionValues(formData: FormData, name: string) {
+  return formData
+    .getAll(name)
+    .filter((value): value is string => typeof value === "string")
+}
+
 function slugify(value: string) {
   return value
     .normalize("NFKD")
@@ -52,9 +58,9 @@ function parsePrice(mode: PricingMode, value: string) {
   return number.toFixed(2)
 }
 
-function parseOptionList(value: string) {
-  const options = value
-    .split(/[\n,]/)
+function parseOptionList(values: string[]) {
+  const options = values
+    .flatMap((value) => value.split(/[\n,]/))
     .map((option) => option.trim())
     .filter(Boolean)
   const unique = [...new Set(options)]
@@ -125,7 +131,7 @@ function parseServiceRequestOptions(
 ): ServiceRequestOptionsInput {
   const askSizeFormat = checked(formData, "askSizeFormat")
   const sizeFormatOptions = askSizeFormat
-    ? parseOptionList(text(formData, "sizeFormatOptions"))
+    ? parseOptionList(optionValues(formData, "sizeFormatOptions"))
     : []
 
   if (askSizeFormat && sizeFormatOptions.length === 0) {
