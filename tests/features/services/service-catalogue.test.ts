@@ -4,14 +4,20 @@ import {
   deriveOptionCues,
   derivePricingPresentation,
   getServiceRequestHref,
+  mapToServiceAdminListItem,
+  mapToServiceEditorValue,
   projectServiceGroups,
-  resolveImageSource,
 } from "@/features/services/mappers/service.mapper"
+import { mapToRequestServiceOption } from "@/features/services/mappers/request-service.mapper"
 import {
   PUBLISHED_SERVICES_QUERY,
   type PublishedServiceRecord,
 } from "@/features/services/repositories/service.repository"
-import { describe, expect, test } from "vitest"
+import { afterEach, describe, expect, test, vi } from "vitest"
+
+afterEach(() => {
+  vi.unstubAllEnvs()
+})
 
 function serviceRecord(
   overrides: Partial<PublishedServiceRecord> = {}
@@ -167,57 +173,33 @@ describe("Service catalogue projection", () => {
     )
   })
 
-  test("uses an intentional fallback for missing or unusable images", () => {
-    expect(resolveImageSource(null)).toBeUndefined()
-    expect(resolveImageSource("service/object-path.jpg")).toBeUndefined()
-    expect(
-      resolveImageSource(
-        "services/custom shirt.jpg",
-        "https://project.example/storage/v1/object/public/catalogue/"
-      )
-    ).toBe(
-      "https://project.example/storage/v1/object/public/catalogue/services/custom%20shirt.jpg"
-    )
-    expect(
-      resolveImageSource(
-        "services/custom-shirt.jpg",
-        "http://project.example/storage/v1/object/public/catalogue"
-      )
-    ).toBeUndefined()
-    expect(resolveImageSource("/services/example.jpg")).toBe(
-      "/services/example.jpg"
-    )
-    expect(resolveImageSource("https://images.example.com/service.jpg")).toBe(
-      "https://images.example.com/service.jpg"
-    )
+  test("uses the shared public-storage URL across public, request, and Admin projections", () => {
+    vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "http://127.0.0.1:54321")
+    vi.stubEnv("NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET", "catalogue-media")
+    const service = serviceRecord({
+      primaryImagePath: "service/custom shirt.jpg",
+      primaryImageAlt: "A printed custom shirt",
+    })
+    const expectedUrl =
+      "http://127.0.0.1:54321/storage/v1/object/public/catalogue-media/service/custom%20shirt.jpg"
+
+    expect(projectServiceGroups([service])[0]?.services[0]?.imageSrc).toBe(expectedUrl)
+    expect(mapToRequestServiceOption(service).imageSrc).toBe(expectedUrl)
+    expect(mapToServiceAdminListItem(service).imageUrl).toBe(expectedUrl)
+    expect(mapToServiceEditorValue(service).imageUrl).toBe(expectedUrl)
+  })
+
+  test("uses an intentional fallback when the persisted image path is unusable", () => {
+    vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "http://localhost:54321")
+    vi.stubEnv("NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET", "catalogue-media")
 
     const groups = projectServiceGroups([
-      serviceRecord({ primaryImagePath: "/services/example.jpg" }),
+      serviceRecord({ primaryImagePath: "service/../example.jpg" }),
     ])
 
     expect(groups[0]?.services[0]?.imageSrc).toBeUndefined()
     expect(groups[0]?.services[0]?.imageAlt).toBe(
       "Image unavailable for Custom Clothing"
-    )
-
-    const groupsWithPublicMedia = projectServiceGroups(
-      [
-        serviceRecord({
-          primaryImagePath: "services/custom shirt.jpg",
-          primaryImageAlt: "A printed custom shirt",
-        }),
-      ],
-      {
-        publicMediaBaseUrl:
-          "https://project.example/storage/v1/object/public/catalogue",
-      }
-    )
-
-    expect(groupsWithPublicMedia[0]?.services[0]?.imageSrc).toBe(
-      "https://project.example/storage/v1/object/public/catalogue/services/custom%20shirt.jpg"
-    )
-    expect(groupsWithPublicMedia[0]?.services[0]?.imageAlt).toBe(
-      "A printed custom shirt"
     )
   })
 

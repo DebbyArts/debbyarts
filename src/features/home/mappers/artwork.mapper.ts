@@ -1,4 +1,4 @@
-import { resolvePublicArtworkImageUrl } from "@/shared/utils/storage"
+import { resolvePublicStorageObjectUrl } from "@/shared/utils/storage"
 import type { HomeArtwork, HomeArtworkRecord } from "@/features/home/types"
 
 function mapToHomeArtwork(artwork: HomeArtworkRecord): HomeArtwork {
@@ -6,7 +6,7 @@ function mapToHomeArtwork(artwork: HomeArtworkRecord): HomeArtwork {
 
   return {
     ...projection,
-    primaryImageUrl: resolvePublicArtworkImageUrl(primaryImagePath),
+    primaryImageUrl: resolvePublicStorageObjectUrl(primaryImagePath),
   }
 }
 

@@ -18,8 +18,7 @@ import type {
   ArtworkOptionsValue,
   ArtworkProjection,
 } from "@/features/artwork/types"
-import { getPublicMediaUrl } from "@/server/storage/public-url"
-import { resolvePublicArtworkImageUrl } from "@/shared/utils/storage"
+import { resolvePublicStorageObjectUrl } from "@/shared/utils/storage"
 
 type PublishedArtworkRecord = Prisma.ArtworkGetPayload<{
   select: typeof PUBLISHED_ARTWORK_QUERY.select
@@ -69,7 +68,7 @@ function mapToArtworkProjection(artwork: PublishedArtworkRecord): ArtworkProject
     categoryLabel: ARTWORK_CATEGORY_LABELS[artwork.category],
     categoryItemLabel: ARTWORK_CATEGORY_ITEM_LABELS[artwork.category],
     availabilityLabel: AVAILABILITY_LABELS[artwork.availability],
-    imageSrc: resolvePublicArtworkImageUrl(artwork.primaryImagePath),
+    imageSrc: resolvePublicStorageObjectUrl(artwork.primaryImagePath),
     imageAlt: artwork.primaryImageAlt?.trim() || `${artwork.title}, an artwork by Debby Art & Prints`,
     imageWidth: artwork.primaryImageWidth, imageHeight: artwork.primaryImageHeight,
     pricingMode: artwork.pricingMode, priceAmount: artwork.priceAmount?.toString() ?? null,
@@ -83,7 +82,7 @@ function mapToRequestArtworkOption(artwork: RequestArtworkRecord): RequestArtwor
   return {
     id: artwork.id, slug: artwork.slug, title: artwork.title,
     categoryLabel: ARTWORK_CATEGORY_ITEM_LABELS[artwork.category],
-    imageSrc: resolvePublicArtworkImageUrl(artwork.primaryImagePath),
+    imageSrc: resolvePublicStorageObjectUrl(artwork.primaryImagePath),
     imageAlt: artwork.primaryImageAlt?.trim() || `${artwork.title}, an artwork by Debby Art & Prints`,
     availableSizes: artwork.availableSizes, framingEnabled: artwork.framingEnabled,
     framingOptions: artwork.framingOptions, askQuantity: artwork.askQuantity,
@@ -98,7 +97,7 @@ function mapToArtworkAdminListItem(
     title: artwork.title,
     category: artwork.category,
     availability: artwork.availability,
-    imageUrl: getPublicMediaUrl(artwork.primaryImagePath),
+    imageUrl: resolvePublicStorageObjectUrl(artwork.primaryImagePath),
     primaryImageAlt: artwork.primaryImageAlt,
     published: artwork.published,
     featured: artwork.featured,
@@ -117,7 +116,7 @@ function mapToArtworkEditorValue(
     mediumFormat: artwork.mediumFormat,
     displayedPieceDimensions: artwork.displayedPieceDimensions,
     availability: artwork.availability,
-    imageUrl: getPublicMediaUrl(artwork.primaryImagePath),
+    imageUrl: resolvePublicStorageObjectUrl(artwork.primaryImagePath),
     primaryImagePath: artwork.primaryImagePath,
     primaryImageAlt: artwork.primaryImageAlt,
     pricingMode: artwork.pricingMode,

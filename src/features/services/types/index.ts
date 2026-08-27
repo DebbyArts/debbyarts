@@ -10,8 +10,6 @@ type ServicePresentation = {
 type ServiceGroupPresentation = {
   anchorId: string; label: string; number: string; services: ServicePresentation[]; value: ServiceGroup
 }
-type ServiceProjectionOptions = { publicMediaBaseUrl?: string }
-
 type ServiceActionState = {
   message: string
   status: "idle" | "success" | "error" | "warning"
@@ -101,6 +99,5 @@ export type {
   ServiceOptionsValue,
   ServicePresentation,
   ServicePricingPresentation,
-  ServiceProjectionOptions,
   ServiceRequestOptionsInput,
 }

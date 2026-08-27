@@ -1,8 +1,8 @@
 import type { Prisma } from "@/db/generated/prisma/client"
 import type { RequestServiceOption } from "@/types/request-catalogue"
 import { SERVICE_GROUP_DEFINITIONS } from "@/features/services/constants"
-import { resolveImageSource } from "@/features/services/mappers/service.mapper"
 import { REQUEST_SERVICE_SELECT } from "@/features/services/repositories/service.repository"
+import { resolvePublicStorageObjectUrl } from "@/shared/utils/storage"
 
 type RequestServiceRecord = Prisma.ServiceGetPayload<{
   select: typeof REQUEST_SERVICE_SELECT
@@ -19,10 +19,7 @@ function mapToRequestServiceOption(
     throw new Error(`Service "${service.slug}" has an unsupported group.`)
   }
 
-  const imageSrc = resolveImageSource(
-    service.primaryImagePath,
-    process.env.PUBLIC_MEDIA_BASE_URL
-  )
+  const imageSrc = resolvePublicStorageObjectUrl(service.primaryImagePath)
   const imageAlt = service.primaryImageAlt?.trim()
 
   return {

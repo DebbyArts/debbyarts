@@ -14,7 +14,6 @@ import type {
   ServiceOptionsValue,
   ServicePresentation,
   ServicePricingPresentation,
-  ServiceProjectionOptions,
 } from "@/features/services/types"
 import type { Prisma } from "@/db/generated/prisma/client"
 import {
@@ -22,7 +21,7 @@ import {
   SERVICE_EDITOR_SELECT,
   SERVICE_OPTIONS_SELECT,
 } from "@/features/services/repositories/service.repository"
-import { getPublicMediaUrl } from "@/server/storage/public-url"
+import { resolvePublicStorageObjectUrl } from "@/shared/utils/storage"
 
 type AdminServiceListRecord = Prisma.ServiceGetPayload<{
   select: typeof ADMIN_SERVICE_LIST_SELECT
@@ -96,49 +95,6 @@ function deriveOptionCues(service: PublishedServiceRecord) {
   return cues
 }
 
-function resolvePublicMediaBaseUrl(value: string | undefined) {
-  const candidate = value?.trim()
-
-  if (!candidate) return undefined
-
-  try {
-    const url = new URL(candidate)
-
-    if (url.protocol !== "https:") return undefined
-
-    return url.toString().replace(/\/$/, "")
-  } catch {
-    return undefined
-  }
-}
-
-function resolveImageSource(
-  path: string | null,
-  publicMediaBaseUrl?: string
-) {
-  const value = path?.trim()
-
-  if (!value) return undefined
-  if (value.startsWith("/")) return value
-
-  try {
-    const url = new URL(value)
-    return url.protocol === "https:" ? url.toString() : undefined
-  } catch {}
-
-  const baseUrl = resolvePublicMediaBaseUrl(publicMediaBaseUrl)
-
-  if (!baseUrl) return undefined
-
-  const encodedObjectPath = value
-    .split("/")
-    .filter(Boolean)
-    .map(encodeURIComponent)
-    .join("/")
-
-  return encodedObjectPath ? `${baseUrl}/${encodedObjectPath}` : undefined
-}
-
 function getServiceRequestHref(slug: string) {
   return `/request?service=${encodeURIComponent(slug)}`
 }
@@ -164,8 +120,7 @@ function compareServices(
 }
 
 function projectService(
-  service: PublishedServiceRecord,
-  options: ServiceProjectionOptions
+  service: PublishedServiceRecord
 ): ServicePresentation {
   const groupDefinition = SERVICE_GROUP_DEFINITIONS.find(
     (group) => group.value === service.group
@@ -175,10 +130,7 @@ function projectService(
     throw new Error(`Service "${service.slug}" has an unsupported group.`)
   }
 
-  const imageSrc = resolveImageSource(
-    service.primaryImagePath,
-    options.publicMediaBaseUrl
-  )
+  const imageSrc = resolvePublicStorageObjectUrl(service.primaryImagePath)
   const imageAlt = service.primaryImageAlt?.trim()
   const usableImageSrc = imageSrc && imageAlt ? imageSrc : undefined
   const usableImageAlt = usableImageSrc ? imageAlt : undefined
@@ -201,8 +153,7 @@ function projectService(
 }
 
 function projectServiceGroups(
-  services: readonly PublishedServiceRecord[],
-  options: ServiceProjectionOptions = {}
+  services: readonly PublishedServiceRecord[]
 ): ServiceGroupPresentation[] {
   const orderedServices = [...services].sort(compareServices)
 
@@ -213,7 +164,7 @@ function projectServiceGroups(
     number: String(index + 1).padStart(2, "0"),
     services: orderedServices
       .filter((service) => service.group === group.value)
-      .map((service) => projectService(service, options)),
+      .map(projectService),
   })).filter((group) => group.services.length > 0)
 }
 
@@ -224,7 +175,7 @@ function mapToServiceAdminListItem(
     displayOrder: service.displayOrder,
     group: service.group,
     id: service.id,
-    imageUrl: getPublicMediaUrl(service.primaryImagePath),
+    imageUrl: resolvePublicStorageObjectUrl(service.primaryImagePath),
     name: service.name,
     primaryImageAlt: service.primaryImageAlt,
     published: service.published,
@@ -239,7 +190,7 @@ function mapToServiceEditorValue(
     displayOrder: service.displayOrder,
     group: service.group,
     id: service.id,
-    imageUrl: getPublicMediaUrl(service.primaryImagePath),
+    imageUrl: resolvePublicStorageObjectUrl(service.primaryImagePath),
     name: service.name,
     priceAmount: service.priceAmount?.toString() ?? null,
     pricingMode: service.pricingMode,
@@ -263,5 +214,4 @@ export {
   mapToServiceEditorValue,
   mapToServiceOptionsValue,
   projectServiceGroups,
-  resolveImageSource,
 }

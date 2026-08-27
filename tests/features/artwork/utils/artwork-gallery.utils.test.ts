@@ -5,7 +5,10 @@ import {
 } from "@/features/artwork/constants"
 import {
   getArtworkPriceLabel,
+  mapToArtworkAdminListItem,
+  mapToArtworkEditorValue,
   mapToArtworkProjection,
+  mapToRequestArtworkOption,
 } from "@/features/artwork/mappers/artwork.mapper"
 import { PUBLISHED_ARTWORK_QUERY } from "@/features/artwork/repositories/artwork.repository"
 import type { ArtworkProjection } from "@/features/artwork/types"
@@ -133,5 +136,60 @@ describe("artwork catalogue rules", () => {
       priceLabel: "Price on request",
       requestHref: "/request?artwork=blue-horse",
     })
+  })
+
+  test("uses the shared public-storage URL for request and Admin artwork projections", () => {
+    vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "http://localhost:54321")
+    vi.stubEnv("NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET", "catalogue-media")
+    const expectedUrl =
+      "http://localhost:54321/storage/v1/object/public/catalogue-media/artwork/blue%20horse.jpg"
+
+    expect(
+      mapToRequestArtworkOption({
+        id: "artwork-1",
+        slug: "blue-horse",
+        title: "Blue Horse",
+        category: "PAINTING",
+        primaryImagePath: "artwork/blue horse.jpg",
+        primaryImageAlt: "Blue horse study",
+        availableSizes: [],
+        framingEnabled: false,
+        framingOptions: [],
+        askQuantity: false,
+      }).imageSrc
+    ).toBe(expectedUrl)
+
+    expect(
+      mapToArtworkAdminListItem({
+        id: "artwork-1",
+        title: "Blue Horse",
+        category: "PAINTING",
+        availability: "AVAILABLE",
+        primaryImagePath: "artwork/blue horse.jpg",
+        primaryImageAlt: "Blue horse study",
+        published: true,
+        featured: false,
+        displayOrder: 0,
+      }).imageUrl
+    ).toBe(expectedUrl)
+
+    expect(
+      mapToArtworkEditorValue({
+        id: "artwork-1",
+        title: "Blue Horse",
+        description: "A blue horse study.",
+        category: "PAINTING",
+        mediumFormat: null,
+        displayedPieceDimensions: null,
+        availability: "AVAILABLE",
+        primaryImagePath: "artwork/blue horse.jpg",
+        primaryImageAlt: "Blue horse study",
+        pricingMode: "NONE",
+        priceAmount: null,
+        published: true,
+        featured: false,
+        displayOrder: 0,
+      }).imageUrl
+    ).toBe(expectedUrl)
   })
 })

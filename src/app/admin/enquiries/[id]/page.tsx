@@ -16,7 +16,7 @@ import { SignOutButton } from "@/features/admin-auth/components/sign-out-button"
 import { updateEnquiryStatusAction } from "@/features/enquiries/admin/actions"
 import { WhatsAppContinuation } from "@/features/enquiries/components/admin/whatsapp-continuation"
 import { requireAdmin } from "@/server/auth/authorize"
-import { getPublicMediaUrl } from "@/server/storage/public-url"
+import { resolvePublicStorageObjectUrl } from "@/shared/utils/storage"
 
 function DetailRow({ label, value }: { label: string; value: ReactNode }) {
   if (value === null || value === undefined || value === "") return null
@@ -102,7 +102,7 @@ async function EnquiryDetailPage({ params }: { params: Promise<{ id: string }> }
             <AdminSectionCard title={`Linked ${enquiry.requestKind === "ARTWORK" ? "Artwork" : "Service"}`}>
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
                 <MediaImage
-                  src={getPublicMediaUrl(linked?.primaryImagePath) ?? undefined}
+                  src={resolvePublicStorageObjectUrl(linked?.primaryImagePath) ?? undefined}
                   alt={linked?.primaryImageAlt ?? ""}
                   sizes="160px"
                   className="h-[7.5rem] w-full shrink-0 border border-border sm:w-[10rem]"

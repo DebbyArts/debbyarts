@@ -49,9 +49,7 @@ async function getPublishedServiceGroups() {
   await connection()
   const services = await findPublishedServices()
 
-  return projectServiceGroups(services, {
-    publicMediaBaseUrl: process.env.PUBLIC_MEDIA_BASE_URL,
-  })
+  return projectServiceGroups(services)
 }
 
 async function getPublishedRequestServices() {

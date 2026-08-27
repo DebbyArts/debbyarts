@@ -1,30 +1,51 @@
-function resolvePublicArtworkImageUrl(
-  objectPath: string | null
+const LOCAL_SUPABASE_STORAGE_ORIGINS = new Set([
+  "http://127.0.0.1:54321",
+  "http://localhost:54321",
+])
+
+function getSafePathSegments(value: string | null | undefined) {
+  const path = value?.trim()
+
+  if (!path) return null
+
+  const segments = path.split("/")
+
+  return segments.some(
+    (segment) =>
+      !segment || segment === "." || segment === ".." || segment.includes("\0")
+  )
+    ? null
+    : segments
+}
+
+function isApprovedSupabaseProjectUrl(url: URL) {
+  if (LOCAL_SUPABASE_STORAGE_ORIGINS.has(url.origin)) {
+    return true
+  }
+
+  return url.protocol === "https:" && url.hostname.endsWith(".supabase.co")
+}
+
+function resolvePublicStorageObjectUrl(
+  objectPath: string | null | undefined
 ): string | null {
   const projectUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const bucket = process.env.NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET
+  const bucketSegments = getSafePathSegments(
+    process.env.NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET
+  )
+  const objectPathSegments = getSafePathSegments(objectPath)
 
-  if (!objectPath || !projectUrl || !bucket) return null
-
-  const pathSegments = objectPath.split("/")
-
-  if (
-    pathSegments.some(
-      (segment) => !segment || segment === "." || segment === ".."
-    )
-  ) {
+  if (!projectUrl || !bucketSegments || bucketSegments.length !== 1 || !objectPathSegments) {
     return null
   }
 
   try {
     const publicObjectUrl = new URL(projectUrl)
 
-    if (!["http:", "https:"].includes(publicObjectUrl.protocol)) {
-      return null
-    }
+    if (!isApprovedSupabaseProjectUrl(publicObjectUrl)) return null
 
-    const encodedBucket = encodeURIComponent(bucket)
-    const encodedPath = pathSegments.map(encodeURIComponent).join("/")
+    const encodedBucket = encodeURIComponent(bucketSegments[0])
+    const encodedPath = objectPathSegments.map(encodeURIComponent).join("/")
 
     publicObjectUrl.pathname = `/storage/v1/object/public/${encodedBucket}/${encodedPath}`
     publicObjectUrl.search = ""
@@ -36,4 +57,4 @@ function resolvePublicArtworkImageUrl(
   }
 }
 
-export { resolvePublicArtworkImageUrl }
+export { resolvePublicStorageObjectUrl }
