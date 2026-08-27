@@ -45,7 +45,7 @@ function HomeMagneticCta() {
   return (
     <div
       aria-hidden="true"
-      className="relative h-[13.125rem] w-[13.125rem] shrink-0 self-center min-[1400px]:h-[18.75rem] min-[1400px]:w-[18.75rem]"
+      className="relative h-[13.125rem] w-[13.125rem] shrink-0 self-center justify-self-center min-[1400px]:h-[18.75rem] min-[1400px]:w-[18.75rem]"
       onPointerLeave={interactive ? reset : undefined}
       onPointerMove={
         interactive

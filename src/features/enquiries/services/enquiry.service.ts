@@ -22,11 +22,15 @@ import {
 } from "@/features/enquiries/utils/whatsapp.utils"
 import {
   createEnquiryRecord,
+  findEnquiryDetail,
   findEnquiryList,
   findRecentDuplicate,
   updateEnquiryStatus as updateEnquiryStatusRecord,
 } from "@/features/enquiries/repositories/enquiry.repository"
-import { mapToEnquiryListItem } from "@/features/enquiries/mappers/enquiry.mapper"
+import {
+  mapToEnquiryDetail,
+  mapToEnquiryListItem,
+} from "@/features/enquiries/mappers/enquiry.mapper"
 import { ENQUIRIES_PAGE_SIZE } from "@/features/enquiries/constants"
 import {
   getPublishedRequestArtwork,
@@ -223,9 +227,15 @@ async function getEnquiryList(
   }
 }
 
+async function getEnquiryDetail(id: string) {
+  const enquiry = await findEnquiryDetail(id)
+  return enquiry ? mapToEnquiryDetail(enquiry) : null
+}
+
 export {
   RequestContextUnavailableError,
   createEnquiry,
+  getEnquiryDetail,
   resolveAuthority,
   getEnquiryList,
   submitEnquiry,

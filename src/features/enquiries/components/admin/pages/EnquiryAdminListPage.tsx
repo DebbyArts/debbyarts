@@ -1,4 +1,5 @@
 import Link from "next/link"
+import type { ReactNode } from "react"
 
 import {
   AdminPage,
@@ -10,16 +11,19 @@ import { EmptyState } from "@/components/ui/states/empty"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { EnquiryStatus, RequestKind } from "@/db/generated/prisma/enums"
-import { SignOutButton } from "@/features/admin-auth/components/sign-out-button"
 import { getEnquiryList } from "@/features/enquiries/services/enquiry.service"
 import type { EnquiryListSearchParams } from "@/features/enquiries/types"
 import { requireAdmin } from "@/server/auth/authorize"
 
 type EnquiryListPageProps = {
+  accountAction?: ReactNode
   searchParams: Promise<EnquiryListSearchParams>
 }
 
-async function EnquiryAdminListPage({ searchParams }: EnquiryListPageProps) {
+async function EnquiryAdminListPage({
+  accountAction,
+  searchParams,
+}: EnquiryListPageProps) {
   await requireAdmin()
   const query = await searchParams
   const status = Object.values(EnquiryStatus).includes(
@@ -44,7 +48,7 @@ async function EnquiryAdminListPage({ searchParams }: EnquiryListPageProps) {
   }
 
   return (
-    <AdminShell activeSection="enquiries" accountAction={<SignOutButton />}>
+    <AdminShell activeSection="enquiries" accountAction={accountAction}>
       <AdminPage>
         <AdminPageHeader
           eyebrow="Admin / Enquiries"
@@ -91,12 +95,12 @@ async function EnquiryAdminListPage({ searchParams }: EnquiryListPageProps) {
         </form>
         {enquiries.length ? (
           <div className="overflow-hidden border border-border-subtle bg-card">
-            <div className="hidden min-w-[58rem] grid-cols-[7rem_13rem_8rem_1fr_10rem_8rem_3rem] items-center bg-muted px-4 py-3 lg:grid">
+            <div className="hidden grid-cols-[6.5rem_minmax(10rem,0.9fr)_minmax(13rem,1.45fr)_6rem_7.5rem_6rem_2rem] items-center bg-muted px-4 py-3 xl:grid">
               {[
                 "Reference",
                 "Customer",
-                "Request",
                 "Linked to",
+                "Request",
                 "Received",
                 "Status",
                 "",
@@ -108,10 +112,10 @@ async function EnquiryAdminListPage({ searchParams }: EnquiryListPageProps) {
             </div>
             <ul>
               {enquiries.map((enquiry) => (
-                <li key={enquiry.id} className="border-t border-border-subtle first:border-t-0 lg:min-w-[58rem]">
+                <li key={enquiry.id} className="border-t border-border-subtle first:border-t-0">
                   <Link
                     href={`/admin/enquiries/${enquiry.id}`}
-                    className="grid gap-3 p-4 hover:bg-surface-subtle lg:grid-cols-[7rem_13rem_8rem_1fr_10rem_8rem_3rem] lg:items-center"
+                    className="grid gap-3 p-4 hover:bg-surface-subtle xl:grid-cols-[6.5rem_minmax(10rem,0.9fr)_minmax(13rem,1.45fr)_6rem_7.5rem_6rem_2rem] xl:items-center"
                   >
                     <strong className="type-label">{enquiry.reference}</strong>
                     <span className="flex min-w-0 flex-col gap-1">
@@ -120,13 +124,13 @@ async function EnquiryAdminListPage({ searchParams }: EnquiryListPageProps) {
                         {enquiry.phoneWhatsApp}
                       </span>
                     </span>
-                    <span className="type-label">{enquiry.requestKind}</span>
                     <span className="min-w-0">
-                    <strong className="block truncate text-sm">{enquiry.itemName}</strong>
+                      <strong className="block text-sm xl:line-clamp-2">{enquiry.itemName}</strong>
                       <span className="text-xs text-muted-foreground">
                         {enquiry.requestKind === "ARTWORK" ? "Artwork" : "Service"} request
                       </span>
                     </span>
+                    <span className="type-label">{enquiry.requestKind}</span>
                     <span className="text-xs">{enquiry.receivedLabel}</span>
                     <AdminStatusBadge tone={enquiry.statusTone}>
                       {enquiry.status}

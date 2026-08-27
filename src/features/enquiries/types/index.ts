@@ -168,8 +168,48 @@ type EnquiryListResult = {
   totalPages: number
 }
 
+type EnquiryDetail = {
+  contact: {
+    customerName: string
+    email: string | null
+    phoneWhatsApp: string
+  }
+  delivery: {
+    fulfilmentMethodLabel: string | null
+    location: string | null
+    preferredDateLabel: string | null
+  }
+  id: string
+  linkedRecord: {
+    hasLinkedRecord: boolean
+    href: string | null
+    imageAlt: string
+    imageUrl: string | null
+    name: string
+    sourceLabel: "Linked record" | "Saved snapshot"
+  }
+  receivedLabel: string
+  reference: string
+  requestDetails: {
+    colour: string | null
+    customerNote: string | null
+    designReadinessLabel: string | null
+    finish: string | null
+    framing: string | null
+    material: string | null
+    quantity: number | null
+    sizeFormat: string | null
+  }
+  requestKind: RequestKind
+  requestKindLabel: string
+  status: EnquiryStatus
+  statusChangedLabel: string
+  statusTone: EnquiryStatusTone
+}
+
 export type {
   EnquiryActionState,
+  EnquiryDetail,
   EnquiryPersistenceInput,
   EnquiryListFilters,
   EnquiryListItem,

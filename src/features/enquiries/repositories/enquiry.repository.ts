@@ -18,6 +18,46 @@ const ENQUIRY_LIST_SELECT = {
   status: true,
 } satisfies Prisma.EnquirySelect
 
+const ENQUIRY_DETAIL_SELECT = {
+  id: true,
+  reference: true,
+  status: true,
+  requestKind: true,
+  itemNameSnapshot: true,
+  quantity: true,
+  sizeFormat: true,
+  framing: true,
+  designReadiness: true,
+  colour: true,
+  material: true,
+  finish: true,
+  fulfilmentMethod: true,
+  location: true,
+  preferredDate: true,
+  customerName: true,
+  phoneWhatsApp: true,
+  email: true,
+  customerNote: true,
+  createdAt: true,
+  updatedAt: true,
+  artwork: {
+    select: {
+      id: true,
+      title: true,
+      primaryImagePath: true,
+      primaryImageAlt: true,
+    },
+  },
+  service: {
+    select: {
+      id: true,
+      name: true,
+      primaryImagePath: true,
+      primaryImageAlt: true,
+    },
+  },
+} satisfies Prisma.EnquirySelect
+
 function enquiryListWhere(filters: EnquiryListFilters) {
   return {
     requestKind: filters.kind,
@@ -124,9 +164,20 @@ async function findEnquiryList(filters: EnquiryListFilters) {
   return { enquiries, total, newToday }
 }
 
+async function findEnquiryDetail(id: string) {
+  const { prisma } = await import("@/db/client")
+
+  return prisma.enquiry.findUnique({
+    where: { id },
+    select: ENQUIRY_DETAIL_SELECT,
+  })
+}
+
 export {
+  ENQUIRY_DETAIL_SELECT,
   ENQUIRY_LIST_SELECT,
   createEnquiryRecord,
+  findEnquiryDetail,
   findEnquiryList,
   findRecentDuplicate,
   updateEnquiryStatus,

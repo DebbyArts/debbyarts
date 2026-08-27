@@ -1,4 +1,7 @@
-import { DesignReadiness } from "@/db/generated/prisma/enums"
+import {
+  DesignReadiness,
+  FulfilmentMethod,
+} from "@/db/generated/prisma/enums"
 import type {
   EnquiryActionState,
   RequestDraft,
@@ -100,6 +103,14 @@ const ENQUIRY_STATUS_TONES = {
   RESOLVED: "resolved",
 } as const
 
+const ENQUIRY_DETAIL_VALUE_LABELS = {
+  [FulfilmentMethod.DELIVERY]: "Delivery",
+  [FulfilmentMethod.PICKUP]: "Pickup",
+  [DesignReadiness.FINISHED_DESIGN]: "Finished design ready",
+  [DesignReadiness.NEEDS_DESIGN_HELP]: "Needs design help",
+  [DesignReadiness.NOT_SURE]: "Not sure",
+} as const
+
 const REQUEST_KIND_LABELS = {
   ARTWORK: "Artwork",
   SERVICE: "Service",
@@ -111,6 +122,7 @@ export {
   DEFAULT_REQUEST_STEPS,
   DESIGN_READINESS_OPTIONS,
   DESIGN_READINESS_VALUES,
+  ENQUIRY_DETAIL_VALUE_LABELS,
   ENQUIRIES_PAGE_SIZE,
   ENQUIRY_STATUS_TONES,
   EMPTY_REQUEST_DETAIL_DRAFT,
