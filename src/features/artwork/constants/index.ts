@@ -39,6 +39,7 @@ const ARTWORK_REVALIDATION_PATHS = [
   "/request",
 ] as const
 const INITIAL_ARTWORK_ACTION_STATE: ArtworkActionState = {
+  createdId: null,
   message: "",
   status: "idle",
 }

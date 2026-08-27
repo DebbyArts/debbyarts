@@ -29,6 +29,7 @@ const SERVICE_REVALIDATION_PATHS = [
   "/request",
 ] as const
 const INITIAL_SERVICE_ACTION_STATE: ServiceActionState = {
+  createdId: null,
   message: "",
   status: "idle",
 }

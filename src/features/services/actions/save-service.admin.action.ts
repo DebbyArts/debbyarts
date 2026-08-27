@@ -81,11 +81,19 @@ async function saveServiceAction(
       if (result.status === "saved") {
         SERVICE_REVALIDATION_PATHS.forEach((path) => revalidatePath(path))
       }
-      return { status: "warning", message: result.warning }
+      return {
+        createdId: result.createdId,
+        status: "warning",
+        message: result.warning,
+      }
     }
 
     SERVICE_REVALIDATION_PATHS.forEach((path) => revalidatePath(path))
-    return { status: "success", message: "Service saved." }
+    return {
+      createdId: result.createdId,
+      status: "success",
+      message: "Service saved.",
+    }
   } catch (error) {
     return actionError(error)
   }

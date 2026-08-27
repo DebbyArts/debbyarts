@@ -81,11 +81,19 @@ async function saveArtworkAction(
       if (result.status === "saved") {
         ARTWORK_REVALIDATION_PATHS.forEach((path) => revalidatePath(path))
       }
-      return { status: "warning", message: result.warning }
+      return {
+        createdId: result.createdId,
+        status: "warning",
+        message: result.warning,
+      }
     }
 
     ARTWORK_REVALIDATION_PATHS.forEach((path) => revalidatePath(path))
-    return { status: "success", message: "Artwork saved." }
+    return {
+      createdId: result.createdId,
+      status: "success",
+      message: "Artwork saved.",
+    }
   } catch (error) {
     return actionError(error)
   }

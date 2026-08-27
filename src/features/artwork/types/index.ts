@@ -82,6 +82,7 @@ type ArtworkOptionsValue = {
 }
 
 type ArtworkActionState = {
+  createdId?: string | null
   message: string
   status: "idle" | "success" | "error" | "warning"
 }

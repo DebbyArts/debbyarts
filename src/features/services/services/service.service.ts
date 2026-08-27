@@ -42,8 +42,8 @@ type ServiceSaveInput = {
 }
 
 type ServiceSaveResult =
-  | { status: "saved"; warning?: string }
-  | { status: "not-saved"; warning: string }
+  | { createdId?: string; status: "saved"; warning?: string }
+  | { createdId?: never; status: "not-saved"; warning: string }
 
 async function getPublishedServiceGroups() {
   await connection()
@@ -107,11 +107,14 @@ async function saveService({
         }
       : {}
 
+  let createdId: string | undefined
+
   try {
     if (existing) {
       await updateService(existing.id, { ...data, ...imageData })
     } else {
-      await createService({ ...data, ...imageData })
+      const createdService = await createService({ ...data, ...imageData })
+      createdId = createdService.id
     }
   } catch (error) {
     if (uploaded) {
@@ -134,6 +137,7 @@ async function saveService({
       await deleteCatalogueImage(admin, "service", oldPath)
     } catch (error) {
       return {
+        createdId,
         status: "saved",
         warning:
           error instanceof Error
@@ -143,7 +147,7 @@ async function saveService({
     }
   }
 
-  return { status: "saved" }
+  return { createdId, status: "saved" }
 }
 
 async function saveServiceOptions(

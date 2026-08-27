@@ -1,9 +1,20 @@
 "use client"
 
 import Link from "next/link"
-import { useActionState } from "react"
+import { useRouter } from "next/navigation"
+import { useActionState, useEffect, useRef, useState, type ChangeEvent } from "react"
 
 import { AdminSectionCard } from "@/components/shared/admin/admin-page"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog"
 import { FeedbackBanner } from "@/components/ui/feedback-banner"
 import { MediaImage } from "@/components/ui/media-image"
@@ -21,15 +32,58 @@ import {
 import type { ServiceEditorValue } from "@/features/services/types"
 
 function ServiceEditor({ service }: { service: ServiceEditorValue | null }) {
+  const router = useRouter()
   const [state, action, pending] = useActionState(
     saveServiceAction.bind(null, service?.id ?? null),
     INITIAL_SERVICE_ACTION_STATE
   )
-  const completedCreate = !service && state.status === "success"
+  const formRef = useRef<HTMLFormElement>(null)
+  const imageInputRef = useRef<HTMLInputElement>(null)
+  const handledCreatedIdRef = useRef<string | null>(null)
+  const [selectedImagePreviewUrl, setSelectedImagePreviewUrl] = useState<
+    string | null
+  >(null)
+  const [createdServiceId, setCreatedServiceId] = useState<string | null>(null)
+  const imageUrl = selectedImagePreviewUrl ?? service?.imageUrl ?? undefined
+
+  useEffect(() => {
+    return () => {
+      if (selectedImagePreviewUrl) {
+        URL.revokeObjectURL(selectedImagePreviewUrl)
+      }
+    }
+  }, [selectedImagePreviewUrl])
+
+  useEffect(() => {
+    if (
+      service ||
+      !state.createdId ||
+      handledCreatedIdRef.current === state.createdId
+    ) {
+      return
+    }
+
+    handledCreatedIdRef.current = state.createdId
+    formRef.current?.reset()
+    setSelectedImagePreviewUrl(null)
+    setCreatedServiceId(state.createdId)
+  }, [service, state.createdId])
+
+  function handleImageSelection(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0]
+    setSelectedImagePreviewUrl(file ? URL.createObjectURL(file) : null)
+  }
+
+  function clearSelectedImage() {
+    if (imageInputRef.current) {
+      imageInputRef.current.value = ""
+    }
+    setSelectedImagePreviewUrl(null)
+  }
 
   return (
     <div className="flex flex-col gap-6">
-      <form action={action} className="flex flex-col gap-6">
+      <form ref={formRef} action={action} className="flex flex-col gap-6">
         {state.status !== "idle" ? (
           <FeedbackBanner
             tone={
@@ -101,11 +155,16 @@ function ServiceEditor({ service }: { service: ServiceEditorValue | null }) {
         >
           <div className="grid gap-5 md:grid-cols-[minmax(15rem,24rem)_1fr]">
             <MediaImage
-              src={service?.imageUrl ?? undefined}
-              alt={service?.primaryImageAlt ?? ""}
+              src={imageUrl}
+              alt={
+                selectedImagePreviewUrl
+                  ? "Selected service image preview"
+                  : service?.primaryImageAlt ?? ""
+              }
               sizes="(min-width: 768px) 384px, 100vw"
               className="aspect-[13/6] border border-border"
               fallback="No primary image"
+              unoptimized={Boolean(selectedImagePreviewUrl)}
             />
             <div className="flex flex-col gap-4 border border-border-subtle bg-background p-4">
               <Field>
@@ -113,14 +172,31 @@ function ServiceEditor({ service }: { service: ServiceEditorValue | null }) {
                   {service?.primaryImagePath ? "Replace image" : "Primary image"}
                 </FieldLabel>
                 <Input
+                  ref={imageInputRef}
                   id="primaryImage"
                   name="primaryImage"
                   type="file"
                   accept="image/jpeg,image/png,image/webp"
+                  onChange={handleImageSelection}
                 />
                 <FieldDescription>
                   JPEG, PNG or WebP; 8 MB maximum; 320–8,000px per side.
                 </FieldDescription>
+                {selectedImagePreviewUrl ? (
+                  <div className="flex flex-wrap items-center gap-3">
+                    <p role="status" className="text-xs text-muted-foreground">
+                      Selected image preview ready.
+                    </p>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={clearSelectedImage}
+                    >
+                      Clear selected image
+                    </Button>
+                  </div>
+                ) : null}
               </Field>
               <Field>
                 <FieldLabel htmlFor="primaryImageAlt">Image alt text</FieldLabel>
@@ -226,19 +302,43 @@ function ServiceEditor({ service }: { service: ServiceEditorValue | null }) {
           </Button>
           <Button
             type="submit"
-            disabled={pending || completedCreate}
+            disabled={pending}
             aria-busy={pending}
           >
-            {pending
-              ? "Saving…"
-              : service
-                ? "Save Changes"
-                : completedCreate
-                  ? "Service Created"
-                  : "Create Service"}
+            {pending ? "Saving…" : service ? "Save Changes" : "Create Service"}
           </Button>
         </div>
       </form>
+
+      {!service ? (
+        <AlertDialog
+          open={Boolean(createdServiceId)}
+          onOpenChange={(open) => {
+            if (!open) setCreatedServiceId(null)
+          }}
+        >
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Service created</AlertDialogTitle>
+              <AlertDialogDescription>
+                Would you like to configure the request options for this item?
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>No</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={() => {
+                  if (createdServiceId) {
+                    router.push(`/admin/services/${createdServiceId}/options`)
+                  }
+                }}
+              >
+                Yes
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      ) : null}
 
       {service ? (
         <section className="flex flex-col gap-4 border border-warning-border bg-warning-surface p-5 sm:flex-row sm:items-center sm:justify-between">

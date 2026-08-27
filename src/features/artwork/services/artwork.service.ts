@@ -42,8 +42,8 @@ type ArtworkSaveInput = {
 }
 
 type ArtworkSaveResult =
-  | { status: "saved"; warning?: string }
-  | { status: "not-saved"; warning: string }
+  | { createdId?: string; status: "saved"; warning?: string }
+  | { createdId?: never; status: "not-saved"; warning: string }
 
 async function getPublishedArtworks() {
   await connection()
@@ -105,11 +105,14 @@ async function saveArtwork({
         }
       : {}
 
+  let createdId: string | undefined
+
   try {
     if (existing) {
       await updateArtwork(existing.id, { ...data, ...imageData })
     } else {
-      await createArtwork({ ...data, ...imageData })
+      const createdArtwork = await createArtwork({ ...data, ...imageData })
+      createdId = createdArtwork.id
     }
   } catch (error) {
     if (uploaded) {
@@ -132,6 +135,7 @@ async function saveArtwork({
       await deleteCatalogueImage(admin, "artwork", oldPath)
     } catch (error) {
       return {
+        createdId,
         status: "saved",
         warning:
           error instanceof Error
@@ -141,7 +145,7 @@ async function saveArtwork({
     }
   }
 
-  return { status: "saved" }
+  return { createdId, status: "saved" }
 }
 
 async function saveArtworkOptions(

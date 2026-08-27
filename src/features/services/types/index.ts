@@ -11,6 +11,7 @@ type ServiceGroupPresentation = {
   anchorId: string; label: string; number: string; services: ServicePresentation[]; value: ServiceGroup
 }
 type ServiceActionState = {
+  createdId?: string | null
   message: string
   status: "idle" | "success" | "error" | "warning"
 }

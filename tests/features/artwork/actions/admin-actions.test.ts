@@ -118,20 +118,39 @@ describe("Artwork Admin action boundaries", () => {
     )
   })
 
-  it("creates a new record only after authorization and upload", async () => {
+  it("returns the created record ID after authorization and upload", async () => {
     const result = await saveArtworkAction(
       null,
       INITIAL_ARTWORK_ACTION_STATE,
       artworkForm()
     )
 
-    expect(result.status).toBe("success")
+    expect(result).toMatchObject({
+      createdId: "created-artwork",
+      status: "success",
+    })
     expect(mocks.requireAdmin.mock.invocationCallOrder[0]).toBeLessThan(
       mocks.uploadCatalogueImage.mock.invocationCallOrder[0]
     )
     expect(mocks.uploadCatalogueImage.mock.invocationCallOrder[0]).toBeLessThan(
       mocks.artworkCreate.mock.invocationCallOrder[0]
     )
+  })
+
+  it("keeps a saved image-cleanup warning explicit", async () => {
+    mocks.deleteCatalogueImage.mockRejectedValue(new Error("storage unavailable"))
+
+    const result = await saveArtworkAction(
+      existingArtwork.id,
+      INITIAL_ARTWORK_ACTION_STATE,
+      artworkForm()
+    )
+
+    expect(result).toMatchObject({
+      message: "storage unavailable",
+      status: "warning",
+    })
+    expect(result.createdId).toBeUndefined()
   })
 
   it("authorizes publication and request-option mutations", async () => {

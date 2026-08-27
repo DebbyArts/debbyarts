@@ -124,20 +124,39 @@ describe("Service Admin action boundaries", () => {
     )
   })
 
-  it("creates a new record only after authorization and upload", async () => {
+  it("returns the created record ID after authorization and upload", async () => {
     const result = await saveServiceAction(
       null,
       INITIAL_SERVICE_ACTION_STATE,
       serviceForm()
     )
 
-    expect(result.status).toBe("success")
+    expect(result).toMatchObject({
+      createdId: "created-service",
+      status: "success",
+    })
     expect(mocks.requireAdmin.mock.invocationCallOrder[0]).toBeLessThan(
       mocks.uploadCatalogueImage.mock.invocationCallOrder[0]
     )
     expect(mocks.uploadCatalogueImage.mock.invocationCallOrder[0]).toBeLessThan(
       mocks.serviceCreate.mock.invocationCallOrder[0]
     )
+  })
+
+  it("keeps a saved image-cleanup warning explicit", async () => {
+    mocks.deleteCatalogueImage.mockRejectedValue(new Error("storage unavailable"))
+
+    const result = await saveServiceAction(
+      existingService.id,
+      INITIAL_SERVICE_ACTION_STATE,
+      serviceForm()
+    )
+
+    expect(result).toMatchObject({
+      message: "storage unavailable",
+      status: "warning",
+    })
+    expect(result.createdId).toBeUndefined()
   })
 
   it("authorizes publication and request-option mutations", async () => {
