@@ -12,7 +12,7 @@ vi.mock("@/db/client", () => ({
   prisma: { enquiry: { update: mocks.enquiryUpdate } },
 }))
 
-import { updateEnquiryStatusAction } from "@/features/enquiries/admin/actions"
+import { updateEnquiryStatusAction } from "@/features/enquiries/actions/update-enquiry-status.admin.action"
 
 describe("Enquiry Admin action boundary", () => {
   beforeEach(() => {

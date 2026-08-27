@@ -1,64 +1,14 @@
 import type {
-  RequestArtworkOption,
   RequestDraft,
   RequestFieldErrors,
-  RequestKindValue,
-  RequestServiceOption,
-} from "@/features/enquiries/request-types"
-
-const DESIGN_READINESS_VALUES = [
-  "FINISHED_DESIGN",
-  "NEEDS_DESIGN_HELP",
-  "NOT_SURE",
-] as const
-
-type DesignReadinessValue = (typeof DESIGN_READINESS_VALUES)[number]
-type FulfilmentMethodValue = "DELIVERY" | "PICKUP"
-
-type RequestAuthority =
-  | {
-      id: string
-      kind: "ARTWORK"
-      name: string
-      record: RequestArtworkOption
-      slug: string
-    }
-  | {
-      id: string
-      kind: "SERVICE"
-      name: string
-      record: RequestServiceOption
-      slug: string
-    }
-  | {
-      id: null
-      kind: RequestKindValue
-      name: string
-      record: null
-      slug: string
-    }
-
-type NormalizedEnquiryInput = {
-  artworkId: string | null
-  colour: string | null
-  customerName: string
-  customerNote: string | null
-  designReadiness: DesignReadinessValue | null
-  email: string | null
-  finish: string | null
-  framing: string | null
-  fulfilmentMethod: FulfilmentMethodValue
-  itemNameSnapshot: string
-  itemSlugSnapshot: string
-  location: string | null
-  material: string | null
-  phoneWhatsApp: string
-  preferredDate: Date | null
-  quantity: number | null
-  requestKind: RequestKindValue
-  serviceId: string | null
-  sizeFormat: string | null
-}
+  NormalizedEnquiryInput,
+  RequestAuthority,
+} from "@/features/enquiries/types"
+import {
+  DesignReadiness,
+  FulfilmentMethod,
+} from "@/db/generated/prisma/enums"
+import { DESIGN_READINESS_VALUES } from "@/features/enquiries/constants"
 
 class RequestValidationError extends Error {
   fieldErrors: RequestFieldErrors
@@ -161,8 +111,8 @@ function validateEnquiryInput(
     errors.quantity = "Enter a positive whole-number quantity."
   }
 
-  const fulfilmentMethod = draft.fulfilmentMethod as FulfilmentMethodValue
-  if (fulfilmentMethod !== "DELIVERY" && fulfilmentMethod !== "PICKUP") {
+  const fulfilmentMethod = draft.fulfilmentMethod as FulfilmentMethod
+  if (!Object.values(FulfilmentMethod).includes(fulfilmentMethod)) {
     errors.fulfilmentMethod = "Choose delivery or pickup."
   }
   if (fulfilmentMethod === "DELIVERY" && !location) {
@@ -171,7 +121,7 @@ function validateEnquiryInput(
 
   let sizeFormat: string | null = null
   let framing: string | null = null
-  let designReadiness: DesignReadinessValue | null = null
+  let designReadiness: DesignReadiness | null = null
   let colour: string | null = null
   let material: string | null = null
   let finish: string | null = null
@@ -247,13 +197,11 @@ function validateEnquiryInput(
 
     if (service.askDesignReadiness) {
       if (
-        !DESIGN_READINESS_VALUES.includes(
-          draft.designReadiness as DesignReadinessValue
-        )
+        !DESIGN_READINESS_VALUES.includes(draft.designReadiness as DesignReadiness)
       ) {
         errors.designReadiness = "Choose your design readiness."
       } else {
-        designReadiness = draft.designReadiness as DesignReadinessValue
+        designReadiness = draft.designReadiness as DesignReadiness
       }
     } else if (draft.designReadiness.trim()) {
       errors.designReadiness = "Design readiness does not apply to this service."
@@ -336,7 +284,4 @@ export {
   normalizePhone,
   normalizePreferredDate,
   validateEnquiryInput,
-  type DesignReadinessValue,
-  type NormalizedEnquiryInput,
-  type RequestAuthority,
 }

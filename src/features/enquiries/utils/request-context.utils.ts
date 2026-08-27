@@ -1,15 +1,15 @@
 import type {
   RequestItem,
   RequestKindValue,
-} from "@/features/enquiries/request-types"
+  RequestSearchParams,
+  RequestStep,
+} from "@/features/enquiries/types"
+import {
+  CONTEXTUAL_REQUEST_STEPS,
+  DEFAULT_REQUEST_STEPS,
+} from "@/features/enquiries/constants"
 
-type SearchParamValue = string | string[] | undefined
-
-type RequestSearchParams = {
-  artwork?: SearchParamValue
-  service?: SearchParamValue
-  type?: SearchParamValue
-}
+type SearchParamValue = RequestSearchParams[keyof RequestSearchParams]
 
 type ParsedRequestContext =
   | { mode: "default"; status: "valid" }
@@ -17,18 +17,6 @@ type ParsedRequestContext =
   | { mode: "artwork"; slug: string; status: "valid" }
   | { mode: "service"; slug: string; status: "valid" }
   | { message: string; status: "invalid" }
-
-const DEFAULT_STEPS = [
-  "interest",
-  "item",
-  "details",
-  "delivery",
-  "contact",
-] as const
-
-const CONTEXTUAL_STEPS = ["details", "delivery", "contact"] as const
-
-type RequestStep = (typeof DEFAULT_STEPS)[number]
 
 function singleValue(value: SearchParamValue) {
   if (Array.isArray(value)) return { invalid: true as const }
@@ -82,7 +70,7 @@ function parseRequestContext(
 }
 
 function getRequestSteps(hasKnownContext: boolean): readonly RequestStep[] {
-  return hasKnownContext ? CONTEXTUAL_STEPS : DEFAULT_STEPS
+  return hasKnownContext ? CONTEXTUAL_REQUEST_STEPS : DEFAULT_REQUEST_STEPS
 }
 
 function getEnabledDetailFields(item: RequestItem | null) {

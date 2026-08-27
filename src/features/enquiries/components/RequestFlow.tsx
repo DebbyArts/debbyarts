@@ -20,13 +20,21 @@ import {
 import { Input } from "@/components/ui/input"
 import { RadioGroup } from "@/components/ui/radio-group"
 import { Textarea } from "@/components/ui/textarea"
-import { submitEnquiryAction } from "@/features/enquiries/actions"
-import { DESIGN_READINESS_OPTIONS } from "@/features/enquiries/constants"
+import { submitEnquiryAction } from "@/features/enquiries/actions/submit-enquiry.action"
+import {
+  COMPACT_PROGRESS_VARIANTS,
+  DESIGN_READINESS_OPTIONS,
+  EMPTY_REQUEST_DETAIL_DRAFT,
+  INITIAL_ENQUIRY_ACTION_STATE,
+  REQUEST_STAGE_VARIANTS,
+  REQUEST_STEP_LABELS,
+  REQUEST_STEP_TITLES,
+} from "@/features/enquiries/constants"
 import {
   getEnabledDetailFields,
   getRequestSteps,
   type RequestStep,
-} from "@/features/enquiries/request-context"
+} from "@/features/enquiries/utils/request-context.utils"
 import type {
   EnquiryActionState,
   RequestDraft,
@@ -35,53 +43,14 @@ import type {
   RequestItem,
   RequestKindValue,
   RequestPageData,
-} from "@/features/enquiries/request-types"
+} from "@/features/enquiries/types"
 import {
   normalizeEmail,
   normalizePhone,
   normalizePreferredDate,
-} from "@/features/enquiries/request-validation"
+} from "@/features/enquiries/validation/request.validation"
 import { cn } from "@/lib/utils"
 
-const INITIAL_ACTION_STATE: EnquiryActionState = { status: "idle" }
-
-const STEP_LABELS: Record<RequestStep, string> = {
-  interest: "Interest",
-  item: "Specific item",
-  details: "Request details",
-  delivery: "Delivery & timing",
-  contact: "Contact",
-}
-
-const STEP_TITLES: Record<RequestStep, string> = {
-  interest: "WHAT ARE YOU INTERESTED IN?",
-  item: "WHICH ITEM DO YOU NEED?",
-  details: "TELL US THE USEFUL DETAILS",
-  delivery: "WHERE AND WHEN?",
-  contact: "HOW SHOULD WE REACH YOU?",
-}
-
-const EMPTY_DETAIL_DRAFT = {
-  quantity: "",
-  sizeFormat: "",
-  framing: "",
-  designReadiness: "",
-  colour: "",
-  material: "",
-  finish: "",
-} as const
-
-const REQUEST_STAGE_VARIANTS = {
-  enter: (direction: number) => ({ opacity: 0, x: direction * 18 }),
-  centre: { opacity: 1, x: 0 },
-  exit: (direction: number) => ({ opacity: 0, x: direction * -14 }),
-}
-
-const COMPACT_PROGRESS_VARIANTS = {
-  enter: (direction: number) => ({ opacity: 0, x: direction * 8 }),
-  centre: { opacity: 1, x: 0 },
-  exit: (direction: number) => ({ opacity: 0, x: direction * -6 }),
-}
 
 function initialDraft(data: RequestPageData): RequestDraft {
   return {
@@ -89,7 +58,7 @@ function initialDraft(data: RequestPageData): RequestDraft {
     contextMode: data.initialContext.mode,
     requestKind: data.initialContext.kind ?? "",
     itemSlug: data.initialContext.itemSlug ?? "",
-    ...EMPTY_DETAIL_DRAFT,
+    ...EMPTY_REQUEST_DETAIL_DRAFT,
     fulfilmentMethod: "",
     location: "",
     preferredDate: "",
@@ -308,7 +277,7 @@ function Progress({
   const reduceMotion = useReducedMotion()
   const steps = getRequestSteps(contextual)
   const currentIndex = steps.indexOf(currentStep)
-  const currentLabel = STEP_LABELS[currentStep]
+  const currentLabel = REQUEST_STEP_LABELS[currentStep]
   const progress = (currentIndex + 1) / steps.length
 
   return (
@@ -408,7 +377,7 @@ function Progress({
                       active && "font-extrabold text-foreground"
                     )}
                   >
-                    {STEP_LABELS[step]}
+                    {REQUEST_STEP_LABELS[step]}
                   </span>
                 </div>
               </li>
@@ -624,9 +593,9 @@ function RequestStage({
   return (
     <div className="flex min-w-0 flex-col gap-7 lg:gap-8">
       <div className="flex flex-col gap-2">
-        <p className="type-label text-primary">{STEP_LABELS[currentStep]}</p>
+        <p className="type-label text-primary">{REQUEST_STEP_LABELS[currentStep]}</p>
         <h2 ref={headingRef} tabIndex={-1} className="type-h2 outline-none">
-          {STEP_TITLES[currentStep]}
+          {REQUEST_STEP_TITLES[currentStep]}
         </h2>
       </div>
 
@@ -999,7 +968,7 @@ function RequestFlow({ data }: { data: RequestPageData }) {
 
   const [actionState, formAction, pending] = useActionState(
     runSubmission,
-    INITIAL_ACTION_STATE
+    INITIAL_ENQUIRY_ACTION_STATE
   )
 
   function updateDraft(field: RequestField, value: string | boolean) {
@@ -1014,7 +983,7 @@ function RequestFlow({ data }: { data: RequestPageData }) {
       if (field === "requestKind") {
         return {
           ...current,
-          ...EMPTY_DETAIL_DRAFT,
+          ...EMPTY_REQUEST_DETAIL_DRAFT,
           requestKind: value as RequestKindValue,
           itemSlug: "",
           broadRequest: false,
@@ -1023,7 +992,7 @@ function RequestFlow({ data }: { data: RequestPageData }) {
       }
 
       if (field === "itemSlug" || field === "broadRequest") {
-        return { ...current, ...EMPTY_DETAIL_DRAFT, [field]: value }
+        return { ...current, ...EMPTY_REQUEST_DETAIL_DRAFT, [field]: value }
       }
 
       return { ...current, [field]: value }

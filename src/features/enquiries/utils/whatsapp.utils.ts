@@ -1,4 +1,4 @@
-import type { NormalizedEnquiryInput } from "@/features/enquiries/request-validation"
+import type { NormalizedEnquiryInput } from "@/features/enquiries/types"
 
 const WHATSAPP_NUMBER = "2348141780805"
 

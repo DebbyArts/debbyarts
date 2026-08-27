@@ -1,26 +1,39 @@
-import { broadSnapshot } from "@/features/enquiries/request-context"
-import { generateEnquiryReference } from "@/features/enquiries/enquiry-reference"
+import type { EnquiryStatus } from "@/db/generated/prisma/enums"
+import { broadSnapshot } from "@/features/enquiries/utils/request-context.utils"
+import { generateEnquiryReference } from "@/features/enquiries/utils/enquiry-reference.utils"
 import type {
+  EnquiryPersistenceInput,
+  EnquiryListFilters,
+  EnquiryListResult,
+  NormalizedEnquiryInput,
   RequestArtworkOption,
   RequestDraft,
   RequestFieldErrors,
   RequestServiceOption,
-} from "@/features/enquiries/request-types"
+  RequestAuthority,
+} from "@/features/enquiries/types"
 import {
   RequestValidationError,
   validateEnquiryInput,
-  type NormalizedEnquiryInput,
-  type RequestAuthority,
-} from "@/features/enquiries/request-validation"
+} from "@/features/enquiries/validation/request.validation"
 import {
   buildWhatsAppSummary,
   buildWhatsAppUrl,
-} from "@/features/enquiries/whatsapp"
+} from "@/features/enquiries/utils/whatsapp.utils"
+import {
+  createEnquiryRecord,
+  findEnquiryList,
+  findRecentDuplicate,
+  updateEnquiryStatus as updateEnquiryStatusRecord,
+} from "@/features/enquiries/repositories/enquiry.repository"
+import { mapToEnquiryListItem } from "@/features/enquiries/mappers/enquiry.mapper"
+import { ENQUIRIES_PAGE_SIZE } from "@/features/enquiries/constants"
+import {
+  getPublishedRequestArtwork,
+  getPublishedRequestService,
+} from "@/server/request-catalogue"
 
-type EnquiryWriteRecord = NormalizedEnquiryInput & {
-  reference: string
-  whatsappSummary: string
-}
+type EnquiryWriteRecord = EnquiryPersistenceInput
 
 type CreateEnquiryDependencies = {
   create: (record: EnquiryWriteRecord) => Promise<void>
@@ -184,10 +197,39 @@ async function createEnquiry(
   throw new Error("Unable to allocate an enquiry reference.")
 }
 
+async function submitEnquiry(draft: RequestDraft, websiteOrigin: string | null) {
+  return createEnquiry(draft, websiteOrigin, {
+    findArtwork: getPublishedRequestArtwork,
+    findService: getPublishedRequestService,
+    findDuplicate: findRecentDuplicate,
+    create: createEnquiryRecord,
+  })
+}
+
+async function updateEnquiryStatus(enquiryId: string, status: EnquiryStatus) {
+  return updateEnquiryStatusRecord(enquiryId, status)
+}
+
+async function getEnquiryList(
+  filters: EnquiryListFilters
+): Promise<EnquiryListResult> {
+  const { enquiries, total, newToday } = await findEnquiryList(filters)
+
+  return {
+    items: enquiries.map(mapToEnquiryListItem),
+    total,
+    newToday,
+    totalPages: Math.max(1, Math.ceil(total / ENQUIRIES_PAGE_SIZE)),
+  }
+}
+
 export {
   RequestContextUnavailableError,
   createEnquiry,
   resolveAuthority,
+  getEnquiryList,
+  submitEnquiry,
+  updateEnquiryStatus,
   type CreateEnquiryDependencies,
   type CreateEnquiryResult,
   type EnquiryWriteRecord,

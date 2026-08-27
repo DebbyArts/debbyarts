@@ -1,16 +1,17 @@
 import "server-only"
 
-import { parseRequestContext } from "@/features/enquiries/request-context"
+import { parseRequestContext } from "@/features/enquiries/utils/request-context.utils"
 import type {
   InvalidRequestPageData,
   RequestPageData,
-} from "@/features/enquiries/request-types"
+  RequestSearchParams,
+} from "@/features/enquiries/types"
 import { getPublishedRequestCatalogue } from "@/server/request-catalogue"
 
 type LoadRequestPageResult = RequestPageData | InvalidRequestPageData
 
 async function loadRequestPage(
-  searchParams: Record<string, string | string[] | undefined>
+  searchParams: RequestSearchParams
 ): Promise<LoadRequestPageResult> {
   const parsed = parseRequestContext({
     artwork: searchParams.artwork,

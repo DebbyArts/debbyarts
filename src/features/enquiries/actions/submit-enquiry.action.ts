@@ -4,14 +4,15 @@ import { headers } from "next/headers"
 
 import {
   RequestContextUnavailableError,
-} from "@/features/enquiries/create-enquiry"
+  submitEnquiry,
+} from "@/features/enquiries/services/enquiry.service"
+import { REQUEST_CONTEXT_MODES } from "@/features/enquiries/constants"
 import type {
   EnquiryActionState,
   RequestContextMode,
   RequestDraft,
-} from "@/features/enquiries/request-types"
-import { RequestValidationError } from "@/features/enquiries/request-validation"
-import { persistEnquiry } from "@/features/enquiries/server/persist-enquiry"
+} from "@/features/enquiries/types"
+import { RequestValidationError } from "@/features/enquiries/validation/request.validation"
 
 function formValue(formData: FormData, field: string) {
   const value = formData.get(field)
@@ -20,12 +21,9 @@ function formValue(formData: FormData, field: string) {
 
 function requestDraftFromFormData(formData: FormData): RequestDraft {
   const contextModeValue = formValue(formData, "contextMode")
-  const contextMode: RequestContextMode = [
-    "default",
-    "art-commission",
-    "artwork",
-    "service",
-  ].includes(contextModeValue)
+  const contextMode: RequestContextMode = REQUEST_CONTEXT_MODES.includes(
+    contextModeValue as RequestContextMode
+  )
     ? (contextModeValue as RequestContextMode)
     : "default"
 
@@ -69,7 +67,7 @@ async function submitEnquiryAction(
   const draft = requestDraftFromFormData(formData)
 
   try {
-    const result = await persistEnquiry(draft, await requestOrigin())
+    const result = await submitEnquiry(draft, await requestOrigin())
     return {
       status: "success",
       reference: result.reference,

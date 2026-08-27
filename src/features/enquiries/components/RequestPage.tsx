@@ -3,8 +3,8 @@ import Link from "next/link"
 import { Container } from "@/components/ui/container"
 import { ErrorState } from "@/components/ui/states/error"
 import { Button } from "@/components/ui/button"
-import { RequestFlow } from "@/features/enquiries/components/request-flow"
-import type { LoadRequestPageResult } from "@/features/enquiries/server/load-request-page"
+import { RequestFlow } from "@/features/enquiries/components/RequestFlow"
+import type { LoadRequestPageResult } from "@/features/enquiries/services/request-page.service"
 
 function RequestIntroduction() {
   return (

@@ -3,16 +3,16 @@ import { describe, expect, test } from "vitest"
 import type {
   RequestArtworkOption,
   RequestDraft,
+  RequestAuthority,
   RequestServiceOption,
-} from "@/features/enquiries/request-types"
+} from "@/features/enquiries/types"
 import {
   RequestValidationError,
   normalizeEmail,
   normalizePhone,
   normalizePreferredDate,
   validateEnquiryInput,
-  type RequestAuthority,
-} from "@/features/enquiries/request-validation"
+} from "@/features/enquiries/validation/request.validation"
 
 const NOW = new Date("2026-08-24T12:00:00.000Z")
 

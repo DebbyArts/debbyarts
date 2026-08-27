@@ -5,11 +5,11 @@ import {
   createEnquiry,
   type CreateEnquiryDependencies,
   type EnquiryWriteRecord,
-} from "@/features/enquiries/create-enquiry"
+} from "@/features/enquiries/services/enquiry.service"
 import type {
   RequestDraft,
   RequestServiceOption,
-} from "@/features/enquiries/request-types"
+} from "@/features/enquiries/types"
 
 const NOW = new Date("2026-08-24T12:00:00.000Z")
 

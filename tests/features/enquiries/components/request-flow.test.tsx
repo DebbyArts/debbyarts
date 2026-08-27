@@ -1,15 +1,17 @@
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react"
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest"
 
-import type { RequestPageData } from "@/features/enquiries/request-types"
+import type { RequestPageData } from "@/features/enquiries/types"
 
 const { submitEnquiryAction } = vi.hoisted(() => ({
   submitEnquiryAction: vi.fn(),
 }))
 
-vi.mock("@/features/enquiries/actions", () => ({ submitEnquiryAction }))
+vi.mock("@/features/enquiries/actions/submit-enquiry.action", () => ({
+  submitEnquiryAction,
+}))
 
-import { RequestFlow } from "@/features/enquiries/components/request-flow"
+import { RequestFlow } from "@/features/enquiries/components/RequestFlow"
 
 class ResizeObserverMock {
   disconnect() {}

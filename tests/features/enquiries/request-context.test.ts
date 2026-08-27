@@ -4,11 +4,11 @@ import {
   getEnabledDetailFields,
   getRequestSteps,
   parseRequestContext,
-} from "@/features/enquiries/request-context"
+} from "@/features/enquiries/utils/request-context.utils"
 import type {
   RequestArtworkOption,
   RequestServiceOption,
-} from "@/features/enquiries/request-types"
+} from "@/features/enquiries/types"
 
 const artwork: RequestArtworkOption = {
   id: "artwork-1",

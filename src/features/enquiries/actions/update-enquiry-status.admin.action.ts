@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache"
 
 import { EnquiryStatus } from "@/db/generated/prisma/enums"
+import { updateEnquiryStatus } from "@/features/enquiries/services/enquiry.service"
 import { requireAdmin } from "@/server/auth/authorize"
 
 async function updateEnquiryStatusAction(
@@ -10,16 +11,12 @@ async function updateEnquiryStatusAction(
   statusValue: string
 ) {
   await requireAdmin()
-  const { prisma } = await import("@/db/client")
 
   if (!Object.values(EnquiryStatus).includes(statusValue as EnquiryStatus)) {
     throw new Error("Invalid enquiry status.")
   }
 
-  await prisma.enquiry.update({
-    where: { id: enquiryId },
-    data: { status: statusValue as EnquiryStatus },
-  })
+  await updateEnquiryStatus(enquiryId, statusValue as EnquiryStatus)
   revalidatePath("/admin/enquiries")
   revalidatePath(`/admin/enquiries/${enquiryId}`)
 }

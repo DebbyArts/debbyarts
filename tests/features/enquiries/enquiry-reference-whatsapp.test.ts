@@ -1,12 +1,12 @@
 import { describe, expect, test } from "vitest"
 
-import { generateEnquiryReference } from "@/features/enquiries/enquiry-reference"
-import type { NormalizedEnquiryInput } from "@/features/enquiries/request-validation"
+import { generateEnquiryReference } from "@/features/enquiries/utils/enquiry-reference.utils"
+import type { NormalizedEnquiryInput } from "@/features/enquiries/types"
 import {
   WHATSAPP_NUMBER,
   buildWhatsAppSummary,
   buildWhatsAppUrl,
-} from "@/features/enquiries/whatsapp"
+} from "@/features/enquiries/utils/whatsapp.utils"
 
 const enquiry: NormalizedEnquiryInput = {
   requestKind: "SERVICE",

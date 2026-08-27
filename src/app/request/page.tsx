@@ -1,8 +1,10 @@
 import type { Metadata } from "next"
 
-import { RequestPage } from "@/features/enquiries/components/request-page"
-import { loadRequestPage } from "@/features/enquiries/server/load-request-page"
 import { PublicShell } from "@/components/shared/public/public-shell"
+import {
+  RequestFeaturePage,
+  type RequestSearchParams,
+} from "@/features/enquiries"
 
 export const metadata: Metadata = {
   title: "Make a Request | Debby Art & Prints",
@@ -11,15 +13,13 @@ export const metadata: Metadata = {
 }
 
 type RequestRouteProps = {
-  searchParams: Promise<Record<string, string | string[] | undefined>>
+  searchParams: Promise<RequestSearchParams>
 }
 
-export default async function RequestRoute({ searchParams }: RequestRouteProps) {
-  const data = await loadRequestPage(await searchParams)
-
+export default function RequestRoute({ searchParams }: RequestRouteProps) {
   return (
     <PublicShell activePath="/request">
-      <RequestPage data={data} />
+      <RequestFeaturePage searchParams={searchParams} />
     </PublicShell>
   )
 }
