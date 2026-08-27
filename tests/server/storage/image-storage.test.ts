@@ -75,5 +75,19 @@ describe("catalogue image safety", () => {
     expect(() =>
       assertOwnedImagePath("someone-else/artwork/file.jpg", "abc-123", "artwork")
     ).toThrow(ImageStorageError)
+    expect(() =>
+      assertOwnedImagePath(
+        "seed/artwork/leopard-painting/additional-01.webp",
+        "abc-123",
+        "artwork"
+      )
+    ).not.toThrow()
+    expect(() =>
+      assertOwnedImagePath(
+        "seed/artwork/leopard-painting/additional-08.webp",
+        "abc-123",
+        "artwork"
+      )
+    ).toThrow(ImageStorageError)
   })
 })

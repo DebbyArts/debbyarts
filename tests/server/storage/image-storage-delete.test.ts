@@ -92,6 +92,15 @@ describe("catalogue image deletion", () => {
     expect(remove).toHaveBeenCalledWith([path])
   })
 
+  it("allows owner-authorized cleanup of an unreferenced deterministic seed object", async () => {
+    const path = "seed/artwork/leopard-painting/cover.webp"
+    remove.mockResolvedValue({ data: [{ name: path }], error: null })
+
+    await deleteCatalogueImage(admin as never, "artwork", path)
+
+    expect(remove).toHaveBeenCalledWith([path])
+  })
+
   it("reports a Storage cleanup failure after reference checks are clear", async () => {
     const path = "abc-123/artwork/123e4567-e89b-12d3-a456-426614174000.jpg"
     remove.mockResolvedValue({

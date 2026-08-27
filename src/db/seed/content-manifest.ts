@@ -16,7 +16,7 @@ type ArtworkManifestItem = {
     | "DIGITAL_ARTWORK"
   mediumFormat: null
   displayedPieceDimensions: null
-  availability: null
+  availability: "MADE_TO_ORDER"
   pricingMode: "NONE"
   priceAmount: null
   published: boolean
@@ -24,9 +24,9 @@ type ArtworkManifestItem = {
   displayOrder: number
   primaryImage: SeedImage
   additionalImages: SeedImage[]
-  availableSizes: []
+  availableSizes: readonly []
   framingEnabled: false
-  framingOptions: []
+  framingOptions: readonly []
   askQuantity: false
 }
 
@@ -69,7 +69,7 @@ const seedArtwork: ArtworkManifestItem[] = [
     category: "PAINTING",
     mediumFormat: null,
     displayedPieceDimensions: null,
-    availability: null,
+    availability: "MADE_TO_ORDER",
     pricingMode: "NONE",
     priceAmount: null,
     published: true,
@@ -107,7 +107,7 @@ const seedArtwork: ArtworkManifestItem[] = [
     category: "PAINTING",
     mediumFormat: null,
     displayedPieceDimensions: null,
-    availability: null,
+    availability: "MADE_TO_ORDER",
     pricingMode: "NONE",
     priceAmount: null,
     published: true,
@@ -132,7 +132,7 @@ const seedArtwork: ArtworkManifestItem[] = [
     category: "PAINTING",
     mediumFormat: null,
     displayedPieceDimensions: null,
-    availability: null,
+    availability: "MADE_TO_ORDER",
     pricingMode: "NONE",
     priceAmount: null,
     published: true,
@@ -157,7 +157,7 @@ const seedArtwork: ArtworkManifestItem[] = [
     category: "PAINTING",
     mediumFormat: null,
     displayedPieceDimensions: null,
-    availability: null,
+    availability: "MADE_TO_ORDER",
     pricingMode: "NONE",
     priceAmount: null,
     published: true,
@@ -182,7 +182,7 @@ const seedArtwork: ArtworkManifestItem[] = [
     category: "PAINTING",
     mediumFormat: null,
     displayedPieceDimensions: null,
-    availability: null,
+    availability: "MADE_TO_ORDER",
     pricingMode: "NONE",
     priceAmount: null,
     published: true,
@@ -207,7 +207,7 @@ const seedArtwork: ArtworkManifestItem[] = [
     category: "PENCIL_PORTRAIT",
     mediumFormat: null,
     displayedPieceDimensions: null,
-    availability: null,
+    availability: "MADE_TO_ORDER",
     pricingMode: "NONE",
     priceAmount: null,
     published: true,
@@ -232,7 +232,7 @@ const seedArtwork: ArtworkManifestItem[] = [
     category: "FRAMED_CUSTOM_ARTWORK",
     mediumFormat: null,
     displayedPieceDimensions: null,
-    availability: null,
+    availability: "MADE_TO_ORDER",
     pricingMode: "NONE",
     priceAmount: null,
     published: true,
@@ -257,7 +257,7 @@ const seedArtwork: ArtworkManifestItem[] = [
     category: "FRAMED_CUSTOM_ARTWORK",
     mediumFormat: null,
     displayedPieceDimensions: null,
-    availability: null,
+    availability: "MADE_TO_ORDER",
     pricingMode: "NONE",
     priceAmount: null,
     published: true,
@@ -282,7 +282,7 @@ const seedArtwork: ArtworkManifestItem[] = [
     category: "FRAMED_CUSTOM_ARTWORK",
     mediumFormat: null,
     displayedPieceDimensions: null,
-    availability: null,
+    availability: "MADE_TO_ORDER",
     pricingMode: "NONE",
     priceAmount: null,
     published: true,
@@ -307,7 +307,7 @@ const seedArtwork: ArtworkManifestItem[] = [
     category: "FRAMED_CUSTOM_ARTWORK",
     mediumFormat: null,
     displayedPieceDimensions: null,
-    availability: null,
+    availability: "MADE_TO_ORDER",
     pricingMode: "NONE",
     priceAmount: null,
     published: true,
@@ -332,7 +332,7 @@ const seedArtwork: ArtworkManifestItem[] = [
     category: "FRAMED_CUSTOM_ARTWORK",
     mediumFormat: null,
     displayedPieceDimensions: null,
-    availability: null,
+    availability: "MADE_TO_ORDER",
     pricingMode: "NONE",
     priceAmount: null,
     published: true,
@@ -361,12 +361,12 @@ const seedServices: ServiceManifestItem[] = [
     group: "PERSONALISED_PRODUCTS",
     pricingMode: "NONE",
     priceAmount: null,
-    published: true,
+    published: false,
     displayOrder: 1,
     primaryImage: null,
     requestDefaults: {
       askQuantity: false,
-      askSizeFormat: true,
+      askSizeFormat: false,
       askDesignReadiness: true,
       askColour: false,
       askFinish: false,
@@ -381,12 +381,12 @@ const seedServices: ServiceManifestItem[] = [
     group: "PERSONALISED_PRODUCTS",
     pricingMode: "NONE",
     priceAmount: null,
-    published: true,
+    published: false,
     displayOrder: 2,
     primaryImage: null,
     requestDefaults: {
       askQuantity: false,
-      askSizeFormat: true,
+      askSizeFormat: false,
       askDesignReadiness: true,
       askColour: true,
       askFinish: true,
@@ -400,7 +400,7 @@ const seedServices: ServiceManifestItem[] = [
     group: "BRANDING_SIGNAGE",
     pricingMode: "NONE",
     priceAmount: null,
-    published: true,
+    published: false,
     displayOrder: 3,
     primaryImage: null,
     requestDefaults: {
@@ -429,7 +429,7 @@ const seedServices: ServiceManifestItem[] = [
     },
     requestDefaults: {
       askQuantity: true,
-      askSizeFormat: true,
+      askSizeFormat: false,
       askDesignReadiness: true,
       askColour: true,
       askFinish: false,
@@ -453,7 +453,7 @@ const seedServices: ServiceManifestItem[] = [
     },
     requestDefaults: {
       askQuantity: true,
-      askSizeFormat: true,
+      askSizeFormat: false,
       askDesignReadiness: true,
       askColour: false,
       askFinish: false,
@@ -467,12 +467,12 @@ const seedServices: ServiceManifestItem[] = [
     group: "PRINT_EVENT_MATERIALS",
     pricingMode: "NONE",
     priceAmount: null,
-    published: true,
+    published: false,
     displayOrder: 6,
     primaryImage: null,
     requestDefaults: {
       askQuantity: true,
-      askSizeFormat: true,
+      askSizeFormat: false,
       askDesignReadiness: true,
       askColour: true,
       askFinish: false,
@@ -486,12 +486,12 @@ const seedServices: ServiceManifestItem[] = [
     group: "PRINT_EVENT_MATERIALS",
     pricingMode: "NONE",
     priceAmount: null,
-    published: true,
+    published: false,
     displayOrder: 7,
     primaryImage: null,
     requestDefaults: {
       askQuantity: true,
-      askSizeFormat: true,
+      askSizeFormat: false,
       askDesignReadiness: true,
       askColour: true,
       askFinish: true,
@@ -505,12 +505,12 @@ const seedServices: ServiceManifestItem[] = [
     group: "PRINT_EVENT_MATERIALS",
     pricingMode: "NONE",
     priceAmount: null,
-    published: true,
+    published: false,
     displayOrder: 8,
     primaryImage: null,
     requestDefaults: {
       askQuantity: true,
-      askSizeFormat: true,
+      askSizeFormat: false,
       askDesignReadiness: true,
       askColour: true,
       askFinish: false,
@@ -524,12 +524,12 @@ const seedServices: ServiceManifestItem[] = [
     group: "BRANDING_SIGNAGE",
     pricingMode: "NONE",
     priceAmount: null,
-    published: true,
+    published: false,
     displayOrder: 9,
     primaryImage: null,
     requestDefaults: {
       askQuantity: true,
-      askSizeFormat: true,
+      askSizeFormat: false,
       askDesignReadiness: true,
       askColour: false,
       askFinish: false,
@@ -553,7 +553,7 @@ const seedServices: ServiceManifestItem[] = [
     },
     requestDefaults: {
       askQuantity: true,
-      askSizeFormat: true,
+      askSizeFormat: false,
       askDesignReadiness: true,
       askColour: false,
       askFinish: true,
@@ -567,12 +567,12 @@ const seedServices: ServiceManifestItem[] = [
     group: "BRANDING_SIGNAGE",
     pricingMode: "NONE",
     priceAmount: null,
-    published: true,
+    published: false,
     displayOrder: 11,
     primaryImage: null,
     requestDefaults: {
       askQuantity: false,
-      askSizeFormat: true,
+      askSizeFormat: false,
       askDesignReadiness: true,
       askColour: true,
       askFinish: false,
@@ -596,7 +596,7 @@ const seedServices: ServiceManifestItem[] = [
     },
     requestDefaults: {
       askQuantity: true,
-      askSizeFormat: true,
+      askSizeFormat: false,
       askDesignReadiness: true,
       askColour: true,
       askFinish: false,
@@ -620,7 +620,7 @@ const seedServices: ServiceManifestItem[] = [
     },
     requestDefaults: {
       askQuantity: true,
-      askSizeFormat: true,
+      askSizeFormat: false,
       askDesignReadiness: true,
       askColour: true,
       askFinish: false,
@@ -629,4 +629,11 @@ const seedServices: ServiceManifestItem[] = [
   },
 ]
 
-export { seedArtwork, seedServices }
+export {
+  seedArtwork,
+  seedServices,
+  type ArtworkManifestItem,
+  type SeedImage,
+  type ServiceManifestItem,
+  type ServiceRequestDefaults,
+}
