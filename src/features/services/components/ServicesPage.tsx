@@ -6,20 +6,12 @@ import { EmptyState } from "@/components/ui/states/empty"
 import { MediaImage } from "@/components/ui/media-image"
 import { Reveal } from "@/components/shared/motion/reveal"
 import { Button } from "@/components/ui/button"
+import { REQUEST_PREPARATION_DETAILS } from "@/features/services/constants"
 import type {
   ServiceGroupPresentation,
   ServicePresentation,
 } from "@/features/services/types"
 import { cn } from "@/lib/utils"
-
-const REQUEST_PREPARATION_DETAILS = [
-  "Size / format",
-  "Quantity",
-  "Wording / design reference",
-  "Colour / finish",
-  "Deadline / event date",
-  "Delivery / pickup need",
-] as const
 
 type ServicesPageProps = {
   groups: ServiceGroupPresentation[]

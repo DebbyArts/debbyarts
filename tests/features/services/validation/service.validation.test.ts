@@ -4,7 +4,7 @@ import {
   parseServiceMutation,
   parseServiceRequestOptions,
   ServiceValidationError,
-} from "@/features/services/admin/service-validation"
+} from "@/features/services/validation/service.validation"
 
 function validServiceForm() {
   const form = new FormData()

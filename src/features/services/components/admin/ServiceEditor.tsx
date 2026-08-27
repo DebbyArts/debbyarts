@@ -11,29 +11,14 @@ import { Button } from "@/components/ui/button"
 import { Field, FieldDescription, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
+import { deleteServiceAction } from "@/features/services/actions/delete-service.admin.action"
+import { saveServiceAction } from "@/features/services/actions/save-service.admin.action"
+import { unpublishServiceAction } from "@/features/services/actions/unpublish-service.admin.action"
 import {
-  deleteServiceAction,
-  saveServiceAction,
-  unpublishServiceAction,
-} from "@/features/services/admin/actions"
-import { INITIAL_SERVICE_ACTION_STATE } from "@/features/services/admin/state"
-
-type ServiceEditorValue = {
-  description: string
-  displayOrder: number
-  group: string
-  id: string
-  imageUrl: string | null
-  name: string
-  priceAmount: string | null
-  pricingMode: string
-  primaryImageAlt: string | null
-  primaryImagePath: string | null
-  published: boolean
-}
-
-const SELECT_CLASS =
-  "h-12 w-full rounded-sm border border-input bg-card px-4 text-base focus-visible:border-info focus-visible:ring-[3px] focus-visible:ring-ring/70"
+  INITIAL_SERVICE_ACTION_STATE,
+  SERVICE_ADMIN_SELECT_CLASS,
+} from "@/features/services/constants"
+import type { ServiceEditorValue } from "@/features/services/types"
 
 function ServiceEditor({ service }: { service: ServiceEditorValue | null }) {
   const [state, action, pending] = useActionState(
@@ -83,7 +68,7 @@ function ServiceEditor({ service }: { service: ServiceEditorValue | null }) {
                 id="group"
                 name="group"
                 required
-                className={SELECT_CLASS}
+                className={SERVICE_ADMIN_SELECT_CLASS}
                 defaultValue={service?.group ?? "PERSONALISED_PRODUCTS"}
               >
                 <option value="PERSONALISED_PRODUCTS">
@@ -167,7 +152,7 @@ function ServiceEditor({ service }: { service: ServiceEditorValue | null }) {
               <select
                 id="pricingMode"
                 name="pricingMode"
-                className={SELECT_CLASS}
+                className={SERVICE_ADMIN_SELECT_CLASS}
                 defaultValue={service?.pricingMode ?? "NONE"}
               >
                 <option value="NONE">No public price</option>
@@ -290,4 +275,4 @@ function ServiceEditor({ service }: { service: ServiceEditorValue | null }) {
   )
 }
 
-export { ServiceEditor, type ServiceEditorValue }
+export { ServiceEditor }

@@ -1,26 +1,8 @@
 import { PricingMode, ServiceGroup } from "@/db/generated/prisma/enums"
-
-type ServiceMutationInput = {
-  description: string
-  displayOrder: number
-  group: ServiceGroup
-  name: string
-  priceAmount: string | null
-  pricingMode: PricingMode
-  primaryImageAlt: string | null
-  published: boolean
-  slug: string
-}
-
-type ServiceRequestOptionsInput = {
-  askColour: boolean
-  askDesignReadiness: boolean
-  askFinish: boolean
-  askMaterial: boolean
-  askQuantity: boolean
-  askSizeFormat: boolean
-  sizeFormatOptions: string[]
-}
+import type {
+  ServiceMutationInput,
+  ServiceRequestOptionsInput,
+} from "@/features/services/types"
 
 class ServiceValidationError extends Error {
   constructor(message: string) {
@@ -168,6 +150,4 @@ export {
   parseServiceMutation,
   parseServiceRequestOptions,
   slugify,
-  type ServiceMutationInput,
-  type ServiceRequestOptionsInput,
 }

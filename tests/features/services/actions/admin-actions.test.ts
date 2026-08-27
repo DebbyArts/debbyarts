@@ -31,13 +31,11 @@ vi.mock("@/server/storage/image-storage", async (importOriginal) => ({
   uploadCatalogueImage: mocks.uploadCatalogueImage,
 }))
 
-import {
-  deleteServiceAction,
-  saveServiceAction,
-  saveServiceOptionsAction,
-  unpublishServiceAction,
-} from "@/features/services/admin/actions"
-import { INITIAL_SERVICE_ACTION_STATE } from "@/features/services/admin/state"
+import { deleteServiceAction } from "@/features/services/actions/delete-service.admin.action"
+import { saveServiceOptionsAction } from "@/features/services/actions/save-service-options.admin.action"
+import { saveServiceAction } from "@/features/services/actions/save-service.admin.action"
+import { unpublishServiceAction } from "@/features/services/actions/unpublish-service.admin.action"
+import { INITIAL_SERVICE_ACTION_STATE } from "@/features/services/constants"
 
 const admin = { email: "owner@example.com", id: "owner-id" }
 const existingService = {

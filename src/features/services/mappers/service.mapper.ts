@@ -7,12 +7,32 @@ import {
   SERVICE_GROUP_ORDER,
 } from "@/features/services/constants"
 import type {
+  ServiceAdminListItem,
+  ServiceEditorValue,
   PublishedServiceRecord,
   ServiceGroupPresentation,
+  ServiceOptionsValue,
   ServicePresentation,
   ServicePricingPresentation,
   ServiceProjectionOptions,
 } from "@/features/services/types"
+import type { Prisma } from "@/db/generated/prisma/client"
+import {
+  ADMIN_SERVICE_LIST_SELECT,
+  SERVICE_EDITOR_SELECT,
+  SERVICE_OPTIONS_SELECT,
+} from "@/features/services/repositories/service.repository"
+import { getPublicMediaUrl } from "@/server/storage/public-url"
+
+type AdminServiceListRecord = Prisma.ServiceGetPayload<{
+  select: typeof ADMIN_SERVICE_LIST_SELECT
+}>
+type ServiceEditorRecord = Prisma.ServiceGetPayload<{
+  select: typeof SERVICE_EDITOR_SELECT
+}>
+type ServiceOptionsRecord = Prisma.ServiceGetPayload<{
+  select: typeof SERVICE_OPTIONS_SELECT
+}>
 
 function invalidPricingError(service: PublishedServiceRecord) {
   return new Error(
@@ -197,10 +217,51 @@ function projectServiceGroups(
   })).filter((group) => group.services.length > 0)
 }
 
+function mapToServiceAdminListItem(
+  service: AdminServiceListRecord
+): ServiceAdminListItem {
+  return {
+    displayOrder: service.displayOrder,
+    group: service.group,
+    id: service.id,
+    imageUrl: getPublicMediaUrl(service.primaryImagePath),
+    name: service.name,
+    primaryImageAlt: service.primaryImageAlt,
+    published: service.published,
+  }
+}
+
+function mapToServiceEditorValue(
+  service: ServiceEditorRecord
+): ServiceEditorValue {
+  return {
+    description: service.description,
+    displayOrder: service.displayOrder,
+    group: service.group,
+    id: service.id,
+    imageUrl: getPublicMediaUrl(service.primaryImagePath),
+    name: service.name,
+    priceAmount: service.priceAmount?.toString() ?? null,
+    pricingMode: service.pricingMode,
+    primaryImageAlt: service.primaryImageAlt,
+    primaryImagePath: service.primaryImagePath,
+    published: service.published,
+  }
+}
+
+function mapToServiceOptionsValue(
+  service: ServiceOptionsRecord
+): ServiceOptionsValue {
+  return service
+}
+
 export {
   deriveOptionCues,
   derivePricingPresentation,
   getServiceRequestHref,
+  mapToServiceAdminListItem,
+  mapToServiceEditorValue,
+  mapToServiceOptionsValue,
   projectServiceGroups,
   resolveImageSource,
 }
