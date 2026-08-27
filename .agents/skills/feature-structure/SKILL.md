@@ -24,6 +24,14 @@ Apply only the rules defined here. Preserve everything else.
 - Keep feature-specific application types in `types/index.ts`.
 - Keep feature code inside its owning feature unless it is genuinely shared.
 
+## Constants
+
+- Treat immutable option lists, labels, lookup maps, ordering values, route values, and fixed configuration as constants.
+- Feature-owned constants belong in `constants/index.ts`. Do not keep constant-only files at the feature root.
+- Place a constant with the feature that owns and consumes the behaviour, not automatically with the feature where it currently lives.
+- Constants genuinely used by multiple features belong in `shared/constants/`; features must not import constants from one another.
+- Do not place functions, mutable state, or runtime-derived values in constants modules.
+
 ## Public feature boundary
 
 - Each feature exposes its public API through an `index.ts` at the feature root.
