@@ -8,6 +8,13 @@ import {
   parseServiceRequestOptions,
   ServiceValidationError,
 } from "@/features/services/admin/service-validation"
+import {
+  createService,
+  deleteService,
+  findServiceById,
+  findServiceImagePath,
+  updateService,
+} from "@/features/services/repositories/service-admin.repository"
 import { requireAdmin } from "@/server/auth/authorize"
 import {
   deleteCatalogueImage,
@@ -59,9 +66,8 @@ async function saveServiceAction(
   formData: FormData
 ): Promise<ServiceActionState> {
   const admin = await requireAdmin()
-  const { prisma } = await import("@/db/client")
   const existing = serviceId
-    ? await prisma.service.findUnique({ where: { id: serviceId } })
+    ? await findServiceById(serviceId)
     : null
   if (serviceId && !existing) {
     return { status: "error", message: "Service not found." }
@@ -95,12 +101,9 @@ async function saveServiceAction(
 
     try {
       if (existing) {
-        await prisma.service.update({
-          where: { id: existing.id },
-          data: { ...input, ...imageData },
-        })
+        await updateService(existing.id, { ...input, ...imageData })
       } else {
-        await prisma.service.create({ data: { ...input, ...imageData } })
+        await createService({ ...input, ...imageData })
       }
     } catch (error) {
       if (uploadedPath) {
@@ -146,10 +149,9 @@ async function saveServiceOptionsAction(
   formData: FormData
 ): Promise<ServiceActionState> {
   await requireAdmin()
-  const { prisma } = await import("@/db/client")
   try {
     const data = parseServiceRequestOptions(formData)
-    await prisma.service.update({ where: { id: serviceId }, data })
+    await updateService(serviceId, data)
     revalidateServices()
     return { status: "success", message: "Request options saved." }
   } catch (error) {
@@ -159,24 +161,16 @@ async function saveServiceOptionsAction(
 
 async function unpublishServiceAction(serviceId: string) {
   await requireAdmin()
-  const { prisma } = await import("@/db/client")
-  await prisma.service.update({
-    where: { id: serviceId },
-    data: { published: false },
-  })
+  await updateService(serviceId, { published: false })
   revalidateServices()
 }
 
 async function deleteServiceAction(serviceId: string) {
   const admin = await requireAdmin()
-  const { prisma } = await import("@/db/client")
-  const service = await prisma.service.findUnique({
-    where: { id: serviceId },
-    select: { primaryImagePath: true },
-  })
+  const service = await findServiceImagePath(serviceId)
   if (!service) redirect("/admin/services")
 
-  await prisma.service.delete({ where: { id: serviceId } })
+  await deleteService(serviceId)
   let cleanupPath: string | null = null
   if (service.primaryImagePath) {
     try {

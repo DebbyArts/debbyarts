@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import type {
   ServiceGroupPresentation,
   ServicePresentation,
-} from "@/features/services/service-catalogue"
+} from "@/features/services/types"
 import { cn } from "@/lib/utils"
 
 const REQUEST_PREPARATION_DETAILS = [

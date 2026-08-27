@@ -10,7 +10,7 @@ import {
   resolveArtworkImageSource,
   type ArtworkProjection,
 } from "@/features/artwork/artwork-catalogue"
-import { PUBLISHED_ARTWORK_QUERY } from "@/features/artwork/server/get-published-artworks"
+import { PUBLISHED_ARTWORK_QUERY } from "@/features/artwork/repositories/artwork.repository"
 
 function artwork(
   slug: string,

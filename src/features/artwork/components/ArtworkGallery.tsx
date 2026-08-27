@@ -17,8 +17,8 @@ import {
   type ArtworkFilter,
   type ArtworkProjection,
 } from "@/features/artwork/artwork-catalogue"
-import { ArtworkLightbox } from "@/features/artwork/components/artwork-lightbox"
-import { ArtworkMedia } from "@/features/artwork/components/artwork-media"
+import { ArtworkLightbox } from "@/features/artwork/components/ArtworkLightbox"
+import { ArtworkMedia } from "@/features/artwork/components/ArtworkMedia"
 import { cn } from "@/lib/utils"
 
 type ArtworkGalleryProps = {

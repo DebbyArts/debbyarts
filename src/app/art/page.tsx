@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 
-import { ArtworkPage } from "@/features/artwork/artwork-page"
+import { ArtworkPage } from "@/features/artwork"
 import { PublicShell } from "@/components/shared/public/public-shell"
 
 export const metadata: Metadata = {

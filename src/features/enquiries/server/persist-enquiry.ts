@@ -2,8 +2,8 @@ import "server-only"
 
 import { createEnquiry } from "@/features/enquiries/create-enquiry"
 import type { RequestDraft } from "@/features/enquiries/request-types"
-import { getPublishedRequestArtwork } from "@/features/artwork/server/get-request-artworks"
-import { getPublishedRequestService } from "@/features/services/server/get-request-services"
+import { getPublishedRequestArtwork } from "@/features/artwork/services/artwork.service"
+import { getPublishedRequestService } from "@/features/services/services/service.service"
 
 async function persistEnquiry(draft: RequestDraft, websiteOrigin: string | null) {
   return createEnquiry(draft, websiteOrigin, {

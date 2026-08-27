@@ -1,7 +1,9 @@
 import type { Metadata } from "next"
 
-import { ServicesPage } from "@/features/services/components/services-page"
-import { getPublishedServiceGroups } from "@/features/services/server/get-published-services"
+import {
+  getPublishedServiceGroups,
+  ServicesPage,
+} from "@/features/services"
 
 const metadata: Metadata = {
   title: "Services | Debby Art & Prints",

@@ -11,7 +11,7 @@ src/
     ui/                # Low-level shadcn/base UI primitives
     shared/            # Proven cross-feature application UI
   features/
-    site/              # Public-site shell and Home domain/UI
+    home/              # Home domain/UI
     artwork/           # Art & Gallery public/admin domain
     services/          # Services public/admin domain
     enquiries/         # Make a Request and Enquiries admin domain
@@ -93,7 +93,7 @@ Do not turn a page into a Client Component because one child is interactive. Cli
 
 | Item | Convention | Examples |
 | --- | --- | --- |
-| React component files | kebab-case | `artwork-card.tsx`, `request-progress.tsx` |
+| React component files | PascalCase | `ArtworkCard.tsx`, `RequestProgress.tsx` |
 | Utility/module files | kebab-case | `format-price.ts`, `request-context.ts` |
 | Tests | subject plus `.test` | `artwork-card.test.tsx`, `format-price.test.ts` |
 | Components, types, classes | PascalCase | `ArtworkCard`, `EnquiryStatus` |

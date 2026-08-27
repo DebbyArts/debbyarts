@@ -5,7 +5,7 @@ import { AdminPage, AdminPageHeader } from "@/components/shared/admin/admin-page
 import { AdminShell } from "@/components/shared/admin/admin-shell"
 import { Button } from "@/components/ui/button"
 import { SignOutButton } from "@/features/admin-auth/components/sign-out-button"
-import { ServiceOptionsForm } from "@/features/services/components/admin/service-options-form"
+import { ServiceOptionsForm } from "@/features/services"
 import { requireAdmin } from "@/server/auth/authorize"
 
 async function ServiceOptionsPage({ params }: { params: Promise<{ id: string }> }) {

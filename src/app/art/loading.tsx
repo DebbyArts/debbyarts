@@ -1,4 +1,4 @@
-import { ArtworkLoading } from "@/features/artwork/components/artwork-loading"
+import { ArtworkLoading } from "@/features/artwork"
 import { PublicShell } from "@/components/shared/public/public-shell"
 
 export default function ArtLoading() {

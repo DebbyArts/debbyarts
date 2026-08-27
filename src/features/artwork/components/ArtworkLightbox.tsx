@@ -20,7 +20,7 @@ import {
   getArtworkCategoryItemLabel,
   type ArtworkProjection,
 } from "@/features/artwork/artwork-catalogue"
-import { ArtworkMedia } from "@/features/artwork/components/artwork-media"
+import { ArtworkMedia } from "@/features/artwork/components/ArtworkMedia"
 
 type ArtworkLightboxProps = {
   artworks: ArtworkProjection[]
@@ -116,7 +116,7 @@ function ArtworkLightbox({
   return (
     <dialog
       ref={dialogRef}
-      aria-labelledby="artwork-lightbox-title"
+      aria-labelledby="ArtworkLightbox-title"
       aria-modal="true"
       onCancel={(event) => {
         event.preventDefault()
@@ -171,7 +171,7 @@ function ArtworkLightbox({
               <p className="type-label text-primary">
                 {getArtworkCategoryItemLabel(artwork.category)}
               </p>
-              <h2 id="artwork-lightbox-title" className="type-h2 uppercase">
+              <h2 id="ArtworkLightbox-title" className="type-h2 uppercase">
                 {artwork.title}
               </h2>
               <div className="h-px bg-border" />

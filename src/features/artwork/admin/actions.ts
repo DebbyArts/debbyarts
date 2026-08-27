@@ -8,6 +8,13 @@ import {
   parseArtworkMutation,
   parseArtworkRequestOptions,
 } from "@/features/artwork/admin/artwork-validation"
+import {
+  createArtwork,
+  deleteArtwork,
+  findArtworkById,
+  findArtworkImagePath,
+  updateArtwork,
+} from "@/features/artwork/repositories/artwork-admin.repository"
 import { requireAdmin } from "@/server/auth/authorize"
 import {
   deleteCatalogueImage,
@@ -62,9 +69,8 @@ async function saveArtworkAction(
   formData: FormData
 ): Promise<ArtworkActionState> {
   const admin = await requireAdmin()
-  const { prisma } = await import("@/db/client")
   const existing = artworkId
-    ? await prisma.artwork.findUnique({ where: { id: artworkId } })
+    ? await findArtworkById(artworkId)
     : null
 
   if (artworkId && !existing) {
@@ -99,14 +105,9 @@ async function saveArtworkAction(
 
     try {
       if (existing) {
-        await prisma.artwork.update({
-          where: { id: existing.id },
-          data: { ...input, ...imageData },
-        })
+        await updateArtwork(existing.id, { ...input, ...imageData })
       } else {
-        await prisma.artwork.create({
-          data: { ...input, ...imageData },
-        })
+        await createArtwork({ ...input, ...imageData })
       }
     } catch (error) {
       if (uploadedPath) {
@@ -152,11 +153,10 @@ async function saveArtworkOptionsAction(
   formData: FormData
 ): Promise<ArtworkActionState> {
   await requireAdmin()
-  const { prisma } = await import("@/db/client")
 
   try {
     const data = parseArtworkRequestOptions(formData)
-    await prisma.artwork.update({ where: { id: artworkId }, data })
+    await updateArtwork(artworkId, data)
     revalidateArtwork()
     return { status: "success", message: "Request options saved." }
   } catch (error) {
@@ -166,24 +166,16 @@ async function saveArtworkOptionsAction(
 
 async function unpublishArtworkAction(artworkId: string) {
   await requireAdmin()
-  const { prisma } = await import("@/db/client")
-  await prisma.artwork.update({
-    where: { id: artworkId },
-    data: { published: false },
-  })
+  await updateArtwork(artworkId, { published: false })
   revalidateArtwork()
 }
 
 async function deleteArtworkAction(artworkId: string) {
   const admin = await requireAdmin()
-  const { prisma } = await import("@/db/client")
-  const artwork = await prisma.artwork.findUnique({
-    where: { id: artworkId },
-    select: { primaryImagePath: true },
-  })
+  const artwork = await findArtworkImagePath(artworkId)
   if (!artwork) redirect("/admin/artwork")
 
-  await prisma.artwork.delete({ where: { id: artworkId } })
+  await deleteArtwork(artworkId)
   let cleanupPath: string | null = null
   if (artwork.primaryImagePath) {
     try {

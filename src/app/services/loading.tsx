@@ -1,4 +1,4 @@
-import { ServicesLoading } from "@/features/services/components/services-loading"
+import { ServicesLoading } from "@/features/services"
 
 function Loading() {
   return <ServicesLoading />

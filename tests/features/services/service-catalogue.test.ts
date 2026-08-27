@@ -6,11 +6,11 @@ import {
   getServiceRequestHref,
   projectServiceGroups,
   resolveImageSource,
-} from "@/features/services/service-catalogue"
+} from "@/features/services/mappers/service.mapper"
 import {
   PUBLISHED_SERVICES_QUERY,
   type PublishedServiceRecord,
-} from "@/features/services/service-query"
+} from "@/features/services/repositories/service.repository"
 import { describe, expect, test } from "vitest"
 
 function serviceRecord(

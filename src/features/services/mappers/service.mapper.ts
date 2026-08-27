@@ -1,72 +1,18 @@
 import {
   PricingMode,
-  ServiceGroup,
-  type PricingMode as PricingModeValue,
-  type ServiceGroup as ServiceGroupValue,
 } from "@/db/generated/prisma/enums"
-import type { PublishedServiceRecord } from "@/features/services/service-query"
-
-const SERVICE_GROUP_DEFINITIONS = [
-  {
-    value: ServiceGroup.PERSONALISED_PRODUCTS,
-    label: "Personalised Products",
-    anchorId: "personalised-products",
-  },
-  {
-    value: ServiceGroup.PRINT_EVENT_MATERIALS,
-    label: "Print & Event Materials",
-    anchorId: "print-event-materials",
-  },
-  {
-    value: ServiceGroup.BRANDING_SIGNAGE,
-    label: "Branding & Signage",
-    anchorId: "branding-signage",
-  },
-] as const
-
-const SERVICE_GROUP_ORDER: Record<ServiceGroupValue, number> = {
-  [ServiceGroup.PERSONALISED_PRODUCTS]: 0,
-  [ServiceGroup.PRINT_EVENT_MATERIALS]: 1,
-  [ServiceGroup.BRANDING_SIGNAGE]: 2,
-}
-
-type ServicePricingPresentation = {
-  label: string
-  mode: PricingModeValue
-}
-
-type ServicePresentation = {
-  description: string
-  group: ServiceGroupValue
-  groupLabel: string
-  id: string
-  imageAlt: string
-  imageSrc?: string
-  name: string
-  optionCues: string[]
-  pricing: ServicePricingPresentation
-  requestHref: string
-  slug: string
-}
-
-type ServiceGroupPresentation = {
-  anchorId: string
-  label: string
-  number: string
-  services: ServicePresentation[]
-  value: ServiceGroupValue
-}
-
-type ServiceProjectionOptions = {
-  publicMediaBaseUrl?: string
-}
-
-const NGN_FORMATTER = new Intl.NumberFormat("en-NG", {
-  style: "currency",
-  currency: "NGN",
-  minimumFractionDigits: 0,
-  maximumFractionDigits: 2,
-})
+import {
+  NGN_FORMATTER,
+  SERVICE_GROUP_DEFINITIONS,
+  SERVICE_GROUP_ORDER,
+} from "@/features/services/constants"
+import type {
+  PublishedServiceRecord,
+  ServiceGroupPresentation,
+  ServicePresentation,
+  ServicePricingPresentation,
+  ServiceProjectionOptions,
+} from "@/features/services/types"
 
 function invalidPricingError(service: PublishedServiceRecord) {
   return new Error(
@@ -252,14 +198,9 @@ function projectServiceGroups(
 }
 
 export {
-  SERVICE_GROUP_DEFINITIONS,
   deriveOptionCues,
   derivePricingPresentation,
   getServiceRequestHref,
   projectServiceGroups,
   resolveImageSource,
-  type ServiceGroupPresentation,
-  type ServicePresentation,
-  type ServicePricingPresentation,
-  type ServiceProjectionOptions,
 }

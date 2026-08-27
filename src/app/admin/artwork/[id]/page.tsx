@@ -5,7 +5,7 @@ import { AdminPage, AdminPageHeader } from "@/components/shared/admin/admin-page
 import { AdminShell } from "@/components/shared/admin/admin-shell"
 import { Button } from "@/components/ui/button"
 import { SignOutButton } from "@/features/admin-auth/components/sign-out-button"
-import { ArtworkEditor } from "@/features/artwork/components/admin/artwork-editor"
+import { ArtworkEditor } from "@/features/artwork"
 import { requireAdmin } from "@/server/auth/authorize"
 import { getPublicMediaUrl } from "@/server/storage/public-url"
 

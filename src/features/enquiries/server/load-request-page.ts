@@ -1,12 +1,12 @@
 import "server-only"
 
-import { getPublishedRequestArtworks } from "@/features/artwork/server/get-request-artworks"
+import { getPublishedRequestArtworks } from "@/features/artwork/services/artwork.service"
 import { parseRequestContext } from "@/features/enquiries/request-context"
 import type {
   InvalidRequestPageData,
   RequestPageData,
 } from "@/features/enquiries/request-types"
-import { getPublishedRequestServices } from "@/features/services/server/get-request-services"
+import { getPublishedRequestServices } from "@/features/services/services/service.service"
 
 type LoadRequestPageResult = RequestPageData | InvalidRequestPageData
 

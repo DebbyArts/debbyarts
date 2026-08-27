@@ -4,7 +4,7 @@ import { AdminPage, AdminPageHeader } from "@/components/shared/admin/admin-page
 import { AdminShell } from "@/components/shared/admin/admin-shell"
 import { Button } from "@/components/ui/button"
 import { SignOutButton } from "@/features/admin-auth/components/sign-out-button"
-import { ServiceEditor } from "@/features/services/components/admin/service-editor"
+import { ServiceEditor } from "@/features/services"
 import { requireAdmin } from "@/server/auth/authorize"
 
 async function NewServicePage() {

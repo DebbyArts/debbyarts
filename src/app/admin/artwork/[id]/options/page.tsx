@@ -5,7 +5,7 @@ import { AdminPage, AdminPageHeader } from "@/components/shared/admin/admin-page
 import { AdminShell } from "@/components/shared/admin/admin-shell"
 import { Button } from "@/components/ui/button"
 import { SignOutButton } from "@/features/admin-auth/components/sign-out-button"
-import { ArtworkOptionsForm } from "@/features/artwork/components/admin/artwork-options-form"
+import { ArtworkOptionsForm } from "@/features/artwork"
 import { requireAdmin } from "@/server/auth/authorize"
 
 async function ArtworkOptionsPage({ params }: { params: Promise<{ id: string }> }) {
