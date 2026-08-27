@@ -28,6 +28,16 @@ const ARTWORK_EDITOR_SELECT = {
   published: true,
   featured: true,
   displayOrder: true,
+  additionalImages: {
+    orderBy: { displayOrder: "asc" },
+    select: {
+      id: true,
+      storagePath: true,
+      altText: true,
+      width: true,
+      height: true,
+    },
+  },
 } satisfies Prisma.ArtworkSelect
 
 const ARTWORK_OPTIONS_SELECT = {
@@ -47,6 +57,10 @@ const PUBLISHED_ARTWORK_QUERY = {
     mediumFormat: true, displayedPieceDimensions: true, availability: true,
     primaryImagePath: true, primaryImageAlt: true, primaryImageWidth: true,
     primaryImageHeight: true, pricingMode: true, priceAmount: true,
+    additionalImages: {
+      orderBy: { displayOrder: "asc" },
+      select: { id: true, storagePath: true, altText: true, width: true, height: true },
+    },
   },
 } satisfies Prisma.ArtworkFindManyArgs
 
@@ -78,7 +92,14 @@ async function findPublishedRequestArtwork(slug: string) {
 
 async function findArtworkById(id: string) {
   const { prisma } = await import("@/db/client")
-  return prisma.artwork.findUnique({ where: { id } })
+  return prisma.artwork.findUnique({
+    where: { id },
+    select: {
+      id: true,
+      primaryImagePath: true,
+      additionalImages: { select: { id: true } },
+    },
+  })
 }
 
 async function findAdminArtworks(filters: ArtworkAdminListFilters) {
@@ -127,7 +148,122 @@ async function findArtworkImagePath(id: string) {
   const { prisma } = await import("@/db/client")
   return prisma.artwork.findUnique({
     where: { id },
-    select: { primaryImagePath: true },
+    select: {
+      primaryImagePath: true,
+      additionalImages: { select: { storagePath: true } },
+    },
+  })
+}
+
+async function findArtworkImageCount(artworkId: string) {
+  const { prisma } = await import("@/db/client")
+  return prisma.artworkImage.count({ where: { artworkId } })
+}
+
+async function createArtworkImage(data: Prisma.ArtworkImageCreateInput) {
+  const { prisma } = await import("@/db/client")
+  return prisma.artworkImage.create({ data })
+}
+
+async function findArtworkImage(artworkId: string, imageId: string) {
+  const { prisma } = await import("@/db/client")
+  return prisma.artworkImage.findFirst({
+    where: { id: imageId, artworkId },
+  })
+}
+
+async function updateArtworkImageAlt(
+  artworkId: string,
+  imageId: string,
+  altText: string | null
+) {
+  const { prisma } = await import("@/db/client")
+  return prisma.artworkImage.updateMany({
+    where: { id: imageId, artworkId },
+    data: { altText },
+  })
+}
+
+async function deleteArtworkImage(artworkId: string, imageId: string) {
+  const { prisma } = await import("@/db/client")
+  return prisma.$transaction(async (transaction) => {
+    const deleted = await transaction.artworkImage.deleteMany({
+      where: { id: imageId, artworkId },
+    })
+    if (!deleted.count) return deleted
+
+    const remainingImages = await transaction.artworkImage.findMany({
+      where: { artworkId },
+      orderBy: { displayOrder: "asc" },
+    })
+    const temporaryOffset =
+      Math.max(...remainingImages.map((image) => image.displayOrder), 0) +
+      remainingImages.length +
+      1
+
+    await Promise.all(
+      remainingImages.map((image, index) =>
+        transaction.artworkImage.update({
+          where: { id: image.id },
+          data: { displayOrder: index + temporaryOffset },
+        })
+      )
+    )
+    await Promise.all(
+      remainingImages.map((image, index) =>
+        transaction.artworkImage.update({
+          where: { id: image.id },
+          data: { displayOrder: index },
+        })
+      )
+    )
+
+    return deleted
+  })
+}
+
+async function moveArtworkImage(
+  artworkId: string,
+  imageId: string,
+  direction: "up" | "down"
+) {
+  const { prisma } = await import("@/db/client")
+
+  return prisma.$transaction(async (transaction) => {
+    const images = await transaction.artworkImage.findMany({
+      where: { artworkId },
+      orderBy: { displayOrder: "asc" },
+    })
+    const index = images.findIndex((image) => image.id === imageId)
+    const targetIndex = direction === "up" ? index - 1 : index + 1
+
+    if (index < 0 || targetIndex < 0 || targetIndex >= images.length) return false
+
+    const reordered = [...images]
+    ;[reordered[index], reordered[targetIndex]] = [
+      reordered[targetIndex],
+      reordered[index],
+    ]
+    const temporaryOffset =
+      Math.max(...images.map((image) => image.displayOrder), 0) + images.length + 1
+    await Promise.all(
+      reordered.map((image, nextIndex) =>
+        transaction.artworkImage.update({
+          where: { id: image.id },
+          data: { displayOrder: nextIndex + temporaryOffset },
+        })
+      )
+    )
+    await Promise.all(
+      reordered.map((image, nextIndex) =>
+        transaction.artworkImage.update({
+          where: { id: image.id },
+          data: { displayOrder: nextIndex },
+        })
+      )
+    )
+
+    return true
   })
 }
 
@@ -143,14 +279,20 @@ export {
   PUBLISHED_ARTWORK_QUERY,
   REQUEST_ARTWORK_SELECT,
   createArtwork,
+  createArtworkImage,
   deleteArtwork,
+  deleteArtworkImage,
   findAdminArtworks,
   findArtworkById,
   findArtworkForEditor,
   findArtworkForOptions,
   findArtworkImagePath,
+  findArtworkImage,
+  findArtworkImageCount,
   findPublishedArtworks,
   findPublishedRequestArtwork,
   findPublishedRequestArtworks,
   updateArtwork,
+  updateArtworkImageAlt,
+  moveArtworkImage,
 }

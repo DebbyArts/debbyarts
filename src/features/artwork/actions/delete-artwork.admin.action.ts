@@ -14,9 +14,10 @@ async function deleteArtworkAction(artworkId: string) {
   if (!result) redirect("/admin/artwork")
 
   ARTWORK_REVALIDATION_PATHS.forEach((path) => revalidatePath(path))
+  const cleanup = result.cleanupPaths.join("|")
   redirect(
-    result.cleanupPath
-      ? `/admin/artwork?deleted=1&cleanup=${encodeURIComponent(result.cleanupPath)}`
+    cleanup
+      ? `/admin/artwork?deleted=1&cleanup=${encodeURIComponent(cleanup)}`
       : "/admin/artwork?deleted=1"
   )
 }

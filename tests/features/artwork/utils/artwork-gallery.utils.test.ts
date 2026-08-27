@@ -30,6 +30,7 @@ function artwork(
     mediumFormat: null,
     displayedPieceDimensions: null,
     availability: "AVAILABLE",
+    gallery: [],
     imageSrc: null,
     imageAlt: `${slug} artwork`,
     imageWidth: null,
@@ -52,6 +53,9 @@ describe("artwork catalogue rules", () => {
       { createdAt: "asc" },
       { id: "asc" },
     ])
+    expect(PUBLISHED_ARTWORK_QUERY.select.additionalImages).toMatchObject({
+      orderBy: { displayOrder: "asc" },
+    })
   })
 
   test("only exposes useful populated filters for a sufficiently sized gallery", () => {
@@ -124,6 +128,15 @@ describe("artwork catalogue rules", () => {
       primaryImageHeight: 1200,
       pricingMode: "NONE",
       priceAmount: null,
+      additionalImages: [
+        {
+          id: "detail-1",
+          storagePath: "artwork/blue-horse-detail.jpg",
+          altText: "Detail of the blue horse study",
+          width: 900,
+          height: 600,
+        },
+      ],
     })
 
     expect(projection).toMatchObject({
@@ -136,6 +149,7 @@ describe("artwork catalogue rules", () => {
       priceLabel: "Price on request",
       requestHref: "/request?artwork=blue-horse",
     })
+    expect(projection.gallery.map((image) => image.id)).toEqual(["cover", "detail-1"])
   })
 
   test("uses the shared public-storage URL for request and Admin artwork projections", () => {
@@ -189,6 +203,7 @@ describe("artwork catalogue rules", () => {
         published: true,
         featured: false,
         displayOrder: 0,
+        additionalImages: [],
       }).imageUrl
     ).toBe(expectedUrl)
   })

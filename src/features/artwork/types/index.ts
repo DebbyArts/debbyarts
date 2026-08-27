@@ -15,6 +15,7 @@ type ArtworkProjection = {
   categoryLabel: string
   description: string
   displayedPieceDimensions: string | null
+  gallery: ArtworkGalleryImage[]
   imageAlt: string
   imageHeight: number | null
   imageSrc: string | null
@@ -26,6 +27,14 @@ type ArtworkProjection = {
   requestHref: string
   slug: string
   title: string
+}
+
+type ArtworkGalleryImage = {
+  alt: string
+  height: number | null
+  id: string
+  src: string | null
+  width: number | null
 }
 
 type ArtworkAdminListFilters = {
@@ -55,6 +64,7 @@ type ArtworkAdminListItem = {
 }
 
 type ArtworkEditorValue = {
+  additionalImages: ArtworkAdditionalImage[]
   availability: AvailabilityStatus
   category: ArtworkCategory
   description: string
@@ -70,6 +80,20 @@ type ArtworkEditorValue = {
   primaryImagePath: string | null
   published: boolean
   title: string
+}
+
+type ArtworkAdditionalImage = {
+  altText: string | null
+  height: number
+  id: string
+  imageUrl: string | null
+  storagePath: string
+  width: number
+}
+
+type ArtworkImageActionState = {
+  message: string
+  status: "idle" | "success" | "error" | "warning"
 }
 
 type ArtworkOptionsValue = {
@@ -112,12 +136,15 @@ type ArtworkRequestOptionsInput = {
 
 export type {
   ArtworkActionState,
+  ArtworkAdditionalImage,
   ArtworkAdminListFilters,
   ArtworkAdminListItem,
   ArtworkCategory,
   AvailabilityStatus as ArtworkAvailability,
   ArtworkEditorValue,
   ArtworkFilter,
+  ArtworkGalleryImage,
+  ArtworkImageActionState,
   ArtworkListSearchParams,
   ArtworkMutationInput,
   ArtworkOptionsValue,

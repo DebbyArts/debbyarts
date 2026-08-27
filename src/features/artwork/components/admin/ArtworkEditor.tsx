@@ -28,6 +28,7 @@ import {
 } from "@/features/artwork/constants"
 import { deleteArtworkAction } from "@/features/artwork/actions/delete-artwork.admin.action"
 import { saveArtworkAction } from "@/features/artwork/actions/save-artwork.admin.action"
+import { ArtworkImageManager } from "@/features/artwork/components/admin/ArtworkImageManager"
 import { unpublishArtworkAction } from "@/features/artwork/actions/unpublish-artwork.admin.action"
 import type { ArtworkEditorValue } from "@/features/artwork/types"
 
@@ -376,6 +377,8 @@ function ArtworkEditor({ artwork }: { artwork: ArtworkEditorValue | null }) {
           </Button>
         </div>
       </form>
+
+      {artwork ? <ArtworkImageManager artwork={artwork} /> : null}
 
       {!artwork ? (
         <AlertDialog

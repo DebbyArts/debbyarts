@@ -34,8 +34,11 @@ function ArtworkLightbox({
   const dialogRef = useRef<HTMLDialogElement>(null)
   const closeButtonRef = useRef<HTMLButtonElement>(null)
   const [direction, setDirection] = useState<1 | -1>(1)
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0)
   const reduceMotion = useReducedMotion()
   const artwork = selectedIndex === null ? null : artworks[selectedIndex]
+  const gallery = artwork?.gallery ?? []
+  const selectedImage = gallery[selectedImageIndex] ?? gallery[0]
   const isOpen = selectedIndex !== null
 
   useEffect(() => {
@@ -63,6 +66,7 @@ function ArtworkLightbox({
 
   function closeDialog() {
     dialogRef.current?.close()
+    setSelectedImageIndex(0)
     onClose()
     window.requestAnimationFrame(() => openerRef.current?.focus())
   }
@@ -76,23 +80,40 @@ function ArtworkLightbox({
 
     if (nextIndex >= 0 && nextIndex < artworks.length) {
       setDirection(offset > 0 ? 1 : -1)
+      setSelectedImageIndex(0)
       onSelect(nextIndex)
     }
   }
 
+  function moveImage(offset: number) {
+    const nextIndex = selectedImageIndex + offset
+
+    if (nextIndex >= 0 && nextIndex < gallery.length) {
+      setSelectedImageIndex(nextIndex)
+    }
+  }
+
   function handleKeyDown(event: KeyboardEvent<HTMLDialogElement>) {
-    if (event.altKey || event.ctrlKey || event.metaKey) {
+    if (event.ctrlKey || event.metaKey) {
       return
     }
 
     if (event.key === "ArrowLeft") {
       event.preventDefault()
-      moveSelection(-1)
+      if (event.altKey) {
+        moveSelection(-1)
+      } else {
+        moveImage(-1)
+      }
     }
 
     if (event.key === "ArrowRight") {
       event.preventDefault()
-      moveSelection(1)
+      if (event.altKey) {
+        moveSelection(1)
+      } else {
+        moveImage(1)
+      }
     }
 
     if (event.key === "Escape") {
@@ -149,15 +170,25 @@ function ArtworkLightbox({
           transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
         >
           <div className="flex min-h-[31.25rem] items-center justify-center bg-[#11110f] p-6 lg:min-h-0 lg:p-9">
-            <ArtworkMedia
-              key={artwork.slug}
-              alt={artwork.imageAlt}
-              src={artwork.imageSrc}
-              contain
-              eager
-              sizes="(max-width: 1023px) 100vw, 760px"
-              className="h-[min(26.875rem,55vh)] w-full max-w-[36.25rem] border-0 bg-[#11110f] lg:h-full lg:max-h-[45rem]"
-            />
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={selectedImage?.id ?? artwork.slug}
+                className="flex h-full w-full items-center justify-center"
+                initial={{ opacity: 0, x: reduceMotion ? 0 : 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: reduceMotion ? 0 : -8 }}
+                transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <ArtworkMedia
+                  alt={selectedImage?.alt ?? artwork.imageAlt}
+                  src={selectedImage?.src ?? artwork.imageSrc}
+                  contain
+                  eager
+                  sizes="(max-width: 1023px) 100vw, 760px"
+                  className="h-[min(26.875rem,55vh)] w-full max-w-[36.25rem] border-0 bg-[#11110f] lg:h-full lg:max-h-[45rem]"
+                />
+              </motion.div>
+            </AnimatePresence>
           </div>
 
           <div className="flex min-h-[21.875rem] flex-col gap-8 p-6 pt-7 lg:min-h-0 lg:justify-between lg:overflow-y-auto lg:px-2 lg:pt-[3.375rem] lg:pb-3">
@@ -175,6 +206,56 @@ function ArtworkLightbox({
             </div>
 
             <div className="flex flex-col gap-4">
+              {gallery.length > 1 ? (
+                <div className="flex flex-col gap-3 border-y border-border py-4">
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-xs font-extrabold uppercase tracking-[0.08em]">
+                      Images {selectedImageIndex + 1} of {gallery.length}
+                    </p>
+                    <div className="flex gap-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon-sm"
+                        disabled={selectedImageIndex === 0}
+                        aria-label="View previous image"
+                        onClick={() => moveImage(-1)}
+                      >
+                        <ArrowLeftIcon aria-hidden="true" />
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon-sm"
+                        disabled={selectedImageIndex === gallery.length - 1}
+                        aria-label="View next image"
+                        onClick={() => moveImage(1)}
+                      >
+                        <ArrowRightIcon aria-hidden="true" />
+                      </Button>
+                    </div>
+                  </div>
+                  <div className="flex gap-2 overflow-x-auto pb-1">
+                    {gallery.map((image, index) => (
+                      <button
+                        key={image.id}
+                        type="button"
+                        aria-label={`View image ${index + 1} of ${gallery.length}`}
+                        aria-pressed={selectedImageIndex === index}
+                        onClick={() => setSelectedImageIndex(index)}
+                        className="shrink-0 border border-border-subtle p-0.5 aria-pressed:border-primary aria-pressed:ring-2 aria-pressed:ring-primary/30"
+                      >
+                        <ArtworkMedia
+                          alt=""
+                          src={image.src}
+                          sizes="64px"
+                          className="size-16 border-0"
+                        />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
               <Button asChild className="w-full">
                 <Link href={artwork.requestHref}>
                   Ask About This Piece ↗
@@ -189,7 +270,7 @@ function ArtworkLightbox({
                   className="min-h-11 px-0 text-[0.8125rem]"
                 >
                   <ArrowLeftIcon aria-hidden="true" />
-                  Previous
+                  Previous artwork
                 </Button>
                 <Button
                   type="button"
@@ -198,12 +279,14 @@ function ArtworkLightbox({
                   onClick={() => moveSelection(1)}
                   className="min-h-11 px-0 text-[0.8125rem]"
                 >
-                  Next
+                  Next artwork
                   <ArrowRightIcon aria-hidden="true" />
                 </Button>
               </div>
               <p className="text-center text-[0.6875rem] leading-[1.125rem] text-muted-foreground">
-                Use arrow keys to browse · Esc to close
+                {gallery.length > 1
+                  ? "Arrow keys browse images · Alt + arrow keys browse artworks · Esc to close"
+                  : "Alt + arrow keys browse artworks · Esc to close"}
               </p>
               <div className="border-t border-border pt-5 lg:hidden">
                 <ArtworkDetails artwork={artwork} />

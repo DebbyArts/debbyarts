@@ -191,9 +191,13 @@ async function deleteCatalogueImage(
 ) {
   assertOwnedImagePath(path, admin.id, kind)
   const { prisma } = await import("@/db/client")
-  const [artworkReference, serviceReference] = await Promise.all([
+  const [artworkReference, artworkImageReference, serviceReference] = await Promise.all([
     prisma.artwork.findFirst({
       where: { primaryImagePath: path },
+      select: { id: true },
+    }),
+    prisma.artworkImage.findFirst({
+      where: { storagePath: path },
       select: { id: true },
     }),
     prisma.service.findFirst({
@@ -202,7 +206,7 @@ async function deleteCatalogueImage(
     }),
   ])
 
-  if (artworkReference || serviceReference) {
+  if (artworkReference || artworkImageReference || serviceReference) {
     throw new ImageStorageError(
       "Refusing to delete an image path that is still referenced by a catalogue record."
     )

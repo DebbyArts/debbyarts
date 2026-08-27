@@ -73,6 +73,26 @@ function mapToArtworkProjection(artwork: PublishedArtworkRecord): ArtworkProject
     imageWidth: artwork.primaryImageWidth, imageHeight: artwork.primaryImageHeight,
     pricingMode: artwork.pricingMode, priceAmount: artwork.priceAmount?.toString() ?? null,
     requestHref: `/request?artwork=${encodeURIComponent(artwork.slug)}`,
+    gallery: [
+      {
+        id: "cover",
+        src: resolvePublicStorageObjectUrl(artwork.primaryImagePath),
+        alt:
+          artwork.primaryImageAlt?.trim() ||
+          `${artwork.title}, an artwork by Debby Art & Prints`,
+        width: artwork.primaryImageWidth,
+        height: artwork.primaryImageHeight,
+      },
+      ...artwork.additionalImages.map((image) => ({
+        id: image.id,
+        src: resolvePublicStorageObjectUrl(image.storagePath),
+        alt:
+          image.altText?.trim() ||
+          `${artwork.title}, additional artwork image`,
+        width: image.width,
+        height: image.height,
+      })),
+    ],
   }
 
   return { ...projection, priceLabel: getArtworkPriceLabel(projection) }
@@ -124,6 +144,14 @@ function mapToArtworkEditorValue(
     published: artwork.published,
     featured: artwork.featured,
     displayOrder: artwork.displayOrder,
+    additionalImages: artwork.additionalImages.map((image) => ({
+      id: image.id,
+      storagePath: image.storagePath,
+      altText: image.altText,
+      width: image.width,
+      height: image.height,
+      imageUrl: resolvePublicStorageObjectUrl(image.storagePath),
+    })),
   }
 }
 

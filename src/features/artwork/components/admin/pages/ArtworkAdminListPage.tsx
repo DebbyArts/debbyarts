@@ -34,13 +34,15 @@ async function ArtworkAdminListPage({
 }: ArtworkListPageProps) {
   const admin = await requireAdmin()
   const query = await searchParams
-  const cleanupPath =
-    query.cleanup &&
-    query.cleanup.length <= 250 &&
-    query.cleanup.startsWith(`${admin.id}/artwork/`) &&
-    /^[0-9a-f-]+\/artwork\/[0-9a-f-]+\.(jpg|png|webp)$/.test(query.cleanup)
-      ? query.cleanup
-      : null
+  const cleanupPaths = query.cleanup
+    ?.split("|")
+    .filter(
+      (path) =>
+        path.length <= 250 &&
+        path.startsWith(`${admin.id}/artwork/`) &&
+        /^[0-9a-f-]+\/artwork\/[0-9a-f-]+\.(jpg|png|webp)$/.test(path)
+    )
+  const hasCleanupWarning = Boolean(query.cleanup) && Boolean(cleanupPaths?.length)
   const category = Object.hasOwn(ARTWORK_CATEGORY_ITEM_LABELS, query.category ?? "")
     ? (query.category as ArtworkCategory)
     : undefined
@@ -70,11 +72,18 @@ async function ArtworkAdminListPage({
           }
         />
         {query.deleted ? (
-          <FeedbackBanner tone={cleanupPath ? "warning" : "success"}>
-            {cleanupPath ? (
+          <FeedbackBanner tone={hasCleanupWarning ? "warning" : "success"}>
+            {hasCleanupWarning ? (
               <span>
-                Artwork deleted. Remove the orphaned Storage object at{" "}
-                <code className="break-all font-mono">{cleanupPath}</code>.
+                Artwork deleted. Remove the orphaned Storage object
+                {cleanupPaths?.length === 1 ? " at " : "s at "}
+                {cleanupPaths?.map((path, index) => (
+                  <span key={path}>
+                    {index ? ", " : null}
+                    <code className="break-all font-mono">{path}</code>
+                  </span>
+                ))}
+                .
               </span>
             ) : (
               "Artwork deleted."

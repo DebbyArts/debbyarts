@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest"
 import sharp from "sharp"
 
 const artworkFindFirst = vi.fn()
+const artworkImageFindFirst = vi.fn()
 const serviceFindFirst = vi.fn()
 const remove = vi.fn()
 const upload = vi.fn()
@@ -15,6 +16,7 @@ vi.mock("@supabase/supabase-js", () => ({
 vi.mock("@/db/client", () => ({
   prisma: {
     artwork: { findFirst: artworkFindFirst },
+    artworkImage: { findFirst: artworkImageFindFirst },
     service: { findFirst: serviceFindFirst },
   },
 }))
@@ -36,10 +38,12 @@ describe("catalogue image deletion", () => {
     vi.stubEnv("NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET", "catalogue-media")
     vi.stubEnv("SUPABASE_SECRET_KEY", "test-secret")
     artworkFindFirst.mockReset()
+    artworkImageFindFirst.mockReset()
     serviceFindFirst.mockReset()
     remove.mockReset()
     upload.mockReset()
     artworkFindFirst.mockResolvedValue(null)
+    artworkImageFindFirst.mockResolvedValue(null)
     serviceFindFirst.mockResolvedValue(null)
     remove.mockResolvedValue({
       data: [{ name: "abc-123/artwork/123e4567-e89b-12d3-a456-426614174000.jpg" }],
@@ -48,8 +52,21 @@ describe("catalogue image deletion", () => {
     upload.mockResolvedValue({ data: { path: "stored" }, error: null })
   })
 
-  it("refuses to delete a path still referenced by either catalogue table", async () => {
+  it("refuses to delete a path still referenced by a catalogue record", async () => {
     artworkFindFirst.mockResolvedValue({ id: "art-1" })
+    await expect(
+      deleteCatalogueImage(
+        admin as never,
+        "artwork",
+        "abc-123/artwork/123e4567-e89b-12d3-a456-426614174000.jpg"
+      )
+    ).rejects.toBeInstanceOf(ImageStorageError)
+    expect(remove).not.toHaveBeenCalled()
+  })
+
+  it("refuses to delete a path still referenced by an additional artwork image", async () => {
+    artworkImageFindFirst.mockResolvedValue({ id: "art-image-1" })
+
     await expect(
       deleteCatalogueImage(
         admin as never,
@@ -65,6 +82,10 @@ describe("catalogue image deletion", () => {
     await deleteCatalogueImage(admin as never, "artwork", path)
     expect(artworkFindFirst).toHaveBeenCalledWith({
       where: { primaryImagePath: path },
+      select: { id: true },
+    })
+    expect(artworkImageFindFirst).toHaveBeenCalledWith({
+      where: { storagePath: path },
       select: { id: true },
     })
     expect(serviceFindFirst).toHaveBeenCalled()

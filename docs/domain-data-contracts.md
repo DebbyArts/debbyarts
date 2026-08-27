@@ -18,7 +18,8 @@ Artwork is one public catalogue record with:
 
 - a unique slug, title, description, controlled category, optional combined medium/format, and optional displayed-piece dimensions;
 - availability: `AVAILABLE`, `MADE_TO_ORDER`, `SOLD`, or `UNAVAILABLE`;
-- one optional primary-image object path plus alt text and intrinsic dimensions;
+- one optional primary/cover-image object path plus alt text and intrinsic dimensions;
+- up to seven ordered additional images, each with its own immutable Storage path, alt text, and intrinsic dimensions; the public gallery is therefore capped at eight images including the cover;
 - shared pricing mode and optional amount;
 - `published`, `featured`, display order, and timestamps.
 
@@ -118,9 +119,9 @@ The application tables are in PostgreSQL's `public` schema with RLS enabled and 
 
 ## Image storage
 
-Use one public Supabase Storage bucket for public Artwork and Service images. V1 stores one immutable object path directly on each catalogue row, with alt text and intrinsic width/height. The fixed bucket name is application configuration and signed URLs are not persisted.
+Use one public Supabase Storage bucket for public Artwork and Service images. Artwork keeps its immutable primary/cover object path directly on the catalogue row and stores any additional gallery images in its feature-owned relational table. Every object has alt text and intrinsic dimensions. The fixed bucket name is application configuration and signed URLs are not persisted.
 
-An eventual replace flow should upload and validate the new object, update the catalogue record, then delete the old unreferenced object. Upload, replace, and delete remain authenticated Admin operations. No additional-image model or duplicate storage-metadata table exists.
+An eventual replace flow should upload and validate the new object, update the catalogue record, then delete the old unreferenced object. Upload, replace, and delete remain authenticated Admin operations. `ArtworkImage` is the only additional-image relation; there is no generic media framework or duplicate storage-metadata table.
 
 ## Admin authentication
 

@@ -11,17 +11,24 @@ import {
 } from "@/features/artwork/mappers/artwork.mapper"
 import {
   createArtwork,
+  createArtworkImage,
   deleteArtwork,
+  deleteArtworkImage,
   findAdminArtworks,
   findArtworkById,
   findArtworkForEditor,
   findArtworkForOptions,
   findArtworkImagePath,
+  findArtworkImage,
+  findArtworkImageCount,
   findPublishedArtworks,
   findPublishedRequestArtwork,
   findPublishedRequestArtworks,
   updateArtwork,
+  updateArtworkImageAlt,
+  moveArtworkImage as moveArtworkImageRecord,
 } from "@/features/artwork/repositories/artwork.repository"
+import { MAX_ARTWORK_GALLERY_IMAGE_COUNT } from "@/features/artwork/constants"
 import type {
   ArtworkAdminListFilters,
   ArtworkMutationInput,
@@ -88,6 +95,15 @@ async function saveArtwork({
   file,
   removeImage,
 }: ArtworkSaveInput): Promise<ArtworkSaveResult> {
+  if (
+    file &&
+    !existing?.primaryImagePath &&
+    (existing?.additionalImages.length ?? 0) >= MAX_ARTWORK_GALLERY_IMAGE_COUNT
+  ) {
+    throw new Error(
+      `An artwork can have at most ${MAX_ARTWORK_GALLERY_IMAGE_COUNT} gallery images.`
+    )
+  }
   const uploaded = file
     ? await uploadCatalogueImage(admin, "artwork", file)
     : null
@@ -165,18 +181,110 @@ async function removeArtwork(admin: VerifiedAdmin, artworkId: string) {
 
   await deleteArtwork(artworkId)
 
-  if (!artwork.primaryImagePath) return { cleanupPath: null }
+  const storagePaths = [
+    artwork.primaryImagePath,
+    ...artwork.additionalImages.map((image) => image.storagePath),
+  ].filter((path): path is string => Boolean(path))
+  const cleanupPaths: string[] = []
 
-  try {
-    await deleteCatalogueImage(admin, "artwork", artwork.primaryImagePath)
-    return { cleanupPath: null }
-  } catch {
-    return { cleanupPath: artwork.primaryImagePath }
+  for (const path of storagePaths) {
+    try {
+      await deleteCatalogueImage(admin, "artwork", path)
+    } catch {
+      cleanupPaths.push(path)
+    }
   }
+
+  return { cleanupPaths }
+}
+
+async function addArtworkImage(
+  admin: VerifiedAdmin,
+  artworkId: string,
+  file: File,
+  altText: string | null
+) {
+  const artwork = await findArtworkById(artworkId)
+  if (!artwork) return { status: "not-found" as const }
+  if (!artwork.primaryImagePath) {
+    throw new Error("Add a primary cover image before adding gallery images.")
+  }
+
+  const imageCount = await findArtworkImageCount(artworkId)
+  const totalImages = imageCount + 1
+  if (totalImages >= MAX_ARTWORK_GALLERY_IMAGE_COUNT) {
+    throw new Error(
+      `An artwork can have at most ${MAX_ARTWORK_GALLERY_IMAGE_COUNT} gallery images.`
+    )
+  }
+
+  const uploaded = await uploadCatalogueImage(admin, "artwork", file)
+  try {
+    await createArtworkImage({
+      artwork: { connect: { id: artworkId } },
+      storagePath: uploaded.path,
+      altText,
+      width: uploaded.width,
+      height: uploaded.height,
+      displayOrder: imageCount,
+    })
+  } catch (error) {
+    try {
+      await deleteCatalogueImage(admin, "artwork", uploaded.path)
+    } catch {
+      throw new Error(
+        "The gallery image was uploaded, but its database record failed and needs manual Storage cleanup."
+      )
+    }
+    throw error
+  }
+
+  return { status: "saved" as const }
+}
+
+async function updateArtworkImageDescription(
+  artworkId: string,
+  imageId: string,
+  altText: string | null
+) {
+  const result = await updateArtworkImageAlt(artworkId, imageId, altText)
+  return result.count > 0
+}
+
+async function removeArtworkImage(
+  admin: VerifiedAdmin,
+  artworkId: string,
+  imageId: string
+) {
+  const image = await findArtworkImage(artworkId, imageId)
+  if (!image) return { status: "not-found" as const }
+
+  await deleteArtworkImage(artworkId, imageId)
+  try {
+    await deleteCatalogueImage(admin, "artwork", image.storagePath)
+    return { status: "removed" as const }
+  } catch (error) {
+    return {
+      status: "cleanup-needed" as const,
+      message:
+        error instanceof Error
+          ? error.message
+          : `Image removed, but ${image.storagePath} needs Storage cleanup.`,
+    }
+  }
+}
+
+async function moveArtworkImage(
+  artworkId: string,
+  imageId: string,
+  direction: "up" | "down"
+) {
+  return moveArtworkImageRecord(artworkId, imageId, direction)
 }
 
 export {
   getAdminArtworks,
+  addArtworkImage,
   getArtworkEditor,
   getArtworkForSave,
   getArtworkOptions,
@@ -184,7 +292,10 @@ export {
   getPublishedRequestArtwork,
   getPublishedRequestArtworks,
   removeArtwork,
+  removeArtworkImage,
   saveArtwork,
   saveArtworkOptions,
   unpublishArtwork,
+  updateArtworkImageDescription,
+  moveArtworkImage,
 }

@@ -183,9 +183,20 @@ function parseArtworkRequestOptions(
   }
 }
 
+function parseArtworkImageAlt(formData: FormData) {
+  const value = text(formData, "altText")
+  if (value.length > 180) {
+    throw new ArtworkValidationError(
+      "Image alt text must be 180 characters or fewer."
+    )
+  }
+  return value || null
+}
+
 export {
   ArtworkValidationError,
   checked,
+  parseArtworkImageAlt,
   parseArtworkMutation,
   parseArtworkRequestOptions,
   parseOptionList,

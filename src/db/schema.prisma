@@ -81,10 +81,27 @@ model Artwork {
   createdAt                DateTime           @default(now())
   updatedAt                DateTime           @updatedAt
 
+  additionalImages ArtworkImage[]
   enquiries Enquiry[]
 
   @@index([published, featured, displayOrder])
   @@index([category, published, displayOrder])
+}
+
+model ArtworkImage {
+  id           String   @id @default(cuid())
+  artworkId    String
+  storagePath  String   @unique
+  altText      String?
+  width        Int
+  height       Int
+  displayOrder Int
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  artwork Artwork @relation(fields: [artworkId], references: [id], onDelete: Cascade)
+
+  @@unique([artworkId, displayOrder])
 }
 
 model Service {

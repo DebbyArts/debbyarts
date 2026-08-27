@@ -5,6 +5,8 @@ const mocks = vi.hoisted(() => ({
   artworkDelete: vi.fn(),
   artworkFindUnique: vi.fn(),
   artworkUpdate: vi.fn(),
+  artworkImageCount: vi.fn(),
+  artworkImageCreate: vi.fn(),
   deleteCatalogueImage: vi.fn(),
   redirect: vi.fn(),
   requireAdmin: vi.fn(),
@@ -23,6 +25,10 @@ vi.mock("@/db/client", () => ({
       findUnique: mocks.artworkFindUnique,
       update: mocks.artworkUpdate,
     },
+    artworkImage: {
+      count: mocks.artworkImageCount,
+      create: mocks.artworkImageCreate,
+    },
   },
 }))
 vi.mock("@/server/storage/image-storage", async (importOriginal) => ({
@@ -32,6 +38,7 @@ vi.mock("@/server/storage/image-storage", async (importOriginal) => ({
 }))
 
 import { deleteArtworkAction } from "@/features/artwork/actions/delete-artwork.admin.action"
+import { addArtworkImageAction } from "@/features/artwork/actions/add-artwork-image.admin.action"
 import { saveArtworkOptionsAction } from "@/features/artwork/actions/save-artwork-options.admin.action"
 import { saveArtworkAction } from "@/features/artwork/actions/save-artwork.admin.action"
 import { unpublishArtworkAction } from "@/features/artwork/actions/unpublish-artwork.admin.action"
@@ -41,6 +48,7 @@ const admin = { email: "owner@example.com", id: "owner-id" }
 const existingArtwork = {
   id: "artwork-1",
   primaryImagePath: "owner-id/artwork/old-image.jpg",
+  additionalImages: [],
 }
 
 function artworkForm() {
@@ -66,6 +74,8 @@ describe("Artwork Admin action boundaries", () => {
     mocks.artworkCreate.mockResolvedValue({ id: "created-artwork" })
     mocks.artworkUpdate.mockResolvedValue(existingArtwork)
     mocks.artworkDelete.mockResolvedValue(existingArtwork)
+    mocks.artworkImageCount.mockResolvedValue(0)
+    mocks.artworkImageCreate.mockResolvedValue({ id: "image-1" })
     mocks.uploadCatalogueImage.mockResolvedValue({
       contentType: "image/jpeg",
       extension: "jpg",
@@ -151,6 +161,25 @@ describe("Artwork Admin action boundaries", () => {
       status: "warning",
     })
     expect(result.createdId).toBeUndefined()
+  })
+
+  it("enforces the total gallery image limit before a Storage upload", async () => {
+    mocks.artworkImageCount.mockResolvedValue(7)
+    const formData = new FormData()
+    formData.set(
+      "image",
+      new File(["image"], "detail.jpg", { type: "image/jpeg" })
+    )
+
+    const result = await addArtworkImageAction(
+      existingArtwork.id,
+      { message: "", status: "idle" },
+      formData
+    )
+
+    expect(result.status).toBe("error")
+    expect(result.message).toContain("at most 8 gallery images")
+    expect(mocks.uploadCatalogueImage).not.toHaveBeenCalled()
   })
 
   it("authorizes publication and request-option mutations", async () => {
