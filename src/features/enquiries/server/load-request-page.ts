@@ -1,12 +1,11 @@
 import "server-only"
 
-import { getPublishedRequestArtworks } from "@/features/artwork/services/artwork.service"
 import { parseRequestContext } from "@/features/enquiries/request-context"
 import type {
   InvalidRequestPageData,
   RequestPageData,
 } from "@/features/enquiries/request-types"
-import { getPublishedRequestServices } from "@/features/services/services/service.service"
+import { getPublishedRequestCatalogue } from "@/server/request-catalogue"
 
 type LoadRequestPageResult = RequestPageData | InvalidRequestPageData
 
@@ -23,10 +22,7 @@ async function loadRequestPage(
     return parsed
   }
 
-  const [artworks, services] = await Promise.all([
-    getPublishedRequestArtworks(),
-    getPublishedRequestServices(),
-  ])
+  const { artworks, services } = await getPublishedRequestCatalogue()
 
   if (parsed.mode === "artwork") {
     const artwork = artworks.find((candidate) => candidate.slug === parsed.slug)

@@ -17,24 +17,7 @@ import {
   unpublishArtworkAction,
 } from "@/features/artwork/admin/actions"
 import { INITIAL_ARTWORK_ACTION_STATE } from "@/features/artwork/admin/state"
-
-type ArtworkEditorValue = {
-  availability: string
-  category: string
-  description: string
-  displayedPieceDimensions: string | null
-  displayOrder: number
-  featured: boolean
-  id: string
-  imageUrl: string | null
-  mediumFormat: string | null
-  priceAmount: string | null
-  pricingMode: string
-  primaryImageAlt: string | null
-  primaryImagePath: string | null
-  published: boolean
-  title: string
-}
+import type { ArtworkEditorValue } from "@/features/artwork/types"
 
 const SELECT_CLASS =
   "h-12 w-full rounded-sm border border-input bg-card px-4 text-base focus-visible:border-info focus-visible:ring-[3px] focus-visible:ring-ring/70"
@@ -361,4 +344,4 @@ function ArtworkEditor({ artwork }: { artwork: ArtworkEditorValue | null }) {
   )
 }
 
-export { ArtworkEditor, type ArtworkEditorValue }
+export { ArtworkEditor }

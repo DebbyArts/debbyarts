@@ -14,7 +14,9 @@ const ARTWORK_CATEGORY_ITEM_LABELS = {
   DIGITAL_ARTWORK: "Digital Artwork",
 } as const satisfies Record<ArtworkCategory, string>
 
-const ARTWORK_CATEGORY_ORDER = Object.keys(ARTWORK_CATEGORY_LABELS) as ArtworkCategory[]
+const ARTWORK_CATEGORY_ORDER = Object.keys(
+  ARTWORK_CATEGORY_LABELS
+) as ArtworkCategory[]
 
 const AVAILABILITY_LABELS = {
   AVAILABLE: "Available",

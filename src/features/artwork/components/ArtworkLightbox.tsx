@@ -13,14 +13,8 @@ import {
 } from "react"
 
 import { Button } from "@/components/ui/button"
-import {
-  buildArtworkRequestHref,
-  formatArtworkPrice,
-  getArtworkAvailabilityLabel,
-  getArtworkCategoryItemLabel,
-  type ArtworkProjection,
-} from "@/features/artwork/artwork-catalogue"
 import { ArtworkMedia } from "@/features/artwork/components/ArtworkMedia"
+import type { ArtworkProjection } from "@/features/artwork/types"
 
 type ArtworkLightboxProps = {
   artworks: ArtworkProjection[]
@@ -169,7 +163,7 @@ function ArtworkLightbox({
           <div className="flex min-h-[21.875rem] flex-col gap-8 p-6 pt-7 lg:min-h-0 lg:justify-between lg:overflow-y-auto lg:px-2 lg:pt-[3.375rem] lg:pb-3">
             <div className="flex flex-col gap-[1.125rem] pr-12 lg:pr-0">
               <p className="type-label text-primary">
-                {getArtworkCategoryItemLabel(artwork.category)}
+                {artwork.categoryItemLabel}
               </p>
               <h2 id="ArtworkLightbox-title" className="type-h2 uppercase">
                 {artwork.title}
@@ -182,7 +176,7 @@ function ArtworkLightbox({
 
             <div className="flex flex-col gap-4">
               <Button asChild className="w-full">
-                <Link href={buildArtworkRequestHref(artwork.slug)}>
+                <Link href={artwork.requestHref}>
                   Ask About This Piece ↗
                 </Link>
               </Button>
@@ -255,9 +249,9 @@ function ArtworkDetails({ artwork }: { artwork: ArtworkProjection }) {
         ) : null}
         <MetadataRow
           label="Availability"
-          value={getArtworkAvailabilityLabel(artwork.availability)}
+          value={artwork.availabilityLabel}
         />
-        <MetadataRow label="Price" value={formatArtworkPrice(artwork)} />
+        <MetadataRow label="Price" value={artwork.priceLabel} />
       </dl>
     </div>
   )

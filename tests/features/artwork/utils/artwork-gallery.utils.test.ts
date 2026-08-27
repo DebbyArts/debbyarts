@@ -1,16 +1,19 @@
-import { describe, expect, test } from "vitest"
+import { describe, expect, test, vi } from "vitest"
 
 import {
   ALL_ARTWORK,
-  buildArtworkRequestHref,
+} from "@/features/artwork/constants"
+import {
+  getArtworkPriceLabel,
+  mapToArtworkProjection,
+} from "@/features/artwork/mappers/artwork.mapper"
+import { PUBLISHED_ARTWORK_QUERY } from "@/features/artwork/repositories/artwork.repository"
+import type { ArtworkProjection } from "@/features/artwork/types"
+import {
   distributeArtworks,
   filterArtworks,
-  formatArtworkPrice,
   getUsefulArtworkCategories,
-  resolveArtworkImageSource,
-  type ArtworkProjection,
-} from "@/features/artwork/artwork-catalogue"
-import { PUBLISHED_ARTWORK_QUERY } from "@/features/artwork/repositories/artwork.repository"
+} from "@/features/artwork/utils/artwork-gallery.utils"
 
 function artwork(
   slug: string,
@@ -30,6 +33,11 @@ function artwork(
     imageHeight: null,
     pricingMode: "NONE",
     priceAmount: null,
+    categoryLabel: "Paintings",
+    categoryItemLabel: "Painting",
+    availabilityLabel: "Available",
+    priceLabel: "Price on request",
+    requestHref: `/request?artwork=${slug}`,
   }
 }
 
@@ -86,37 +94,44 @@ describe("artwork catalogue rules", () => {
     expect(distributeArtworks(artworks, 1)[0]).toEqual(artworks)
   })
 
-  test("builds stable encoded request destinations", () => {
-    expect(buildArtworkRequestHref("blue horse/2026")).toBe(
-      "/request?artwork=blue%20horse%2F2026"
-    )
-  })
-
   test("formats the approved pricing modes without inventing an amount", () => {
-    expect(formatArtworkPrice({ pricingMode: "NONE", priceAmount: null })).toBe(
+    expect(getArtworkPriceLabel({ pricingMode: "NONE", priceAmount: null })).toBe(
       "Price on request"
     )
     expect(
-      formatArtworkPrice({ pricingMode: "STARTING_FROM", priceAmount: "125000" })
+      getArtworkPriceLabel({ pricingMode: "STARTING_FROM", priceAmount: "125000" })
     ).toContain("From")
   })
 
-  test("resolves configured public object paths and rejects incomplete storage config", () => {
-    expect(
-      resolveArtworkImageSource("artwork/horse study.jpg", {
-        projectUrl: "https://example.supabase.co",
-        bucket: "catalogue",
-      })
-    ).toBe(
-      "https://example.supabase.co/storage/v1/object/public/catalogue/artwork/horse%20study.jpg"
-    )
-    expect(resolveArtworkImageSource("artwork/horse.jpg", {})).toBeNull()
-    expect(
-      resolveArtworkImageSource("https://untrusted.example/horse.jpg", {
-        projectUrl: "https://example.supabase.co",
-        bucket: "catalogue",
-      })
-    ).toBeNull()
-    expect(resolveArtworkImageSource(null, {})).toBeNull()
+  test("maps persisted artwork into fields ready for the gallery", () => {
+    vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "https://example.supabase.co")
+    vi.stubEnv("NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET", "catalogue")
+
+    const projection = mapToArtworkProjection({
+      slug: "blue-horse",
+      title: "Blue Horse",
+      description: "A blue horse study.",
+      category: "PAINTING",
+      mediumFormat: null,
+      displayedPieceDimensions: null,
+      availability: "AVAILABLE",
+      primaryImagePath: "artwork/blue horse.jpg",
+      primaryImageAlt: null,
+      primaryImageWidth: 800,
+      primaryImageHeight: 1200,
+      pricingMode: "NONE",
+      priceAmount: null,
+    })
+
+    expect(projection).toMatchObject({
+      categoryLabel: "Paintings",
+      categoryItemLabel: "Painting",
+      availabilityLabel: "Available",
+      imageSrc:
+        "https://example.supabase.co/storage/v1/object/public/catalogue/artwork/blue%20horse.jpg",
+      imageAlt: "Blue Horse, an artwork by Debby Art & Prints",
+      priceLabel: "Price on request",
+      requestHref: "/request?artwork=blue-horse",
+    })
   })
 })

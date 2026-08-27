@@ -2,23 +2,25 @@
 
 import Link from "next/link"
 import { AnimatePresence, motion } from "motion/react"
-import { type RefObject, useMemo, useRef, useState } from "react"
+import { useMemo, useRef, useState } from "react"
 
 import { EmptyState } from "@/components/ui/states/empty"
 import { Button } from "@/components/ui/button"
 import {
   ALL_ARTWORK,
+  ARTWORK_CATEGORY_LABELS,
   COMMISSION_REQUEST_HREF,
-  distributeArtworks,
-  filterArtworks,
-  getArtworkCategoryItemLabel,
-  getArtworkCategoryLabel,
-  getUsefulArtworkCategories,
-  type ArtworkFilter,
-  type ArtworkProjection,
-} from "@/features/artwork/artwork-catalogue"
+} from "@/features/artwork/constants"
 import { ArtworkLightbox } from "@/features/artwork/components/ArtworkLightbox"
-import { ArtworkMedia } from "@/features/artwork/components/ArtworkMedia"
+import { ArtworkMasonry } from "@/features/artwork/components/ArtworkMasonry"
+import type {
+  ArtworkFilter,
+  ArtworkProjection,
+} from "@/features/artwork/types"
+import {
+  filterArtworks,
+  getUsefulArtworkCategories,
+} from "@/features/artwork/utils/artwork-gallery.utils"
 import { cn } from "@/lib/utils"
 
 type ArtworkGalleryProps = {
@@ -102,7 +104,7 @@ function ArtworkGallery({ artworks }: ArtworkGalleryProps) {
                   active={filter === category}
                   onClick={() => selectFilter(category)}
                 >
-                  {getArtworkCategoryLabel(category)}
+                  {ARTWORK_CATEGORY_LABELS[category]}
                 </FilterButton>
               ))}
             </div>
@@ -124,21 +126,21 @@ function ArtworkGallery({ artworks }: ArtworkGalleryProps) {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.18, ease: "easeOut" }}
             >
-              <MasonryColumns
+              <ArtworkMasonry
                 artworks={filteredArtworks}
                 columnCount={1}
                 openerRef={openerRef}
                 onOpen={setSelectedIndex}
                 className="grid grid-cols-1 gap-4 min-[360px]:hidden"
               />
-              <MasonryColumns
+              <ArtworkMasonry
                 artworks={filteredArtworks}
                 columnCount={2}
                 openerRef={openerRef}
                 onOpen={setSelectedIndex}
                 className="hidden grid-cols-2 gap-4 min-[360px]:grid lg:hidden"
               />
-              <MasonryColumns
+              <ArtworkMasonry
                 artworks={filteredArtworks}
                 columnCount={3}
                 openerRef={openerRef}
@@ -179,90 +181,6 @@ function ArtworkGallery({ artworks }: ArtworkGalleryProps) {
         onClose={() => setSelectedIndex(null)}
       />
     </>
-  )
-}
-
-type MasonryColumnsProps = {
-  artworks: ArtworkProjection[]
-  className: string
-  columnCount: number
-  onOpen: (index: number) => void
-  openerRef: RefObject<HTMLButtonElement | null>
-}
-
-function MasonryColumns({
-  artworks,
-  className,
-  columnCount,
-  onOpen,
-  openerRef,
-}: MasonryColumnsProps) {
-  const columns = distributeArtworks(artworks, columnCount)
-  const artworkIndices = new Map(
-    artworks.map((artwork, index) => [artwork.slug, index])
-  )
-
-  return (
-    <div className={className}>
-      {columns.map((column, columnIndex) => (
-        <div
-          key={columnIndex}
-          className={cn(
-            "flex min-w-0 flex-col gap-7 lg:gap-10",
-            columnIndex % 2 === 1 && "pt-10 lg:pt-20",
-            columnIndex === 2 && "lg:pt-[14.375rem]"
-          )}
-        >
-          {column.map((artwork) => {
-            const artworkIndex = artworkIndices.get(artwork.slug) ?? 0
-            const aspectRatio =
-              artwork.imageWidth && artwork.imageHeight
-                ? `${artwork.imageWidth} / ${artwork.imageHeight}`
-                : "4 / 5"
-
-            return (
-              <motion.button
-                key={artwork.slug}
-                type="button"
-                aria-label={`Open ${artwork.title}`}
-                onClick={(event) => {
-                  openerRef.current = event.currentTarget
-                  onOpen(artworkIndex)
-                }}
-                className="w-full text-left"
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                whileHover={{ y: -4 }}
-                whileTap={{ y: -1, scale: 0.99 }}
-                transition={{ duration: 0.38, delay: (artworkIndex % 4) * 0.08, ease: [0.22, 1, 0.36, 1] }}
-                viewport={{ once: true, amount: 0.2 }}
-              >
-                <span className="block overflow-hidden">
-                  <motion.span className="block" whileHover={{ scale: 1.025 }} transition={{ duration: 0.2 }}>
-                    <ArtworkMedia
-                      alt={artwork.imageAlt}
-                      src={artwork.imageSrc}
-                      sizes="(max-width: 359px) 100vw, (max-width: 1023px) 50vw, 33vw"
-                      eager={artworkIndex < 3}
-                      className="w-full bg-surface-subtle"
-                      style={{ aspectRatio }}
-                    />
-                  </motion.span>
-                </span>
-                <span className="mt-2 flex flex-col gap-1 lg:mt-3 lg:flex-row lg:items-center lg:justify-between">
-                  <span className="font-display text-[1.1875rem] leading-[1.375rem] uppercase lg:text-[1.5625rem] lg:leading-7">
-                    {artwork.title}
-                  </span>
-                  <span className="hidden text-[0.6875rem] leading-4 font-extrabold tracking-label text-primary uppercase lg:inline">
-                    {getArtworkCategoryItemLabel(artwork.category)}
-                  </span>
-                </span>
-              </motion.button>
-            )
-          })}
-        </div>
-      ))}
-    </div>
   )
 }
 

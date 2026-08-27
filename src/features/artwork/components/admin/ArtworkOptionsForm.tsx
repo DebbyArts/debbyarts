@@ -12,14 +12,7 @@ import {
   saveArtworkOptionsAction,
 } from "@/features/artwork/admin/actions"
 import { INITIAL_ARTWORK_ACTION_STATE } from "@/features/artwork/admin/state"
-
-type ArtworkOptionsValue = {
-  askQuantity: boolean
-  availableSizes: string[]
-  framingEnabled: boolean
-  framingOptions: string[]
-  id: string
-}
+import type { ArtworkOptionsValue } from "@/features/artwork/types"
 
 function ArtworkOptionsForm({ artwork }: { artwork: ArtworkOptionsValue }) {
   const [state, action, pending] = useActionState(

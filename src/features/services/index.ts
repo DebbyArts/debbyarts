@@ -2,4 +2,8 @@ export { ServiceEditor } from "./components/admin/ServiceEditor"
 export { ServiceOptionsForm } from "./components/admin/ServiceOptionsForm"
 export { ServicesLoading } from "./components/ServicesLoading"
 export { ServicesPage } from "./components/ServicesPage"
-export { getPublishedServiceGroups } from "./services/service.service"
+export {
+  getPublishedRequestService,
+  getPublishedRequestServices,
+  getPublishedServiceGroups,
+} from "./services/service.service"
