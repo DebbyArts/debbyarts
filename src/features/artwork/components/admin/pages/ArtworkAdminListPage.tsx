@@ -1,4 +1,5 @@
 import Link from "next/link"
+import type { ReactNode } from "react"
 
 import {
   AdminPage,
@@ -11,7 +12,6 @@ import { FeedbackBanner } from "@/components/ui/feedback-banner"
 import { MediaImage } from "@/components/ui/media-image"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { SignOutButton } from "@/features/admin-auth/components/sign-out-button"
 import {
   ARTWORK_CATEGORY_ITEM_LABELS,
   AVAILABILITY_LABELS,
@@ -24,10 +24,14 @@ import type {
 import { requireAdmin } from "@/server/auth/authorize"
 
 type ArtworkListPageProps = {
+  accountAction?: ReactNode
   searchParams: Promise<ArtworkListSearchParams>
 }
 
-async function ArtworkAdminListPage({ searchParams }: ArtworkListPageProps) {
+async function ArtworkAdminListPage({
+  accountAction,
+  searchParams,
+}: ArtworkListPageProps) {
   const admin = await requireAdmin()
   const query = await searchParams
   const cleanupPath =
@@ -52,7 +56,7 @@ async function ArtworkAdminListPage({ searchParams }: ArtworkListPageProps) {
   return (
     <AdminShell
       activeSection="artwork"
-      accountAction={<SignOutButton />}
+      accountAction={accountAction}
     >
       <AdminPage>
         <AdminPageHeader

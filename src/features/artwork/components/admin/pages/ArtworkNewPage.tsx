@@ -1,16 +1,16 @@
 import Link from "next/link"
+import type { ReactNode } from "react"
 
 import { AdminPage, AdminPageHeader } from "@/components/shared/admin/admin-page"
 import { AdminShell } from "@/components/shared/admin/admin-shell"
 import { Button } from "@/components/ui/button"
-import { SignOutButton } from "@/features/admin-auth/components/sign-out-button"
 import { ArtworkEditor } from "@/features/artwork/components/admin/ArtworkEditor"
 import { requireAdmin } from "@/server/auth/authorize"
 
-async function ArtworkNewPage() {
+async function ArtworkNewPage({ accountAction }: { accountAction?: ReactNode }) {
   await requireAdmin()
   return (
-    <AdminShell activeSection="artwork" accountAction={<SignOutButton />}>
+    <AdminShell activeSection="artwork" accountAction={accountAction}>
       <AdminPage>
         <AdminPageHeader
           eyebrow="Artwork"
