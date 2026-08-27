@@ -24,6 +24,35 @@ Apply only the rules defined here. Preserve everything else.
 - Keep feature-specific application types in `types/index.ts`.
 - Keep feature code inside its owning feature unless it is genuinely shared.
 
+## Domain surfaces
+
+- Organise features by domain, not by public or Admin surface.
+- Keep public and Admin code for the same domain inside the owning feature.
+- Keep genuinely Admin-specific feature components in `components/admin/`.
+- Do not use a feature-root `admin/` directory as a general bucket for actions, validation, state, data access, or domain logic.
+- Repositories, services, mappers, validation, constants, and types remain feature-owned and should serve every relevant surface.
+- Do not duplicate or split those modules solely because one consumer is an Admin screen.
+- Split an oversized module only by a cohesive responsibility such as read/write or catalogue/editor behaviour, not merely public/Admin usage.
+- Keep cross-domain Admin composition in `app/admin/` and shared Admin layout UI in `components/shared/admin/`; do not create an umbrella Admin feature for domain CRUD.
+
+## Actions and validation
+
+- Keep feature actions in `actions/`, with one exported action per file.
+- Name public or front-facing action files `<action>.action.ts`.
+- Name Admin action files `<action>.admin.action.ts`; place `.admin` immediately before `.action.ts`.
+- Treat actions as delivery adapters: authenticate where required, parse input, invoke the owning feature's service, and handle framework concerns such as revalidation or redirects.
+- When the feature already has repositories and services, actions should not bypass them or duplicate their data-access and use-case responsibilities.
+- Keep feature validation in `validation/` and share it across surfaces when the rules are the same. Use an Admin-specific validation module only when the input contract is genuinely Admin-only.
+- Keep immutable initial action states in `constants/index.ts` and their state types in `types/index.ts`.
+
+Examples:
+
+```text
+actions/submit-enquiry.action.ts
+actions/save-artwork.admin.action.ts
+validation/artwork.validation.ts
+```
+
 ## Constants
 
 - Treat immutable option lists, labels, lookup maps, ordering values, route values, and fixed configuration as constants.
