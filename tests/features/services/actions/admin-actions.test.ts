@@ -124,6 +124,24 @@ describe("Service Admin action boundaries", () => {
     )
   })
 
+  it("returns expected schema failures without mutating database or Storage", async () => {
+    const invalid = serviceForm()
+    invalid.set("name", "")
+
+    const result = await saveServiceAction(
+      existingService.id,
+      INITIAL_SERVICE_ACTION_STATE,
+      invalid
+    )
+
+    expect(result).toEqual({
+      message: "Name is required and must be 120 characters or fewer.",
+      status: "error",
+    })
+    expect(mocks.serviceUpdate).not.toHaveBeenCalled()
+    expect(mocks.uploadCatalogueImage).not.toHaveBeenCalled()
+  })
+
   it("returns the created record ID after authorization and upload", async () => {
     const result = await saveServiceAction(
       null,
@@ -191,6 +209,23 @@ describe("Service Admin action boundaries", () => {
       where: { id: existingService.id },
       data: { published: false },
     })
+  })
+
+  it("returns expected option-schema failures without updating the service", async () => {
+    const options = new FormData()
+    options.set("askSizeFormat", "on")
+
+    const result = await saveServiceOptionsAction(
+      existingService.id,
+      INITIAL_SERVICE_ACTION_STATE,
+      options
+    )
+
+    expect(result).toEqual({
+      message: "Add at least one size / format option or turn that question off.",
+      status: "error",
+    })
+    expect(mocks.serviceUpdate).not.toHaveBeenCalled()
   })
 
   it("stops every mutation before database or Storage access when authorization fails", async () => {

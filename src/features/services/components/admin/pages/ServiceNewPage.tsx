@@ -4,7 +4,7 @@ import type { ReactNode } from "react"
 import { AdminPage, AdminPageHeader } from "@/components/shared/admin/admin-page"
 import { AdminShell } from "@/components/shared/admin/admin-shell"
 import { Button } from "@/components/ui/button"
-import { ServiceEditor } from "@/features/services"
+import { ServiceEditor } from "@/features/services/components/admin/ServiceEditor"
 import { requireAdmin } from "@/shared/auth/authorize"
 
 async function ServiceNewPage({ accountAction }: { accountAction?: ReactNode }) {

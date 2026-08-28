@@ -4,11 +4,11 @@ import {
   deriveOptionCues,
   derivePricingPresentation,
   getServiceRequestHref,
+  mapToRequestServiceOption,
   mapToServiceAdminListItem,
   mapToServiceEditorValue,
   projectServiceGroups,
 } from "@/features/services/mappers/service.mapper"
-import { mapToRequestServiceOption } from "@/features/services/mappers/request-service.mapper"
 import {
   PUBLISHED_SERVICES_QUERY,
   type PublishedServiceRecord,

@@ -13,7 +13,7 @@ import { MediaImage } from "@/components/ui/media-image"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { SERVICE_GROUP_LABELS } from "@/features/services/constants"
-import { getAdminServices } from "@/features/services/services/service.service"
+import { getAdminServices } from "@/features/services/services/service.query.service"
 import type {
   ServiceListSearchParams,
   ServiceAdminListFilters,

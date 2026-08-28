@@ -1,17 +1,15 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
+import { ZodError } from "zod"
 
 import { SERVICE_REVALIDATION_PATHS } from "@/features/services/constants"
+import { parseServiceMutation } from "@/features/services/parsers/service-form.parser"
 import {
-  getServiceForSave,
+  getServiceForMutation,
   saveService,
-} from "@/features/services/services/service.service"
+} from "@/features/services/services/service.mutation.service"
 import type { ServiceActionState } from "@/features/services/types"
-import {
-  parseServiceMutation,
-  ServiceValidationError,
-} from "@/features/services/validation/service.validation"
 import { requireAdmin } from "@/shared/auth/authorize"
 import {
   ImageStorageError,
@@ -25,11 +23,17 @@ function imageFile(formData: FormData) {
 
 function actionError(error: unknown): ServiceActionState {
   if (
-    error instanceof ServiceValidationError ||
     error instanceof ImageValidationError ||
     error instanceof ImageStorageError
   ) {
     return { status: "error", message: error.message }
+  }
+
+  if (error instanceof ZodError) {
+    return {
+      status: "error",
+      message: error.issues[0]?.message ?? "The service details are invalid.",
+    }
   }
 
   if (
@@ -56,7 +60,7 @@ async function saveServiceAction(
   formData: FormData
 ): Promise<ServiceActionState> {
   const admin = await requireAdmin()
-  const existing = serviceId ? await getServiceForSave(serviceId) : null
+  const existing = serviceId ? await getServiceForMutation(serviceId) : null
 
   if (serviceId && !existing) {
     return { status: "error", message: "Service not found." }

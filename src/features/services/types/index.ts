@@ -1,5 +1,4 @@
 import type { PricingMode, ServiceGroup } from "@/db/generated/prisma/enums"
-import type { PublishedServiceRecord } from "@/features/services/repositories/service.repository"
 
 type ServicePricingPresentation = { label: string; mode: PricingMode }
 type ServicePresentation = {
@@ -91,7 +90,6 @@ type ServiceRequestOptionsInput = {
 }
 
 export type {
-  PublishedServiceRecord,
   ServiceActionState,
   ServiceAdminListFilters,
   ServiceAdminListItem,

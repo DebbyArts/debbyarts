@@ -10,5 +10,5 @@ export {
   getPublishedRequestService,
   getPublishedRequestServices,
   getPublishedServiceGroups,
-} from "./services/service.service"
+} from "./services/service.query.service"
 export type { ServiceListSearchParams } from "./types"

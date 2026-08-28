@@ -1,14 +1,12 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
+import { ZodError } from "zod"
 
 import { SERVICE_REVALIDATION_PATHS } from "@/features/services/constants"
-import { saveServiceOptions } from "@/features/services/services/service.service"
+import { parseServiceRequestOptions } from "@/features/services/parsers/service-form.parser"
+import { saveServiceOptions } from "@/features/services/services/service.mutation.service"
 import type { ServiceActionState } from "@/features/services/types"
-import {
-  parseServiceRequestOptions,
-  ServiceValidationError,
-} from "@/features/services/validation/service.validation"
 import { requireAdmin } from "@/shared/auth/authorize"
 
 async function saveServiceOptionsAction(
@@ -27,8 +25,8 @@ async function saveServiceOptionsAction(
     return {
       status: "error",
       message:
-        error instanceof ServiceValidationError
-          ? error.message
+        error instanceof ZodError
+          ? (error.issues[0]?.message ?? "The request options are invalid.")
           : "The request options could not be saved.",
     }
   }

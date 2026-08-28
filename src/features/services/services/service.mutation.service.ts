@@ -1,29 +1,13 @@
 import "server-only"
 
-import { connection } from "next/server"
-
-import { mapToRequestServiceOption } from "@/features/services/mappers/request-service.mapper"
-import {
-  mapToServiceAdminListItem,
-  mapToServiceEditorValue,
-  mapToServiceOptionsValue,
-  projectServiceGroups,
-} from "@/features/services/mappers/service.mapper"
 import {
   createService,
   deleteService,
-  findAdminServices,
-  findPublishedRequestService,
-  findPublishedRequestServices,
-  findPublishedServices,
   findServiceById,
-  findServiceForEditor,
-  findServiceForOptions,
   findServiceImagePath,
   updateService,
 } from "@/features/services/repositories/service.repository"
 import type {
-  ServiceAdminListFilters,
   ServiceMutationInput,
   ServiceRequestOptionsInput,
 } from "@/features/services/types"
@@ -45,41 +29,7 @@ type ServiceSaveResult =
   | { createdId?: string; status: "saved"; warning?: string }
   | { createdId?: never; status: "not-saved"; warning: string }
 
-async function getPublishedServiceGroups() {
-  await connection()
-  const services = await findPublishedServices()
-
-  return projectServiceGroups(services)
-}
-
-async function getPublishedRequestServices() {
-  await connection()
-  return (await findPublishedRequestServices()).map(mapToRequestServiceOption)
-}
-
-async function getPublishedRequestService(slug: string) {
-  const service = await findPublishedRequestService(slug)
-  return service ? mapToRequestServiceOption(service) : null
-}
-
-async function getAdminServices(filters: ServiceAdminListFilters) {
-  await connection()
-  return (await findAdminServices(filters)).map(mapToServiceAdminListItem)
-}
-
-async function getServiceEditor(id: string) {
-  await connection()
-  const service = await findServiceForEditor(id)
-  return service ? mapToServiceEditorValue(service) : null
-}
-
-async function getServiceOptions(id: string) {
-  await connection()
-  const service = await findServiceForOptions(id)
-  return service ? mapToServiceOptionsValue(service) : null
-}
-
-async function getServiceForSave(id: string) {
+async function getServiceForMutation(id: string) {
   return findServiceById(id)
 }
 
@@ -178,13 +128,7 @@ async function removeService(admin: VerifiedAdmin, serviceId: string) {
 }
 
 export {
-  getAdminServices,
-  getPublishedRequestService,
-  getPublishedRequestServices,
-  getPublishedServiceGroups,
-  getServiceEditor,
-  getServiceForSave,
-  getServiceOptions,
+  getServiceForMutation,
   removeService,
   saveService,
   saveServiceOptions,

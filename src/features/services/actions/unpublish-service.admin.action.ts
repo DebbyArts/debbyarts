@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache"
 
 import { SERVICE_REVALIDATION_PATHS } from "@/features/services/constants"
-import { unpublishService } from "@/features/services/services/service.service"
+import { unpublishService } from "@/features/services/services/service.mutation.service"
 import { requireAdmin } from "@/shared/auth/authorize"
 
 async function unpublishServiceAction(serviceId: string) {

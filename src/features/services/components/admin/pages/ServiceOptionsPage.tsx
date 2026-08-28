@@ -6,7 +6,7 @@ import { AdminPage, AdminPageHeader } from "@/components/shared/admin/admin-page
 import { AdminShell } from "@/components/shared/admin/admin-shell"
 import { Button } from "@/components/ui/button"
 import { ServiceOptionsForm } from "@/features/services/components/admin/ServiceOptionsForm"
-import { getServiceOptions } from "@/features/services/services/service.service"
+import { getServiceOptions } from "@/features/services/services/service.query.service"
 import { requireAdmin } from "@/shared/auth/authorize"
 
 async function ServiceOptionsPage({

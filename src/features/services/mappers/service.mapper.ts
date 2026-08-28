@@ -1,6 +1,5 @@
-import {
-  PricingMode,
-} from "@/db/generated/prisma/enums"
+import type { Prisma } from "@/db/generated/prisma/client"
+import { PricingMode } from "@/db/generated/prisma/enums"
 import {
   SERVICE_GROUP_DEFINITIONS,
   SERVICE_GROUP_ORDER,
@@ -8,18 +7,19 @@ import {
 import type {
   ServiceAdminListItem,
   ServiceEditorValue,
-  PublishedServiceRecord,
   ServiceGroupPresentation,
   ServiceOptionsValue,
   ServicePresentation,
   ServicePricingPresentation,
 } from "@/features/services/types"
-import type { Prisma } from "@/db/generated/prisma/client"
 import {
   ADMIN_SERVICE_LIST_SELECT,
+  type PublishedServiceRecord,
+  REQUEST_SERVICE_SELECT,
   SERVICE_EDITOR_SELECT,
   SERVICE_OPTIONS_SELECT,
 } from "@/features/services/repositories/service.repository"
+import type { RequestServiceOption } from "@/shared/types/request-catalogue"
 import { resolvePublicStorageObjectUrl } from "@/shared/utils/storage"
 import { formatNgn } from "@/shared/utils/format-ngn"
 
@@ -31,6 +31,9 @@ type ServiceEditorRecord = Prisma.ServiceGetPayload<{
 }>
 type ServiceOptionsRecord = Prisma.ServiceGetPayload<{
   select: typeof SERVICE_OPTIONS_SELECT
+}>
+type RequestServiceRecord = Prisma.ServiceGetPayload<{
+  select: typeof REQUEST_SERVICE_SELECT
 }>
 
 function invalidPricingError(service: PublishedServiceRecord) {
@@ -206,12 +209,49 @@ function mapToServiceOptionsValue(
   return service
 }
 
+function mapToRequestServiceOption(
+  service: RequestServiceRecord
+): RequestServiceOption {
+  const group = SERVICE_GROUP_DEFINITIONS.find(
+    (definition) => definition.value === service.group
+  )
+
+  if (!group) {
+    throw new Error(`Service "${service.slug}" has an unsupported group.`)
+  }
+
+  const imageSrc = resolvePublicStorageObjectUrl(service.primaryImagePath)
+  const imageAlt = service.primaryImageAlt?.trim()
+
+  return {
+    id: service.id,
+    slug: service.slug,
+    name: service.name,
+    groupLabel: group.label,
+    imageSrc: imageSrc && imageAlt ? imageSrc : null,
+    imageAlt:
+      imageSrc && imageAlt
+        ? imageAlt
+        : `Image unavailable for ${service.name}`,
+    askQuantity: service.askQuantity,
+    askSizeFormat: service.askSizeFormat,
+    sizeFormatOptions: service.sizeFormatOptions,
+    askDesignReadiness: service.askDesignReadiness,
+    askColour: service.askColour,
+    askMaterial: service.askMaterial,
+    materialOptions: service.materialOptions,
+    askFinish: service.askFinish,
+  }
+}
+
 export {
   deriveOptionCues,
   derivePricingPresentation,
   getServiceRequestHref,
+  mapToRequestServiceOption,
   mapToServiceAdminListItem,
   mapToServiceEditorValue,
   mapToServiceOptionsValue,
   projectServiceGroups,
+  type RequestServiceRecord,
 }

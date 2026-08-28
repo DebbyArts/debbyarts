@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
 
 import { SERVICE_REVALIDATION_PATHS } from "@/features/services/constants"
-import { removeService } from "@/features/services/services/service.service"
+import { removeService } from "@/features/services/services/service.mutation.service"
 import { requireAdmin } from "@/shared/auth/authorize"
 
 async function deleteServiceAction(serviceId: string) {
