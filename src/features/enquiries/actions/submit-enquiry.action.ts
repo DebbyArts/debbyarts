@@ -1,53 +1,18 @@
 "use server"
 
 import { headers } from "next/headers"
+import { ZodError } from "zod"
 
+import {
+  EnquiryFieldError,
+  enquiryFieldErrorsFromZod,
+} from "@/features/enquiries/errors/enquiry-field.error"
+import { parseEnquiryForm } from "@/features/enquiries/parsers/enquiry-form.parser"
 import {
   RequestContextUnavailableError,
   submitEnquiry,
-} from "@/features/enquiries/services/enquiry.service"
-import { REQUEST_CONTEXT_MODES } from "@/features/enquiries/constants"
-import type {
-  EnquiryActionState,
-  RequestContextMode,
-  RequestDraft,
-} from "@/features/enquiries/types"
-import { RequestValidationError } from "@/features/enquiries/validation/request.validation"
-
-function formValue(formData: FormData, field: string) {
-  const value = formData.get(field)
-  return typeof value === "string" ? value : ""
-}
-
-function requestDraftFromFormData(formData: FormData): RequestDraft {
-  const contextModeValue = formValue(formData, "contextMode")
-  const contextMode: RequestContextMode = REQUEST_CONTEXT_MODES.includes(
-    contextModeValue as RequestContextMode
-  )
-    ? (contextModeValue as RequestContextMode)
-    : "default"
-
-  return {
-    broadRequest: formValue(formData, "broadRequest") === "true",
-    contextMode,
-    requestKind: formValue(formData, "requestKind") as RequestDraft["requestKind"],
-    itemSlug: formValue(formData, "itemSlug"),
-    quantity: formValue(formData, "quantity"),
-    sizeFormat: formValue(formData, "sizeFormat"),
-    framing: formValue(formData, "framing"),
-    designReadiness: formValue(formData, "designReadiness"),
-    colour: formValue(formData, "colour"),
-    material: formValue(formData, "material"),
-    finish: formValue(formData, "finish"),
-    fulfilmentMethod: formValue(formData, "fulfilmentMethod"),
-    location: formValue(formData, "location"),
-    preferredDate: formValue(formData, "preferredDate"),
-    customerName: formValue(formData, "customerName"),
-    phoneWhatsApp: formValue(formData, "phoneWhatsApp"),
-    email: formValue(formData, "email"),
-    customerNote: formValue(formData, "customerNote"),
-  }
-}
+} from "@/features/enquiries/services/enquiry.mutation.service"
+import type { EnquiryActionState } from "@/features/enquiries/types"
 
 async function requestOrigin() {
   const requestHeaders = await headers()
@@ -64,10 +29,9 @@ async function submitEnquiryAction(
   _previousState: EnquiryActionState,
   formData: FormData
 ): Promise<EnquiryActionState> {
-  const draft = requestDraftFromFormData(formData)
-
   try {
-    const result = await submitEnquiry(draft, await requestOrigin())
+    const input = parseEnquiryForm(formData)
+    const result = await submitEnquiry(input, await requestOrigin())
     return {
       status: "success",
       reference: result.reference,
@@ -75,7 +39,15 @@ async function submitEnquiryAction(
       duplicate: result.duplicate,
     }
   } catch (error) {
-    if (error instanceof RequestValidationError) {
+    if (error instanceof ZodError) {
+      return {
+        status: "validation",
+        message: "Please correct the highlighted request details.",
+        fieldErrors: enquiryFieldErrorsFromZod(error),
+      }
+    }
+
+    if (error instanceof EnquiryFieldError) {
       return {
         status: "validation",
         message: error.message,

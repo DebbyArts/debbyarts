@@ -11,7 +11,7 @@ import { EmptyState } from "@/components/ui/states/empty"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { EnquiryStatus, RequestKind } from "@/db/generated/prisma/enums"
-import { getEnquiryList } from "@/features/enquiries/services/enquiry.service"
+import { getEnquiryList } from "@/features/enquiries/services/enquiry.query.service"
 import type { EnquiryListSearchParams } from "@/features/enquiries/types"
 import { requireAdmin } from "@/shared/auth/authorize"
 

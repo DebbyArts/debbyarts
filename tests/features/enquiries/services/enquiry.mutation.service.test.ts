@@ -5,8 +5,11 @@ import {
   createEnquiry,
   type CreateEnquiryDependencies,
   type EnquiryWriteRecord,
-} from "@/features/enquiries/services/enquiry.service"
+} from "@/features/enquiries/services/enquiry.mutation.service"
+import { createEnquirySubmissionSchema } from "@/features/enquiries/schemas/enquiry.schema"
+import { EnquiryFieldError } from "@/features/enquiries/errors/enquiry-field.error"
 import type {
+  RequestArtworkOption,
   RequestDraft,
   RequestServiceOption,
 } from "@/features/enquiries/types"
@@ -28,6 +31,27 @@ const service: RequestServiceOption = {
   askMaterial: false,
   materialOptions: [],
   askFinish: false,
+}
+
+const configuredService: RequestServiceOption = {
+  ...service,
+  askColour: true,
+  askFinish: true,
+  askMaterial: true,
+  materialOptions: ["Cotton", "Polyester"],
+}
+
+const artwork: RequestArtworkOption = {
+  askQuantity: true,
+  availableSizes: ["A3"],
+  categoryLabel: "Painting",
+  framingEnabled: true,
+  framingOptions: ["Black"],
+  id: "artwork-1",
+  imageAlt: "Horses",
+  imageSrc: null,
+  slug: "horses",
+  title: "Horses",
 }
 
 function draft(overrides: Partial<RequestDraft> = {}): RequestDraft {
@@ -54,6 +78,10 @@ function draft(overrides: Partial<RequestDraft> = {}): RequestDraft {
   }
 }
 
+function input(overrides: Partial<RequestDraft> = {}) {
+  return createEnquirySubmissionSchema(NOW).parse(draft(overrides))
+}
+
 function dependencies(overrides: Partial<CreateEnquiryDependencies> = {}) {
   const writes: EnquiryWriteRecord[] = []
   const deps: CreateEnquiryDependencies = {
@@ -75,7 +103,7 @@ describe("enquiry creation service", () => {
   test("persists the normalized enquiry before returning WhatsApp continuation", async () => {
     const { deps, writes } = dependencies()
     const result = await createEnquiry(
-      draft(),
+      input(),
       "https://debby.example/request",
       deps
     )
@@ -103,7 +131,7 @@ describe("enquiry creation service", () => {
       create,
     })
 
-    const result = await createEnquiry(draft(), "https://debby.example", deps)
+    const result = await createEnquiry(input(), "https://debby.example", deps)
 
     expect(result.duplicate).toBe(true)
     expect(result.reference).toBe("DAP-EXISTING")
@@ -119,7 +147,7 @@ describe("enquiry creation service", () => {
     })
 
     await expect(
-      createEnquiry(draft(), "https://debby.example", deps)
+      createEnquiry(input(), "https://debby.example", deps)
     ).rejects.toBeInstanceOf(RequestContextUnavailableError)
     expect(create).not.toHaveBeenCalled()
   })
@@ -132,7 +160,7 @@ describe("enquiry creation service", () => {
     })
 
     await expect(
-      createEnquiry(draft(), "https://debby.example", deps)
+      createEnquiry(input(), "https://debby.example", deps)
     ).rejects.toThrow("database unavailable")
   })
 
@@ -147,7 +175,7 @@ describe("enquiry creation service", () => {
       create,
     })
 
-    const result = await createEnquiry(draft(), "https://debby.example", deps)
+    const result = await createEnquiry(input(), "https://debby.example", deps)
 
     expect(create).toHaveBeenCalledTimes(2)
     expect(result.reference).toBe("DAP-UNIQUE")
@@ -156,7 +184,7 @@ describe("enquiry creation service", () => {
   test("persists a broad art commission with stable snapshots and no entity", async () => {
     const { deps, writes } = dependencies()
     const result = await createEnquiry(
-      draft({
+      input({
         broadRequest: true,
         contextMode: "art-commission",
         requestKind: "ARTWORK",
@@ -178,5 +206,108 @@ describe("enquiry creation service", () => {
       itemSlugSnapshot: "art-commission",
     })
     expect(result.whatsappSummary).toContain("Custom art commission")
+  })
+
+  test("persists only configured Service answers", async () => {
+    const { deps, writes } = dependencies({
+      findService: vi.fn(async () => configuredService),
+    })
+
+    await createEnquiry(
+      input({
+        colour: "Magenta",
+        finish: "Matte",
+        material: "Cotton",
+      }),
+      "https://debby.example",
+      deps
+    )
+
+    expect(writes[0]).toMatchObject({
+      colour: "Magenta",
+      finish: "Matte",
+      material: "Cotton",
+      serviceId: "service-1",
+    })
+  })
+
+  test("persists configured Artwork answers against the trusted record", async () => {
+    const { deps, writes } = dependencies({
+      findArtwork: vi.fn(async () => artwork),
+    })
+
+    await createEnquiry(
+      input({
+        contextMode: "artwork",
+        designReadiness: "",
+        framing: "Black",
+        itemSlug: "horses",
+        quantity: "1",
+        requestKind: "ARTWORK",
+        sizeFormat: "A3",
+      }),
+      "https://debby.example",
+      deps
+    )
+
+    expect(writes[0]).toMatchObject({
+      artworkId: "artwork-1",
+      framing: "Black",
+      quantity: 1,
+      serviceId: null,
+      sizeFormat: "A3",
+    })
+  })
+
+  test("rejects tampered configured answers before duplicate or persistence checks", async () => {
+    const create = vi.fn(async () => undefined)
+    const findDuplicate = vi.fn(async () => null)
+    const { deps } = dependencies({
+      create,
+      findDuplicate,
+      findService: vi.fn(async () => configuredService),
+    })
+
+    await expect(
+      createEnquiry(
+        input({
+          framing: "Black",
+          material: "Silk",
+          sizeFormat: "Unconfigured",
+        }),
+        "https://debby.example",
+        deps
+      )
+    ).rejects.toMatchObject({
+      fieldErrors: {
+        framing: "Artwork framing cannot be submitted for a service.",
+        material: "Choose one of the available material options.",
+        sizeFormat: "Choose one of the available size or format options.",
+      },
+    } satisfies Partial<EnquiryFieldError>)
+    expect(findDuplicate).not.toHaveBeenCalled()
+    expect(create).not.toHaveBeenCalled()
+  })
+
+  test("rejects forged structured answers on broad requests", async () => {
+    const create = vi.fn(async () => undefined)
+    const { deps } = dependencies({ create })
+
+    await expect(
+      createEnquiry(
+        input({
+          broadRequest: true,
+          contextMode: "art-commission",
+          designReadiness: "",
+          itemSlug: "",
+          quantity: "10",
+          requestKind: "ARTWORK",
+          sizeFormat: "A3",
+        }),
+        "https://debby.example",
+        deps
+      )
+    ).rejects.toBeInstanceOf(EnquiryFieldError)
+    expect(create).not.toHaveBeenCalled()
   })
 })

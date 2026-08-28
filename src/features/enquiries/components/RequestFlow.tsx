@@ -45,10 +45,10 @@ import type {
   RequestPageData,
 } from "@/features/enquiries/types"
 import {
-  normalizeEmail,
-  normalizePhone,
-  normalizePreferredDate,
-} from "@/features/enquiries/validation/request.validation"
+  createEnquiryPreferredDateSchema,
+  enquiryEmailSchema,
+  enquiryPhoneSchema,
+} from "@/features/enquiries/schemas/enquiry.schema"
 import { cn } from "@/shared/utils/cn"
 
 
@@ -134,7 +134,9 @@ function validateClientStep(
       errors.location = "Enter the delivery area, city, or state."
     }
     if (
-      normalizePreferredDate(draft.preferredDate, new Date()) === undefined
+      !createEnquiryPreferredDateSchema(new Date()).safeParse(
+        draft.preferredDate
+      ).success
     ) {
       errors.preferredDate = "Choose today or a future date."
     }
@@ -142,10 +144,10 @@ function validateClientStep(
 
   if (step === "contact") {
     if (!draft.customerName.trim()) errors.customerName = "Enter your name."
-    if (!normalizePhone(draft.phoneWhatsApp)) {
+    if (!enquiryPhoneSchema.safeParse(draft.phoneWhatsApp).success) {
       errors.phoneWhatsApp = "Enter a valid phone or WhatsApp number."
     }
-    if (normalizeEmail(draft.email) === undefined) {
+    if (!enquiryEmailSchema.safeParse(draft.email).success) {
       errors.email = "Enter a valid email address."
     }
     if (!draft.broadRequest && draft.customerNote.length > 2_000) {

@@ -36,6 +36,8 @@ type InvalidRequestPageData = {
   status: "invalid"
 }
 
+type LoadRequestPageResult = RequestPageData | InvalidRequestPageData
+
 type RequestDraft = {
   broadRequest: boolean
   colour: string
@@ -59,6 +61,27 @@ type RequestDraft = {
 
 type RequestField = keyof RequestDraft
 type RequestFieldErrors = Partial<Record<RequestField, string>>
+
+type ParsedEnquiryInput = {
+  broadRequest: boolean
+  colour: string
+  contextMode: RequestContextMode
+  customerName: string
+  customerNote: string | null
+  designReadiness: string
+  email: string | null
+  finish: string
+  framing: string
+  fulfilmentMethod: FulfilmentMethod
+  itemSlug: string
+  location: string | null
+  material: string
+  phoneWhatsApp: string
+  preferredDate: Date | null
+  quantity: number | null
+  requestKind: RequestKindValue
+  sizeFormat: string
+}
 
 type EnquiryActionState =
   | { status: "idle" }
@@ -217,6 +240,8 @@ export type {
   EnquiryListSearchParams,
   EnquiryStatusTone,
   InvalidRequestPageData,
+  LoadRequestPageResult,
+  ParsedEnquiryInput,
   RequestArtworkOption,
   RequestContextMode,
   RequestDraft,

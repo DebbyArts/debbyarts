@@ -1,14 +1,40 @@
 import "server-only"
 
-import { parseRequestContext } from "@/features/enquiries/utils/request-context.utils"
+import { ENQUIRIES_PAGE_SIZE } from "@/features/enquiries/constants"
+import {
+  mapToEnquiryDetail,
+  mapToEnquiryListItem,
+} from "@/features/enquiries/mappers/enquiry.mapper"
+import {
+  findEnquiryDetail,
+  findEnquiryList,
+} from "@/features/enquiries/repositories/enquiry.repository"
 import type {
-  InvalidRequestPageData,
-  RequestPageData,
+  EnquiryListFilters,
+  EnquiryListResult,
+  LoadRequestPageResult,
   RequestSearchParams,
 } from "@/features/enquiries/types"
+import { parseRequestContext } from "@/features/enquiries/utils/request-context.utils"
 import { getPublishedRequestCatalogue } from "@/shared/request-catalogue"
 
-type LoadRequestPageResult = RequestPageData | InvalidRequestPageData
+async function getEnquiryList(
+  filters: EnquiryListFilters
+): Promise<EnquiryListResult> {
+  const { enquiries, total, newToday } = await findEnquiryList(filters)
+
+  return {
+    items: enquiries.map(mapToEnquiryListItem),
+    total,
+    newToday,
+    totalPages: Math.max(1, Math.ceil(total / ENQUIRIES_PAGE_SIZE)),
+  }
+}
+
+async function getEnquiryDetail(id: string) {
+  const enquiry = await findEnquiryDetail(id)
+  return enquiry ? mapToEnquiryDetail(enquiry) : null
+}
 
 async function loadRequestPage(
   searchParams: RequestSearchParams
@@ -96,4 +122,4 @@ async function loadRequestPage(
   }
 }
 
-export { loadRequestPage, type LoadRequestPageResult }
+export { getEnquiryDetail, getEnquiryList, loadRequestPage }

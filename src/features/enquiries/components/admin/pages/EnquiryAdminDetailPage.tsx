@@ -14,7 +14,7 @@ import { MediaImage } from "@/components/ui/media-image"
 import { EnquiryStatus } from "@/db/generated/prisma/enums"
 import { updateEnquiryStatusAction } from "@/features/enquiries/actions/update-enquiry-status.admin.action"
 import { WhatsAppContinuation } from "@/features/enquiries/components/admin/WhatsAppContinuation"
-import { getEnquiryDetail } from "@/features/enquiries/services/enquiry.service"
+import { getEnquiryDetail } from "@/features/enquiries/services/enquiry.query.service"
 import { requireAdmin } from "@/shared/auth/authorize"
 
 type DetailRowProps = {
