@@ -19,7 +19,7 @@ import type {
 } from "@/features/artwork/types"
 import {
   filterArtworks,
-  getUsefulArtworkCategories,
+  getFilterableArtworkCategories,
 } from "@/features/artwork/utils/artwork-gallery.utils"
 import { cn } from "@/shared/utils/cn"
 
@@ -32,7 +32,7 @@ function ArtworkGallery({ artworks }: ArtworkGalleryProps) {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
   const openerRef = useRef<HTMLButtonElement>(null)
   const usefulCategories = useMemo(
-    () => getUsefulArtworkCategories(artworks),
+    () => getFilterableArtworkCategories(artworks),
     [artworks]
   )
   const filteredArtworks = useMemo(

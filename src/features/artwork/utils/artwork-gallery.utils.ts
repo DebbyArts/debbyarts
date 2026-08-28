@@ -9,7 +9,7 @@ import type {
   ArtworkProjection,
 } from "@/features/artwork/types"
 
-function getUsefulArtworkCategories(artworks: ArtworkProjection[]) {
+function getFilterableArtworkCategories(artworks: ArtworkProjection[]) {
   if (artworks.length < MINIMUM_FILTERABLE_ARTWORK_COUNT) return []
 
   const populatedCategories = ARTWORK_CATEGORY_ORDER.filter((category) =>
@@ -57,4 +57,4 @@ function distributeArtworks(artworks: ArtworkProjection[], columnCount: number) 
   return columns
 }
 
-export { distributeArtworks, filterArtworks, getUsefulArtworkCategories }
+export { distributeArtworks, filterArtworks, getFilterableArtworkCategories }

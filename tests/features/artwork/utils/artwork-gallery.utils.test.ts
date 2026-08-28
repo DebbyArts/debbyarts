@@ -5,7 +5,7 @@ import type { ArtworkProjection } from "@/features/artwork/types"
 import {
   distributeArtworks,
   filterArtworks,
-  getUsefulArtworkCategories,
+  getFilterableArtworkCategories,
 } from "@/features/artwork/utils/artwork-gallery.utils"
 
 function artwork(
@@ -44,11 +44,11 @@ describe("artwork catalogue rules", () => {
       artwork("four", "FRAMED_CUSTOM_ARTWORK"),
     ]
 
-    expect(getUsefulArtworkCategories(artworks)).toEqual([
+    expect(getFilterableArtworkCategories(artworks)).toEqual([
       "PAINTING",
       "FRAMED_CUSTOM_ARTWORK",
     ])
-    expect(getUsefulArtworkCategories(artworks.slice(0, 3))).toEqual([])
+    expect(getFilterableArtworkCategories(artworks.slice(0, 3))).toEqual([])
   })
 
   test("filters known categories and treats invalid filter state as all artwork", () => {
