@@ -2,7 +2,7 @@ import "server-only"
 
 import { randomUUID } from "node:crypto"
 
-import { isSeedStoragePath } from "@/db/seed/storage-paths"
+import { isSeedStoragePath } from "@/db/seed/media/storage-paths"
 import type { VerifiedAdmin } from "@/shared/auth/authorize"
 import {
   ImageValidationError,

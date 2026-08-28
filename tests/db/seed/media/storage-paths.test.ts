@@ -5,7 +5,7 @@ import {
   seedArtworkAdditionalStoragePath,
   seedArtworkCoverStoragePath,
   seedServiceCoverStoragePath,
-} from "@/db/seed/storage-paths"
+} from "@/db/seed/media/storage-paths"
 
 describe("seed Storage paths", () => {
   it("uses deterministic, public-bucket-safe paths", () => {

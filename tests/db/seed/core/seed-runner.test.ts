@@ -1,10 +1,8 @@
 import { describe, expect, it, vi } from "vitest"
 
-import {
-  seedArtwork,
-  seedServices,
-} from "@/db/seed/content-manifest"
-import { runSeed, type SeedDatabase } from "@/db/seed/seed-orchestrator"
+import { runSeed, type SeedDatabase } from "@/db/seed/core/seed-runner"
+import { seedArtwork } from "@/db/seed/domains/artwork/artwork.seed-data"
+import { seedServices } from "@/db/seed/domains/service/service.seed-data"
 
 function seedDependencies() {
   const artworkUpsert = vi.fn().mockResolvedValue({ id: "artwork-1" })

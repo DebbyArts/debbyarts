@@ -1,7 +1,7 @@
 import { prisma } from "@/db/client"
-import { loadSeedImage } from "@/db/seed/seed-assets"
-import { runSeed, type SeedDatabase } from "@/db/seed/seed-orchestrator"
-import { uploadSeedCatalogueImage } from "@/db/seed/seed-storage"
+import { runSeed, type SeedDatabase } from "@/db/seed/core/seed-runner"
+import { loadSeedImage } from "@/db/seed/media/asset-loader"
+import { uploadSeedCatalogueImage } from "@/db/seed/media/seed-storage"
 
 async function main() {
   // Storage uploads finish before the single database transaction. If the

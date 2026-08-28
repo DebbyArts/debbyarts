@@ -1,17 +1,17 @@
-import { SeedManifestError } from "@/db/seed/manifest-validation"
-import { isSeedStoragePath } from "@/db/seed/storage-paths"
+import { SeedError } from "@/db/seed/core/seed.error"
+import { isSeedStoragePath } from "@/db/seed/media/storage-paths"
 import { validateImageBuffer } from "@/shared/storage/image-validation"
 import { createStorageAdminClient } from "@/shared/storage/storage-admin"
 import { CATALOGUE_MEDIA_BUCKET } from "@/shared/constants/storage"
 
 async function uploadSeedCatalogueImage(path: string, buffer: Buffer) {
   if (!isSeedStoragePath(path)) {
-    throw new SeedManifestError("Refusing to upload to an unmanaged seed path.")
+    throw new SeedError("Refusing to upload to an unmanaged seed path.")
   }
 
   const image = await validateImageBuffer(buffer)
   if (image.contentType !== "image/webp") {
-    throw new SeedManifestError("Seed catalogue images must be WebP files.")
+    throw new SeedError("Seed catalogue images must be WebP files.")
   }
 
   const { error } = await createStorageAdminClient().storage
@@ -23,7 +23,7 @@ async function uploadSeedCatalogueImage(path: string, buffer: Buffer) {
     })
 
   if (error) {
-    throw new SeedManifestError(
+    throw new SeedError(
       "The public catalogue Storage bucket is unavailable. Apply the Storage migration before seeding."
     )
   }

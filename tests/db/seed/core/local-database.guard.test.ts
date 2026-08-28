@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest"
 
-import { assertLocalDatabaseTargets } from "@/db/seed/local-database-guard"
+import { assertLocalDatabaseTargets } from "@/db/seed/core/local-database.guard"
 
 describe("local database reset guard", () => {
   test("accepts PostgreSQL targets on local loopback hosts", () => {

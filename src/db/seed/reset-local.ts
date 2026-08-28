@@ -2,7 +2,7 @@ import "dotenv/config"
 
 import { spawn } from "node:child_process"
 
-import { assertLocalDatabaseTargets } from "@/db/seed/local-database-guard"
+import { assertLocalDatabaseTargets } from "@/db/seed/core/local-database.guard"
 
 function runPrisma(args: string[]) {
   const command = process.platform === "win32" ? "npx.cmd" : "npx"

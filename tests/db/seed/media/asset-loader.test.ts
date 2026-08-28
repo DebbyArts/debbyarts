@@ -1,12 +1,9 @@
 import { describe, expect, it } from "vitest"
 
-import {
-  seedArtwork,
-  seedServices,
-  type SeedImage,
-} from "@/db/seed/content-manifest"
-import { SeedManifestError } from "@/db/seed/manifest-validation"
-import { loadSeedImage } from "@/db/seed/seed-assets"
+import { SeedError } from "@/db/seed/core/seed.error"
+import { seedArtwork } from "@/db/seed/domains/artwork/artwork.seed-data"
+import { seedServices } from "@/db/seed/domains/service/service.seed-data"
+import { loadSeedImage, type SeedImage } from "@/db/seed/media/asset-loader"
 
 describe("curated seed assets", () => {
   it("decodes every tracked manifest image at its declared dimensions", async () => {
@@ -36,6 +33,6 @@ describe("curated seed assets", () => {
       width: 640,
     }
 
-    await expect(loadSeedImage(missing)).rejects.toBeInstanceOf(SeedManifestError)
+    await expect(loadSeedImage(missing)).rejects.toBeInstanceOf(SeedError)
   })
 })

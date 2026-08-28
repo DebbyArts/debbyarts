@@ -1,20 +1,12 @@
 import { describe, expect, it } from "vitest"
 
-import {
-  seedArtwork,
-  seedServices,
-} from "@/db/seed/content-manifest"
-import {
-  SeedManifestError,
-  validateSeedManifest,
-} from "@/db/seed/manifest-validation"
+import { SeedError } from "@/db/seed/core/seed.error"
+import { seedServices } from "@/db/seed/domains/service/service.seed-data"
+import { validateServiceSeedData } from "@/db/seed/domains/service/service-seed.validation"
 
-describe("curated seed manifest", () => {
+describe("Service seed data", () => {
   it("matches the current catalogue and request contracts", () => {
-    expect(() => validateSeedManifest(seedArtwork, seedServices)).not.toThrow()
-    expect(seedArtwork.every((item) => item.availability === "MADE_TO_ORDER")).toBe(
-      true
-    )
+    expect(() => validateServiceSeedData(seedServices)).not.toThrow()
     expect(
       seedServices.every(
         (item) =>
@@ -28,16 +20,14 @@ describe("curated seed manifest", () => {
     const invalidServices = structuredClone(seedServices)
     invalidServices[0].requestDefaults.askSizeFormat = true
 
-    expect(() => validateSeedManifest(seedArtwork, invalidServices)).toThrow(
-      SeedManifestError
-    )
+    expect(() => validateServiceSeedData(invalidServices)).toThrow(SeedError)
   })
 
   it("rejects published services that have no confirmed cover image", () => {
     const invalidServices = structuredClone(seedServices)
     invalidServices[0].published = true
 
-    expect(() => validateSeedManifest(seedArtwork, invalidServices)).toThrow(
+    expect(() => validateServiceSeedData(invalidServices)).toThrow(
       "cannot be published without a confirmed cover image"
     )
   })

@@ -1,9 +1,15 @@
 import { readFile } from "node:fs/promises"
 import { relative, resolve, sep } from "node:path"
 
-import type { SeedImage } from "@/db/seed/content-manifest"
-import { SeedManifestError } from "@/db/seed/manifest-validation"
+import { SeedError } from "@/db/seed/core/seed.error"
 import { validateImageBuffer } from "@/shared/storage/image-validation"
+
+type SeedImage = {
+  path: string
+  alt: string
+  width: number
+  height: number
+}
 
 type LoadedSeedImage = {
   buffer: Buffer
@@ -23,7 +29,7 @@ function resolveSeedAssetPath(path: string) {
     relativePath === ".." ||
     resolved === seedRoot
   ) {
-    throw new SeedManifestError("Seed assets must stay inside images/seed.")
+    throw new SeedError("Seed assets must stay inside images/seed.")
   }
 
   return resolved
@@ -36,15 +42,15 @@ async function loadSeedImage(image: SeedImage): Promise<LoadedSeedImage> {
   try {
     buffer = await readFile(path)
   } catch {
-    throw new SeedManifestError(`Missing seed image: ${image.path}.`)
+    throw new SeedError(`Missing seed image: ${image.path}.`)
   }
 
   const validated = await validateImageBuffer(buffer)
   if (validated.contentType !== "image/webp") {
-    throw new SeedManifestError(`Seed image must be WebP: ${image.path}.`)
+    throw new SeedError(`Seed image must be WebP: ${image.path}.`)
   }
   if (validated.width !== image.width || validated.height !== image.height) {
-    throw new SeedManifestError(
+    throw new SeedError(
       `Seed image dimensions do not match the manifest: ${image.path}.`
     )
   }
@@ -60,5 +66,6 @@ async function loadSeedImage(image: SeedImage): Promise<LoadedSeedImage> {
 export {
   loadSeedImage,
   resolveSeedAssetPath,
+  type SeedImage,
   type LoadedSeedImage,
 }
