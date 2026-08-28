@@ -6,14 +6,16 @@ import {
   createArtworkImage,
   deleteArtwork,
   deleteArtworkImage,
+  moveArtworkImage as moveArtworkImageRecord,
+  updateArtwork,
+  updateArtworkImageAlt,
+} from "@/features/artwork/repositories/artwork.mutation.repository"
+import {
   findArtworkById,
   findArtworkImage,
   findArtworkImageCount,
   findArtworkImagePath,
-  moveArtworkImage as moveArtworkImageRecord,
-  updateArtwork,
-  updateArtworkImageAlt,
-} from "@/features/artwork/repositories/artwork.repository"
+} from "@/features/artwork/repositories/artwork.query.repository"
 import type {
   ArtworkMutationInput,
   ArtworkRequestOptionsInput,

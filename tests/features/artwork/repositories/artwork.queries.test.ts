@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest"
 
-import { PUBLISHED_ARTWORK_QUERY } from "@/features/artwork/repositories/artwork.repository"
+import { PUBLISHED_ARTWORK_QUERY } from "@/features/artwork/repositories/artwork.queries"
 
-describe("Artwork repository queries", () => {
+describe("Artwork query definitions", () => {
   it("keeps the public catalogue published-only with stable image ordering", () => {
     expect(PUBLISHED_ARTWORK_QUERY.where).toEqual({ published: true })
     expect(PUBLISHED_ARTWORK_QUERY.orderBy).toEqual([

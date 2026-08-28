@@ -12,7 +12,7 @@ vi.mock("@/db/client", () => ({
   },
 }))
 
-import { FEATURED_ARTWORK_QUERY } from "@/features/artwork/repositories/artwork.repository"
+import { FEATURED_ARTWORK_QUERY } from "@/features/artwork/repositories/artwork.queries"
 import { getFeaturedArtwork } from "@/features/artwork/services/artwork.query.service"
 
 describe("getFeaturedArtwork", () => {

@@ -5,7 +5,7 @@ import type {
   PricingMode,
 } from "@/db/generated/prisma/enums"
 import type { ALL_ARTWORK } from "@/features/artwork/constants"
-import type { FEATURED_ARTWORK_QUERY } from "@/features/artwork/repositories/artwork.repository"
+import type { FEATURED_ARTWORK_QUERY } from "@/features/artwork/repositories/artwork.queries"
 
 type ArtworkFilter = ArtworkCategory | typeof ALL_ARTWORK
 

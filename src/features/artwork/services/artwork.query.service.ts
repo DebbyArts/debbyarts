@@ -15,7 +15,7 @@ import {
   findArtworkForOptions,
   findFeaturedArtwork,
   findPublishedArtworks,
-} from "@/features/artwork/repositories/artwork.repository"
+} from "@/features/artwork/repositories/artwork.query.repository"
 import type {
   ArtworkAdminListFilters,
   FeaturedArtworkResult,

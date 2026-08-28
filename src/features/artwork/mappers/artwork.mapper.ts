@@ -9,7 +9,7 @@ import {
   ARTWORK_EDITOR_SELECT,
   ARTWORK_OPTIONS_SELECT,
   PUBLISHED_ARTWORK_QUERY,
-} from "@/features/artwork/repositories/artwork.repository"
+} from "@/features/artwork/repositories/artwork.queries"
 import type {
   ArtworkAdminListItem,
   ArtworkEditorValue,
