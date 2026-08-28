@@ -30,19 +30,24 @@ Apply only the rules defined here. Preserve everything else.
 - Keep public and Admin code for the same domain inside the owning feature.
 - Keep genuinely Admin-specific feature components in `components/admin/`.
 - Do not use a feature-root `admin/` directory as a general bucket for actions, validation, state, data access, or domain logic.
-- Repositories, services, mappers, validation, constants, and types remain feature-owned and should serve every relevant surface.
+- Repositories, services, mappers, parsers, schemas, constants, and types remain feature-owned and should serve every relevant surface.
 - Do not duplicate or split those modules solely because one consumer is an Admin screen.
 - Split an oversized module only by a cohesive responsibility such as read/write or catalogue/editor behaviour, not merely public/Admin usage.
 - Keep cross-domain Admin composition in `app/admin/` and shared Admin layout UI in `components/shared/admin/`; do not create an umbrella Admin feature for domain CRUD.
 
-## Actions and validation
+## Actions, parsers, and schemas
 
 - Keep feature actions in `actions/`, with one exported action per file.
 - Name public or front-facing action files `<action>.action.ts`.
 - Name Admin action files `<action>.admin.action.ts`; place `.admin` immediately before `.action.ts`.
 - Treat actions as delivery adapters: authenticate where required, parse input, invoke the owning feature's service, and handle framework concerns such as revalidation or redirects.
 - When the feature already has repositories and services, actions should not bypass them or duplicate their data-access and use-case responsibilities.
-- Keep feature validation in `validation/` and share it across surfaces when the rules are the same. Use an Admin-specific validation module only when the input contract is genuinely Admin-only.
+- Keep feature-owned Zod schemas in `schemas/`, using `<subject>.schema.ts`.
+- Do not maintain parallel `validation/` and `schemas/` implementations for the same input.
+- Keep transport parsers in `parsers/`; FormData parsers use `<feature>-form.parser.ts`.
+- Parsers decode external input, call the relevant schema, and return typed application input. They do not derive presentation labels, formatted values, image URLs, or destination URLs.
+- Use Zod errors for invalid submitted input. Add a custom error class only for an error category materially different from schema validation.
+- Rules that require database, Storage, authentication, or existing-record state belong in mutation services rather than schemas.
 - Keep immutable initial action states in `constants/index.ts` and their state types in `types/index.ts`.
 
 Examples:
@@ -50,7 +55,8 @@ Examples:
 ```text
 actions/submit-enquiry.action.ts
 actions/save-artwork.admin.action.ts
-validation/artwork.validation.ts
+parsers/artwork-form.parser.ts
+schemas/artwork.schema.ts
 ```
 
 ## Constants
@@ -86,6 +92,10 @@ Apply these rules only where the corresponding responsibility already exists or 
 - `repositories/` contains direct database or external data access.
 - `mappers/` transforms persisted or external data into feature-specific projections.
 - `services/` coordinates feature use cases using repositories, mappers, or other dependencies.
+- Use services consistently; do not add a parallel `usecases/` layer.
+- When a feature has both read and write responsibilities, use `services/<feature>.query.service.ts` and `services/<feature>.mutation.service.ts`.
+- Query services coordinate repositories and mappers for reads. Mutation services coordinate state changes, external infrastructure, rollback, cleanup, and state-dependent rules.
+- Do not create one service file per function. Create only the query or mutation service the feature needs, and split further only around a demonstrated cohesive responsibility.
 - Shared utilities belong in `shared/utils/` only when they are genuinely cross-feature.
 - Persisted entity shapes should use generated ORM types.
 - Create application types only for real projections, inputs, serialized boundaries, or UI state.
@@ -108,6 +118,8 @@ utils/artwork-gallery.utils.ts
 - Do not create catch-all modules such as `helpers.ts`, `utils.ts`, or `<feature>-catalogue.ts` for unrelated responsibilities.
 - Import constants and types directly from `constants/` and `types/`. Do not re-export them through utility files.
 - Mappers should derive ready-to-render projection fields from persisted or external data, including labels, formatted values, and destination URLs where appropriate.
+- Parsers transform incoming external input into validated application input; mappers transform persisted or external records into application projections.
+- Keep feature-specific presentation decisions in the owning mapper. Extract only genuinely reused scalar formatting to `shared/utils/`.
 - Components should consume those derived projection fields instead of repeating presentation logic.
 - Move a utility to `shared/utils/` only when multiple features genuinely use it.
 - Export a utility through the feature's root `index.ts` only when it is intentionally part of the feature's external API.
@@ -116,8 +128,10 @@ utils/artwork-gallery.utils.ts
 
 - React component names and component filenames use `PascalCase`.
 - Repository files use `<name>.repository.ts`.
-- Service files use `<name>.service.ts`.
+- Query and mutation service files use `<feature>.query.service.ts` and `<feature>.mutation.service.ts` when both responsibilities exist.
 - Mapper files use `<name>.mapper.ts`.
+- Form parser files use `<feature>-form.parser.ts`.
+- Schema files use `<subject>.schema.ts`.
 - Non-component filenames use lowercase.
 - Avoid unnecessary hyphenation. Use kebab-case only for genuine multiword non-component names.
 
@@ -126,10 +140,20 @@ Examples:
 ```text
 artwork.repository.ts
 featured-artwork.repository.ts
-artwork.service.ts
+artwork.query.service.ts
+artwork.mutation.service.ts
 artwork.mapper.ts
+artwork-form.parser.ts
+artwork.schema.ts
 FeaturedArtwork.tsx → FeaturedArtwork
 ```
+
+## Shared infrastructure
+
+- Use `shared/utils/cn.ts` as the canonical class-name utility.
+- Keep cross-feature infrastructure under `shared/<concern>/` and genuinely cross-feature contracts under `shared/types/`.
+- A module under `shared/` is not automatically browser-safe. Server-only shared modules retain explicit `server-only` boundaries and must not be imported by Client Components.
+- Do not recreate competing global `lib/`, `server/`, or `types/` dumping grounds.
 
 ## Refactoring behaviour
 
