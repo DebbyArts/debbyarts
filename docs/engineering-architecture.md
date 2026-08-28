@@ -78,6 +78,7 @@ Do not turn a page into a Client Component because one child is interactive. Cli
 - Prisma ORM is active. `src/db/schema.prisma` is the source of truth for persisted entities, `src/db/migrations/` owns application migration history, and `src/db/client.ts` is the single shared client instance.
 - Prisma-generated code lives in ignored `src/db/generated/prisma/` and is regenerated through `npm run db:generate`/`postinstall`. Import server entity/payload types from its `client` entry and browser-safe enums from its `enums` entry; do not duplicate complete Prisma models in feature contracts.
 - Keep feature-specific database behaviour close to its owning feature while using the shared database infrastructure.
+- Begin with one feature repository while its reads and writes remain cohesive. Split a genuinely oversized or substantially mixed repository into query and mutation repositories; query repositories retain direct reads needed by mutation services.
 - The Enquiries feature owns its request-catalogue read model. It may query published Artwork and Service records directly, but must not import either feature module.
 - Domain types and runtime schemas stay with their domain. Do not create global dumping-ground `types` or `schemas` folders in `src/shared/`.
 

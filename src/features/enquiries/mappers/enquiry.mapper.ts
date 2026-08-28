@@ -7,7 +7,7 @@ import {
 import {
   ENQUIRY_DETAIL_SELECT,
   ENQUIRY_LIST_SELECT,
-} from "@/features/enquiries/repositories/enquiry.repository"
+} from "@/features/enquiries/repositories/enquiry.queries"
 import type {
   EnquiryDetail,
   EnquiryListItem,

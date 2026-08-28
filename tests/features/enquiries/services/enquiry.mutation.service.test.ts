@@ -1,11 +1,11 @@
 import { describe, expect, test, vi } from "vitest"
 
 import {
-  RequestContextUnavailableError,
   createEnquiry,
   type CreateEnquiryDependencies,
   type EnquiryWriteRecord,
 } from "@/features/enquiries/services/enquiry.mutation.service"
+import { RequestContextUnavailableError } from "@/features/enquiries/errors/request-context-unavailable.error"
 import { createEnquirySubmissionSchema } from "@/features/enquiries/schemas/enquiry.schema"
 import { EnquiryFieldError } from "@/features/enquiries/errors/enquiry-field.error"
 import type {

@@ -12,7 +12,7 @@ const mocks = vi.hoisted(() => ({
   mapToRequestServiceOption: vi.fn(),
 }))
 
-vi.mock("@/features/enquiries/repositories/request-catalogue.repository", () => ({
+vi.mock("@/features/enquiries/repositories/enquiry.query.repository", () => ({
   findPublishedRequestArtworks: mocks.findPublishedRequestArtworks,
   findPublishedRequestServices: mocks.findPublishedRequestServices,
 }))

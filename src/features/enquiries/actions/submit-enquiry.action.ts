@@ -7,11 +7,9 @@ import {
   EnquiryFieldError,
   enquiryFieldErrorsFromZod,
 } from "@/features/enquiries/errors/enquiry-field.error"
+import { RequestContextUnavailableError } from "@/features/enquiries/errors/request-context-unavailable.error"
 import { parseEnquiryForm } from "@/features/enquiries/parsers/enquiry-form.parser"
-import {
-  RequestContextUnavailableError,
-  submitEnquiry,
-} from "@/features/enquiries/services/enquiry.mutation.service"
+import { submitEnquiry } from "@/features/enquiries/services/enquiry.mutation.service"
 import type { EnquiryActionState } from "@/features/enquiries/types"
 
 async function requestOrigin() {

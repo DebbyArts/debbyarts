@@ -6,7 +6,7 @@ import type {
 import {
   REQUEST_ARTWORK_SELECT,
   REQUEST_SERVICE_SELECT,
-} from "@/features/enquiries/repositories/request-catalogue.repository"
+} from "@/features/enquiries/repositories/enquiry.queries"
 import { resolvePublicStorageObjectUrl } from "@/shared/storage/public-url"
 
 const REQUEST_ARTWORK_CATEGORY_LABELS = {

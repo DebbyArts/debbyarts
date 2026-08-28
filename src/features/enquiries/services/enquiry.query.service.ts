@@ -14,11 +14,9 @@ import {
 import {
   findEnquiryDetail,
   findEnquiryList,
-} from "@/features/enquiries/repositories/enquiry.repository"
-import {
   findPublishedRequestArtworks,
   findPublishedRequestServices,
-} from "@/features/enquiries/repositories/request-catalogue.repository"
+} from "@/features/enquiries/repositories/enquiry.query.repository"
 import type {
   EnquiryListFilters,
   EnquiryListResult,
