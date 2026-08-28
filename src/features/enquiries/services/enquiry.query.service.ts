@@ -1,6 +1,12 @@
 import "server-only"
 
+import { connection } from "next/server"
+
 import { ENQUIRIES_PAGE_SIZE } from "@/features/enquiries/constants"
+import {
+  mapToRequestArtworkOption,
+  mapToRequestServiceOption,
+} from "@/features/enquiries/mappers/request-catalogue.mapper"
 import {
   mapToEnquiryDetail,
   mapToEnquiryListItem,
@@ -9,6 +15,10 @@ import {
   findEnquiryDetail,
   findEnquiryList,
 } from "@/features/enquiries/repositories/enquiry.repository"
+import {
+  findPublishedRequestArtworks,
+  findPublishedRequestServices,
+} from "@/features/enquiries/repositories/request-catalogue.repository"
 import type {
   EnquiryListFilters,
   EnquiryListResult,
@@ -16,7 +26,19 @@ import type {
   RequestSearchParams,
 } from "@/features/enquiries/types"
 import { parseRequestContext } from "@/features/enquiries/utils/request-context.utils"
-import { getPublishedRequestCatalogue } from "@/shared/request-catalogue"
+
+async function getPublishedRequestCatalogue() {
+  await connection()
+  const [artworks, services] = await Promise.all([
+    findPublishedRequestArtworks(),
+    findPublishedRequestServices(),
+  ])
+
+  return {
+    artworks: artworks.map(mapToRequestArtworkOption),
+    services: services.map(mapToRequestServiceOption),
+  }
+}
 
 async function getEnquiryList(
   filters: EnquiryListFilters

@@ -1,4 +1,4 @@
-import { resolvePublicStorageObjectUrl } from "@/shared/utils/storage"
+import { resolvePublicStorageObjectUrl } from "@/shared/storage/public-url"
 import type { HomeArtwork, HomeArtworkRecord } from "@/features/home/types"
 
 function mapToHomeArtwork(artwork: HomeArtworkRecord): HomeArtwork {

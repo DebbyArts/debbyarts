@@ -4,7 +4,6 @@ import {
   deriveOptionCues,
   derivePricingPresentation,
   getServiceRequestHref,
-  mapToRequestServiceOption,
   mapToServiceAdminListItem,
   mapToServiceEditorValue,
   projectServiceGroups,
@@ -169,27 +168,13 @@ describe("Service catalogue projection", () => {
     ])
   })
 
-  test("projects configured material choices for the request flow", () => {
-    expect(
-      mapToRequestServiceOption(
-        serviceRecord({
-          askMaterial: true,
-          materialOptions: ["Cotton", "Polyester"],
-        })
-      )
-    ).toMatchObject({
-      askMaterial: true,
-      materialOptions: ["Cotton", "Polyester"],
-    })
-  })
-
   test("builds stable encoded request URLs", () => {
     expect(getServiceRequestHref("mugs & prints")).toBe(
       "/request?service=mugs%20%26%20prints"
     )
   })
 
-  test("uses the shared public-storage URL across public, request, and Admin projections", () => {
+  test("uses the shared public-storage URL across public and Admin projections", () => {
     vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "http://127.0.0.1:54321")
     const service = serviceRecord({
       primaryImagePath: "service/custom shirt.jpg",
@@ -199,7 +184,6 @@ describe("Service catalogue projection", () => {
       "http://127.0.0.1:54321/storage/v1/object/public/catalogue-media/service/custom%20shirt.jpg"
 
     expect(projectServiceGroups([service])[0]?.services[0]?.imageSrc).toBe(expectedUrl)
-    expect(mapToRequestServiceOption(service).imageSrc).toBe(expectedUrl)
     expect(mapToServiceAdminListItem(service).imageUrl).toBe(expectedUrl)
     expect(mapToServiceEditorValue(service).imageUrl).toBe(expectedUrl)
   })

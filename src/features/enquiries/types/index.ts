@@ -6,10 +6,36 @@ import type {
 } from "@/db/generated/prisma/enums"
 
 type RequestKindValue = "ARTWORK" | "SERVICE"
-import type {
-  RequestArtworkOption,
-  RequestServiceOption,
-} from "@/shared/types/request-catalogue"
+
+type RequestArtworkOption = {
+  askQuantity: boolean
+  availableSizes: string[]
+  categoryLabel: string
+  framingEnabled: boolean
+  framingOptions: string[]
+  id: string
+  imageAlt: string
+  imageSrc: string | null
+  slug: string
+  title: string
+}
+
+type RequestServiceOption = {
+  askColour: boolean
+  askDesignReadiness: boolean
+  askFinish: boolean
+  askMaterial: boolean
+  askQuantity: boolean
+  askSizeFormat: boolean
+  groupLabel: string
+  id: string
+  imageAlt: string
+  imageSrc: string | null
+  materialOptions: string[]
+  name: string
+  sizeFormatOptions: string[]
+  slug: string
+}
 
 type RequestItem =
   | { kind: "ARTWORK"; record: RequestArtworkOption }

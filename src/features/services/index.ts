@@ -7,8 +7,6 @@ export { ServiceOptionsPage } from "./components/admin/pages/ServiceOptionsPage"
 export { ServicesLoading } from "./components/ServicesLoading"
 export { ServicesPage } from "./components/ServicesPage"
 export {
-  getPublishedRequestService,
-  getPublishedRequestServices,
   getPublishedServiceGroups,
 } from "./services/service.query.service"
 export type { ServiceListSearchParams } from "./types"

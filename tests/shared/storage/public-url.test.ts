@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, test, vi } from "vitest"
 
-import { resolvePublicStorageObjectUrl } from "@/shared/utils/storage"
+import { resolvePublicStorageObjectUrl } from "@/shared/storage/public-url"
 
 afterEach(() => {
   vi.unstubAllEnvs()

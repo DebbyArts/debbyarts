@@ -1,4 +1,4 @@
-import { CATALOGUE_MEDIA_BUCKET } from "@/shared/constants/storage"
+import { CATALOGUE_MEDIA_BUCKET } from "@/shared/storage/constants"
 
 const LOCAL_SUPABASE_STORAGE_ORIGINS = new Set([
   "http://127.0.0.1:54321",

@@ -1,6 +1,6 @@
 import { createClient } from "@supabase/supabase-js"
 
-import { getSupabaseStorageAdminConfig } from "@/shared/supabase-config"
+import { getSupabaseStorageAdminConfig } from "@/shared/supabase/config"
 
 function createStorageAdminClient() {
   const { secretKey, url } = getSupabaseStorageAdminConfig()

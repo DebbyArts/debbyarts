@@ -4,13 +4,11 @@ import {
   ARTWORK_CATEGORY_LABELS,
   AVAILABILITY_LABELS,
 } from "@/features/artwork/constants"
-import type { RequestArtworkOption } from "@/shared/types/request-catalogue"
 import {
   ADMIN_ARTWORK_LIST_SELECT,
   ARTWORK_EDITOR_SELECT,
   ARTWORK_OPTIONS_SELECT,
   PUBLISHED_ARTWORK_QUERY,
-  REQUEST_ARTWORK_SELECT,
 } from "@/features/artwork/repositories/artwork.repository"
 import type {
   ArtworkAdminListItem,
@@ -19,13 +17,10 @@ import type {
   ArtworkProjection,
 } from "@/features/artwork/types"
 import { formatNgn } from "@/shared/utils/format-ngn"
-import { resolvePublicStorageObjectUrl } from "@/shared/utils/storage"
+import { resolvePublicStorageObjectUrl } from "@/shared/storage/public-url"
 
 type PublishedArtworkRecord = Prisma.ArtworkGetPayload<{
   select: typeof PUBLISHED_ARTWORK_QUERY.select
-}>
-type RequestArtworkRecord = Prisma.ArtworkGetPayload<{
-  select: typeof REQUEST_ARTWORK_SELECT
 }>
 type AdminArtworkListRecord = Prisma.ArtworkGetPayload<{
   select: typeof ADMIN_ARTWORK_LIST_SELECT
@@ -94,17 +89,6 @@ function mapToArtworkProjection(artwork: PublishedArtworkRecord): ArtworkProject
   return { ...projection, priceLabel: deriveArtworkPriceLabel(projection) }
 }
 
-function mapToRequestArtworkOption(artwork: RequestArtworkRecord): RequestArtworkOption {
-  return {
-    id: artwork.id, slug: artwork.slug, title: artwork.title,
-    categoryLabel: ARTWORK_CATEGORY_ITEM_LABELS[artwork.category],
-    imageSrc: resolvePublicStorageObjectUrl(artwork.primaryImagePath),
-    imageAlt: artwork.primaryImageAlt?.trim() || `${artwork.title}, an artwork by Debby Art & Prints`,
-    availableSizes: artwork.availableSizes, framingEnabled: artwork.framingEnabled,
-    framingOptions: artwork.framingOptions, askQuantity: artwork.askQuantity,
-  }
-}
-
 function mapToArtworkAdminListItem(
   artwork: AdminArtworkListRecord
 ): ArtworkAdminListItem {
@@ -162,7 +146,5 @@ export {
   mapToArtworkAdminListItem,
   mapToArtworkEditorValue,
   mapToArtworkOptionsValue,
-  mapToRequestArtworkOption,
   type PublishedArtworkRecord,
-  type RequestArtworkRecord,
 }

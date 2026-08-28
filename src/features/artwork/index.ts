@@ -6,8 +6,4 @@ export { ArtworkEditPage } from "./components/admin/pages/ArtworkEditPage"
 export { ArtworkNewPage } from "./components/admin/pages/ArtworkNewPage"
 export { ArtworkOptionsPage } from "./components/admin/pages/ArtworkOptionsPage"
 export { ArtworkLoading } from "./components/ArtworkLoading"
-export {
-  getPublishedRequestArtwork,
-  getPublishedRequestArtworks,
-} from "./services/artwork.query.service"
 export type { ArtworkListSearchParams } from "./types"

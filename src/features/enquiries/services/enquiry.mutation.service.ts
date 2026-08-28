@@ -4,10 +4,18 @@ import type { EnquiryStatus } from "@/db/generated/prisma/enums"
 import { DESIGN_READINESS_VALUES } from "@/features/enquiries/constants"
 import { EnquiryFieldError } from "@/features/enquiries/errors/enquiry-field.error"
 import {
+  mapToRequestArtworkOption,
+  mapToRequestServiceOption,
+} from "@/features/enquiries/mappers/request-catalogue.mapper"
+import {
   createEnquiryRecord,
   findRecentDuplicate,
   updateEnquiryStatus as updateEnquiryStatusRecord,
 } from "@/features/enquiries/repositories/enquiry.repository"
+import {
+  findPublishedRequestArtwork,
+  findPublishedRequestService,
+} from "@/features/enquiries/repositories/request-catalogue.repository"
 import type {
   EnquiryPersistenceInput,
   NormalizedEnquiryInput,
@@ -23,10 +31,6 @@ import {
   buildWhatsAppSummary,
   buildWhatsAppUrl,
 } from "@/features/enquiries/utils/whatsapp.utils"
-import {
-  getPublishedRequestArtwork,
-  getPublishedRequestService,
-} from "@/shared/request-catalogue"
 
 type EnquiryWriteRecord = EnquiryPersistenceInput
 
@@ -381,8 +385,14 @@ async function submitEnquiry(
   websiteOrigin: string | null
 ) {
   return createEnquiry(input, websiteOrigin, {
-    findArtwork: getPublishedRequestArtwork,
-    findService: getPublishedRequestService,
+    findArtwork: async (slug) => {
+      const artwork = await findPublishedRequestArtwork(slug)
+      return artwork ? mapToRequestArtworkOption(artwork) : null
+    },
+    findService: async (slug) => {
+      const service = await findPublishedRequestService(slug)
+      return service ? mapToRequestServiceOption(service) : null
+    },
     findDuplicate: findRecentDuplicate,
     create: createEnquiryRecord,
   })

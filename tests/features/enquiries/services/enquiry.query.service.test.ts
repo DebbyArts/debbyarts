@@ -6,11 +6,24 @@ import type {
 } from "@/features/enquiries/types"
 
 const mocks = vi.hoisted(() => ({
-  getPublishedRequestCatalogue: vi.fn(),
+  findPublishedRequestArtworks: vi.fn(),
+  findPublishedRequestServices: vi.fn(),
+  mapToRequestArtworkOption: vi.fn(),
+  mapToRequestServiceOption: vi.fn(),
 }))
 
-vi.mock("@/shared/request-catalogue", () => ({
-  getPublishedRequestCatalogue: mocks.getPublishedRequestCatalogue,
+vi.mock("@/features/enquiries/repositories/request-catalogue.repository", () => ({
+  findPublishedRequestArtworks: mocks.findPublishedRequestArtworks,
+  findPublishedRequestServices: mocks.findPublishedRequestServices,
+}))
+
+vi.mock("@/features/enquiries/mappers/request-catalogue.mapper", () => ({
+  mapToRequestArtworkOption: mocks.mapToRequestArtworkOption,
+  mapToRequestServiceOption: mocks.mapToRequestServiceOption,
+}))
+
+vi.mock("next/server", () => ({
+  connection: vi.fn(),
 }))
 
 import { loadRequestPage } from "@/features/enquiries/services/enquiry.query.service"
@@ -47,11 +60,14 @@ const service: RequestServiceOption = {
 
 describe("Enquiry request-page query service", () => {
   beforeEach(() => {
-    mocks.getPublishedRequestCatalogue.mockReset()
-    mocks.getPublishedRequestCatalogue.mockResolvedValue({
-      artworks: [artwork],
-      services: [service],
-    })
+    mocks.findPublishedRequestArtworks.mockReset()
+    mocks.findPublishedRequestServices.mockReset()
+    mocks.mapToRequestArtworkOption.mockReset()
+    mocks.mapToRequestServiceOption.mockReset()
+    mocks.findPublishedRequestArtworks.mockResolvedValue([{}])
+    mocks.findPublishedRequestServices.mockResolvedValue([{}])
+    mocks.mapToRequestArtworkOption.mockReturnValue(artwork)
+    mocks.mapToRequestServiceOption.mockReturnValue(service)
   })
 
   it("loads the trusted selected record into the ready request context", async () => {

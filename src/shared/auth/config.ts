@@ -1,10 +1,5 @@
 import "server-only"
 
-import {
-  getSupabasePublicConfig,
-  getSupabaseStorageAdminConfig,
-} from "@/shared/supabase-config"
-
 const DEFAULT_ADMIN_PATH = "/admin/artwork"
 
 function normalizeEmail(value: string) {
@@ -37,8 +32,6 @@ function safeAdminRedirect(value: string | null | undefined) {
 export {
   DEFAULT_ADMIN_PATH,
   getAdminEmail,
-  getSupabasePublicConfig,
-  getSupabaseStorageAdminConfig,
   normalizeEmail,
   safeAdminRedirect,
 }

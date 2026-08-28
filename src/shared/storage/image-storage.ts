@@ -2,7 +2,6 @@ import "server-only"
 
 import { randomUUID } from "node:crypto"
 
-import { isSeedStoragePath } from "@/db/seed/media/storage-paths"
 import type { VerifiedAdmin } from "@/shared/auth/authorize"
 import {
   ImageValidationError,
@@ -12,8 +11,9 @@ import {
   validateImageFile,
   type ValidatedImage,
 } from "@/shared/storage/image-validation"
+import { CATALOGUE_MEDIA_BUCKET } from "@/shared/storage/constants"
+import { isSeedStoragePath } from "@/shared/storage/seed-path-policy"
 import { createStorageAdminClient } from "@/shared/storage/storage-admin"
-import { CATALOGUE_MEDIA_BUCKET } from "@/shared/constants/storage"
 
 type CatalogueImageKind = "artwork" | "service"
 

@@ -1,8 +1,8 @@
 import { SeedError } from "@/db/seed/core/seed.error"
-import { isSeedStoragePath } from "@/db/seed/media/storage-paths"
 import { validateImageBuffer } from "@/shared/storage/image-validation"
+import { CATALOGUE_MEDIA_BUCKET } from "@/shared/storage/constants"
+import { isSeedStoragePath } from "@/shared/storage/seed-path-policy"
 import { createStorageAdminClient } from "@/shared/storage/storage-admin"
-import { CATALOGUE_MEDIA_BUCKET } from "@/shared/constants/storage"
 
 async function uploadSeedCatalogueImage(path: string, buffer: Buffer) {
   if (!isSeedStoragePath(path)) {

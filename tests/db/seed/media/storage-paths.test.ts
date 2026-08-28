@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest"
 
 import {
-  isSeedStoragePath,
   seedArtworkAdditionalStoragePath,
   seedArtworkCoverStoragePath,
   seedServiceCoverStoragePath,
@@ -20,12 +19,8 @@ describe("seed Storage paths", () => {
     )
   })
 
-  it("rejects traversal and paths outside the seed namespace", () => {
+  it("rejects traversal and invalid additional-image order", () => {
     expect(() => seedArtworkCoverStoragePath("../artwork")).toThrow()
     expect(() => seedArtworkAdditionalStoragePath("leopard-painting", 8)).toThrow()
-    expect(isSeedStoragePath("owner-id/artwork/image.webp")).toBe(false)
-    expect(isSeedStoragePath("seed/artwork/leopard/cover.webp", "service")).toBe(
-      false
-    )
   })
 })

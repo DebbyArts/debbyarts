@@ -12,7 +12,7 @@ import type {
   EnquiryDetail,
   EnquiryListItem,
 } from "@/features/enquiries/types"
-import { resolvePublicStorageObjectUrl } from "@/shared/utils/storage"
+import { resolvePublicStorageObjectUrl } from "@/shared/storage/public-url"
 
 type EnquiryListRecord = Prisma.EnquiryGetPayload<{
   select: typeof ENQUIRY_LIST_SELECT

@@ -5,7 +5,6 @@ import {
   mapToArtworkAdminListItem,
   mapToArtworkEditorValue,
   mapToArtworkProjection,
-  mapToRequestArtworkOption,
   type PublishedArtworkRecord,
 } from "@/features/artwork/mappers/artwork.mapper"
 
@@ -64,25 +63,10 @@ describe("Artwork mappers", () => {
     expect(startingFrom.priceLabel).toMatch(/^From .*125,000/)
   })
 
-  it("uses shared public Storage URLs across request and Admin projections", () => {
+  it("uses shared public Storage URLs across Admin projections", () => {
     vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "http://localhost:54321")
     const expectedUrl =
       "http://localhost:54321/storage/v1/object/public/catalogue-media/artwork/blue%20horse.jpg"
-
-    expect(
-      mapToRequestArtworkOption({
-        id: "artwork-1",
-        slug: "blue-horse",
-        title: "Blue Horse",
-        category: "PAINTING",
-        primaryImagePath: "artwork/blue horse.jpg",
-        primaryImageAlt: "Blue horse study",
-        availableSizes: [],
-        framingEnabled: false,
-        framingOptions: [],
-        askQuantity: false,
-      }).imageSrc
-    ).toBe(expectedUrl)
 
     expect(
       mapToArtworkAdminListItem({

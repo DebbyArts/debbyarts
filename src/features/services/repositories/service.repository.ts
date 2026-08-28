@@ -71,46 +71,10 @@ type PublishedServiceRecord = Prisma.ServiceGetPayload<
   typeof PUBLISHED_SERVICES_QUERY
 >
 
-const REQUEST_SERVICE_SELECT = {
-  id: true,
-  slug: true,
-  name: true,
-  group: true,
-  primaryImagePath: true,
-  primaryImageAlt: true,
-  askQuantity: true,
-  askSizeFormat: true,
-  sizeFormatOptions: true,
-  askDesignReadiness: true,
-  askColour: true,
-  askMaterial: true,
-  materialOptions: true,
-  askFinish: true,
-} satisfies Prisma.ServiceSelect
-
 async function findPublishedServices() {
   const { prisma } = await import("@/db/client")
 
   return prisma.service.findMany(PUBLISHED_SERVICES_QUERY)
-}
-
-async function findPublishedRequestServices() {
-  const { prisma } = await import("@/db/client")
-
-  return prisma.service.findMany({
-    where: { published: true },
-    select: REQUEST_SERVICE_SELECT,
-    orderBy: [{ displayOrder: "asc" }, { name: "asc" }, { slug: "asc" }],
-  })
-}
-
-async function findPublishedRequestService(slug: string) {
-  const { prisma } = await import("@/db/client")
-
-  return prisma.service.findFirst({
-    where: { slug, published: true },
-    select: REQUEST_SERVICE_SELECT,
-  })
 }
 
 async function findServiceById(id: string) {
@@ -176,14 +140,11 @@ async function deleteService(id: string) {
 export {
   ADMIN_SERVICE_LIST_SELECT,
   PUBLISHED_SERVICES_QUERY,
-  REQUEST_SERVICE_SELECT,
   SERVICE_EDITOR_SELECT,
   SERVICE_OPTIONS_SELECT,
   createService,
   deleteService,
   findAdminServices,
-  findPublishedRequestService,
-  findPublishedRequestServices,
   findPublishedServices,
   findServiceById,
   findServiceForEditor,

@@ -3,10 +3,10 @@ import { NextResponse, type NextRequest } from "next/server"
 
 import {
   getAdminEmail,
-  getSupabasePublicConfig,
   normalizeEmail,
   safeAdminRedirect,
 } from "@/shared/auth/config"
+import { getSupabasePublicConfig } from "@/shared/supabase/config"
 
 async function refreshAdminSession(request: NextRequest) {
   const path = request.nextUrl.pathname

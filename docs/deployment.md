@@ -31,7 +31,7 @@ use a direct or session-pooled connection for hosted migration commands.
 | Admin authorization | `SUPABASE_ADMIN_EMAIL` for the single provisioned owner |
 | App URL and production | No application URL variable is read. Configure Supabase Auth Site URL and `/auth/confirm` Redirect URLs for the actual local, preview (if used), and production domains. |
 
-`catalogue-media` is fixed in `src/shared/constants/storage.ts` and created by
+`catalogue-media` is fixed in `src/shared/storage/constants.ts` and created by
 the Supabase infrastructure migration. Do not add a bucket environment variable
 or create a bucket manually. Never expose `SUPABASE_SECRET_KEY` to the browser.
 
