@@ -5,6 +5,7 @@
 - Read `docs/design-foundations.md` before implementing or changing shared UI foundations.
 - Before implementing or refactoring a feature or page, or changing feature structure, read and apply `.agents/skills/feature-structure/SKILL.md`. Enforce only the rules that skill defines and preserve everything outside its scope.
 - Before creating, extending, or reorganising database seeds, read and apply `.agents/skills/database-seeding/SKILL.md`. Treat existing persisted models as the source of truth and keep media support optional.
+- Before creating, promoting, or reorganising code under `src/shared/`, read and apply `.agents/skills/shared-structure/SKILL.md`. Shared code must have demonstrated cross-feature ownership, remain organised by capability, and must not hide feature workflows or depend on feature or seed implementation.
 - Inspect existing code and patterns before adding files. Keep changes small and feature-owned.
 - Keep feature-specific production code in `src/features/<feature>/` until reuse is demonstrated. Put every test under the root `tests/` directory, mirroring its subject's path under `src/`.
 - Treat `src/db/schema.prisma` and its generated Prisma types as the source of truth for persisted entities. Add a separate application type only for a real input, projection, serialization, or UI-state boundary.
