@@ -20,7 +20,7 @@ type MockServerClientOptions = {
 
 vi.mock("@supabase/ssr", () => ({ createServerClient }))
 
-import { refreshAdminSession } from "@/server/auth/proxy"
+import { refreshAdminSession } from "@/shared/auth/proxy"
 
 describe("Admin Proxy session refresh", () => {
   beforeEach(() => {

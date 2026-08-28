@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it, vi } from "vitest"
 
 const getClaims = vi.fn()
 
-vi.mock("@/server/auth/supabase-server", () => ({
+vi.mock("@/shared/auth/supabase-server", () => ({
   createSupabaseServerClient: vi.fn(async () => ({ auth: { getClaims } })),
 }))
 
@@ -10,7 +10,7 @@ import {
   AdminAuthorizationError,
   getVerifiedAdmin,
   requireAdmin,
-} from "@/server/auth/authorize"
+} from "@/shared/auth/authorize"
 
 describe("verified Admin identity", () => {
   afterEach(() => {

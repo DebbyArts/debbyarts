@@ -9,7 +9,7 @@ type RequestKindValue = "ARTWORK" | "SERVICE"
 import type {
   RequestArtworkOption,
   RequestServiceOption,
-} from "@/types/request-catalogue"
+} from "@/shared/types/request-catalogue"
 
 type RequestItem =
   | { kind: "ARTWORK"; record: RequestArtworkOption }

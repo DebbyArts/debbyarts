@@ -3,7 +3,7 @@ import "server-only"
 import { randomUUID } from "node:crypto"
 
 import { isSeedStoragePath } from "@/db/seed/storage-paths"
-import type { VerifiedAdmin } from "@/server/auth/authorize"
+import type { VerifiedAdmin } from "@/shared/auth/authorize"
 import {
   ImageValidationError,
   MAX_IMAGE_BYTES,
@@ -11,8 +11,8 @@ import {
   MIN_IMAGE_DIMENSION,
   validateImageFile,
   type ValidatedImage,
-} from "@/server/storage/image-validation"
-import { createStorageAdminClient } from "@/server/storage/storage-admin"
+} from "@/shared/storage/image-validation"
+import { createStorageAdminClient } from "@/shared/storage/storage-admin"
 import { CATALOGUE_MEDIA_BUCKET } from "@/shared/constants/storage"
 
 type CatalogueImageKind = "artwork" | "service"

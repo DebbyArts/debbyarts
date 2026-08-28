@@ -3,7 +3,7 @@ import { relative, resolve, sep } from "node:path"
 
 import type { SeedImage } from "@/db/seed/content-manifest"
 import { SeedManifestError } from "@/db/seed/manifest-validation"
-import { validateImageBuffer } from "@/server/storage/image-validation"
+import { validateImageBuffer } from "@/shared/storage/image-validation"
 
 type LoadedSeedImage = {
   buffer: Buffer

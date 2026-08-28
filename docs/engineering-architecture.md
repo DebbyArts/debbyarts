@@ -15,14 +15,12 @@ src/
     artwork/           # Art & Gallery public/admin domain
     services/          # Services public/admin domain
     enquiries/         # Make a Request and Enquiries admin domain
-  lib/                 # Framework-agnostic/general utilities
-  server/              # Cross-feature server infrastructure
+  shared/              # Cross-feature utilities, infrastructure, and contracts
   db/                  # Shared database/Prisma infrastructure
-  types/               # Genuinely cross-domain types only
 tests/
   app/                 # Route and route-composition tests, mirroring src/app
   features/            # Feature tests, mirroring src/features
-  server/              # Shared server-infrastructure tests, mirroring src/server
+  shared/              # Cross-feature infrastructure tests, mirroring src/shared
   support/             # Test-only shims and shared test infrastructure
 ```
 
@@ -71,16 +69,16 @@ Server Component page/layout
 
 Do not turn a page into a Client Component because one child is interactive. Client Components must not be async, and values passed from Server to Client Components must be serializable.
 
-## Server, database, types, and schemas
+## Shared infrastructure, database, types, and schemas
 
 - Feature-specific server logic belongs in `src/features/<feature>/server/` when needed.
-- `src/server/` is reserved for cross-feature infrastructure such as authentication helpers, storage, mail/integration clients, and general server utilities.
-- Do not create a giant global server layer containing domain behaviour.
+- `src/shared/` is reserved for proven cross-feature utilities, infrastructure, and contracts such as authentication helpers, Storage, and request-catalogue types. Modules that must not enter client bundles keep an explicit `server-only` boundary.
+- Do not create a giant shared layer containing domain behaviour.
 - `src/db/` is reserved for shared database infrastructure: the client, schema/migration integration, and seed infrastructure.
 - Prisma ORM is active. `src/db/schema.prisma` is the source of truth for persisted entities, `src/db/migrations/` owns application migration history, and `src/db/client.ts` is the single shared client instance.
 - Prisma-generated code lives in ignored `src/db/generated/prisma/` and is regenerated through `npm run db:generate`/`postinstall`. Import server entity/payload types from its `client` entry and browser-safe enums from its `enums` entry; do not duplicate complete Prisma models in feature contracts.
 - Keep feature-specific database behaviour close to its owning feature while using the shared database infrastructure.
-- Domain types and runtime schemas stay with their domain. Use `src/types/` only for genuinely cross-domain contracts; do not create global dumping-ground `types` or `schemas` folders.
+- Domain types and runtime schemas stay with their domain. Use `src/shared/types/` only for genuinely cross-domain contracts; do not create global dumping-ground `types` or `schemas` folders.
 
 ## Imports and module boundaries
 
@@ -154,8 +152,7 @@ These are higher-conflict shared areas:
 src/app/
 src/components/shared/
 src/components/ui/
-src/lib/
-src/server/
+src/shared/
 src/db/
 package.json
 ```

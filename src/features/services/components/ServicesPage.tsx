@@ -11,7 +11,7 @@ import type {
   ServiceGroupPresentation,
   ServicePresentation,
 } from "@/features/services/types"
-import { cn } from "@/lib/utils"
+import { cn } from "@/shared/utils/cn"
 
 type ServicesPageProps = {
   groups: ServiceGroupPresentation[]

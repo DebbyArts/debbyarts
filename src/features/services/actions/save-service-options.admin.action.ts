@@ -9,7 +9,7 @@ import {
   parseServiceRequestOptions,
   ServiceValidationError,
 } from "@/features/services/validation/service.validation"
-import { requireAdmin } from "@/server/auth/authorize"
+import { requireAdmin } from "@/shared/auth/authorize"
 
 async function saveServiceOptionsAction(
   serviceId: string,

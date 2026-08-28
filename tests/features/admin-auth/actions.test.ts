@@ -11,9 +11,9 @@ vi.mock("next/headers", () => ({
   headers: vi.fn(async () => new Headers({ origin: "http://127.0.0.1:3000" })),
 }))
 vi.mock("next/navigation", () => ({ redirect }))
-vi.mock("@/server/auth/authorize", () => ({ requireAdmin }))
+vi.mock("@/shared/auth/authorize", () => ({ requireAdmin }))
 
-vi.mock("@/server/auth/supabase-server", () => ({
+vi.mock("@/shared/auth/supabase-server", () => ({
   createSupabaseServerClient: vi.fn(async () => ({
     auth: { signInWithOtp },
   })),

@@ -7,9 +7,9 @@ import {
   getAdminEmail,
   normalizeEmail,
   safeAdminRedirect,
-} from "@/server/auth/config"
-import { requireAdmin } from "@/server/auth/authorize"
-import { createSupabaseServerClient } from "@/server/auth/supabase-server"
+} from "@/shared/auth/config"
+import { requireAdmin } from "@/shared/auth/authorize"
+import { createSupabaseServerClient } from "@/shared/auth/supabase-server"
 import type { LoginActionState } from "@/features/admin-auth/state"
 
 async function requestMagicLinkAction(

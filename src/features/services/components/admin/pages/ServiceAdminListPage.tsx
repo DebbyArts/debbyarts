@@ -18,7 +18,7 @@ import type {
   ServiceListSearchParams,
   ServiceAdminListFilters,
 } from "@/features/services/types"
-import { requireAdmin } from "@/server/auth/authorize"
+import { requireAdmin } from "@/shared/auth/authorize"
 
 type ServiceListPageProps = {
   accountAction?: ReactNode

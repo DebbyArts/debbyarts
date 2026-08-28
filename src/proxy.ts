@@ -1,6 +1,6 @@
 import type { NextRequest } from "next/server"
 
-import { refreshAdminSession } from "@/server/auth/proxy"
+import { refreshAdminSession } from "@/shared/auth/proxy"
 
 async function proxy(request: NextRequest) {
   return refreshAdminSession(request)

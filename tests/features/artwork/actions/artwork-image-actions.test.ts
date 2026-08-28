@@ -8,7 +8,7 @@ const mocks = vi.hoisted(() => ({
 }))
 
 vi.mock("next/cache", () => ({ revalidatePath: mocks.revalidatePath }))
-vi.mock("@/server/auth/authorize", () => ({ requireAdmin: mocks.requireAdmin }))
+vi.mock("@/shared/auth/authorize", () => ({ requireAdmin: mocks.requireAdmin }))
 vi.mock("@/features/artwork/services/artwork.service", () => ({
   addArtworkImage: mocks.addArtworkImage,
   removeArtworkImage: mocks.removeArtworkImage,

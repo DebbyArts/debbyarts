@@ -3,7 +3,7 @@
 import type { ReactNode } from "react"
 import { RadioGroup as RadioGroupPrimitive } from "radix-ui"
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/shared/utils/cn"
 
 type SelectableOptionProps = Omit<
   React.ComponentProps<typeof RadioGroupPrimitive.Item>,

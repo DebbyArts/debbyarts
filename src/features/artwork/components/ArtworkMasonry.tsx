@@ -4,7 +4,7 @@ import type { RefObject } from "react"
 import { ArtworkMedia } from "@/features/artwork/components/ArtworkMedia"
 import type { ArtworkProjection } from "@/features/artwork/types"
 import { distributeArtworks } from "@/features/artwork/utils/artwork-gallery.utils"
-import { cn } from "@/lib/utils"
+import { cn } from "@/shared/utils/cn"
 
 type ArtworkMasonryProps = {
   artworks: ArtworkProjection[]

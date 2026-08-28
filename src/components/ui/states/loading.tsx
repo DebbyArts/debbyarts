@@ -1,5 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton"
-import { cn } from "@/lib/utils"
+import { cn } from "@/shared/utils/cn"
 
 type LoadingStateProps = React.ComponentProps<"div"> & {
   label?: string

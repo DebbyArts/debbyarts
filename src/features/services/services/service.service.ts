@@ -27,11 +27,11 @@ import type {
   ServiceMutationInput,
   ServiceRequestOptionsInput,
 } from "@/features/services/types"
-import type { VerifiedAdmin } from "@/server/auth/authorize"
+import type { VerifiedAdmin } from "@/shared/auth/authorize"
 import {
   deleteCatalogueImage,
   uploadCatalogueImage,
-} from "@/server/storage/image-storage"
+} from "@/shared/storage/image-storage"
 
 type ServiceSaveInput = {
   admin: VerifiedAdmin

@@ -4,7 +4,7 @@ import * as motion from "motion/react-client"
 import { Container } from "@/components/ui/container"
 import { Button } from "@/components/ui/button"
 import { requestSteps } from "@/features/home/constants"
-import { cn } from "@/lib/utils"
+import { cn } from "@/shared/utils/cn"
 import { Eyebrow } from "./Eyebrow"
 
 function RequestProcess() {

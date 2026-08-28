@@ -5,8 +5,8 @@ import {
   getAdminEmail,
   normalizeEmail,
   safeAdminRedirect,
-} from "@/server/auth/config"
-import { createSupabaseServerClient } from "@/server/auth/supabase-server"
+} from "@/shared/auth/config"
+import { createSupabaseServerClient } from "@/shared/auth/supabase-server"
 
 const EMAIL_OTP_TYPES = new Set<EmailOtpType>([
   "email",

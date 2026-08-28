@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache"
 import { ARTWORK_REVALIDATION_PATHS } from "@/features/artwork/constants"
 import { moveArtworkImage } from "@/features/artwork/services/artwork.service"
 import type { ArtworkImageActionState } from "@/features/artwork/types"
-import { requireAdmin } from "@/server/auth/authorize"
+import { requireAdmin } from "@/shared/auth/authorize"
 
 async function moveArtworkImageAction(
   artworkId: string,

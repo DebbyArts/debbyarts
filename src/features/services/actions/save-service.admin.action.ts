@@ -12,11 +12,11 @@ import {
   parseServiceMutation,
   ServiceValidationError,
 } from "@/features/services/validation/service.validation"
-import { requireAdmin } from "@/server/auth/authorize"
+import { requireAdmin } from "@/shared/auth/authorize"
 import {
   ImageStorageError,
   ImageValidationError,
-} from "@/server/storage/image-storage"
+} from "@/shared/storage/image-storage"
 
 function imageFile(formData: FormData) {
   const value = formData.get("primaryImage")

@@ -7,7 +7,7 @@ import {
   ImageValidationError,
   immutableImagePath,
   validateImageFile,
-} from "@/server/storage/image-storage"
+} from "@/shared/storage/image-storage"
 
 describe("catalogue image safety", () => {
   it("decodes accepted content and returns intrinsic dimensions", async () => {

@@ -99,7 +99,7 @@ src/app/layout.tsx
 src/app/globals.css
 src/components/ui/
 src/components/shared/
-src/server/
+src/shared/
 src/db/
 src/db/schema.prisma
 prisma.config.ts

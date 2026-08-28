@@ -21,7 +21,7 @@ import {
   filterArtworks,
   getUsefulArtworkCategories,
 } from "@/features/artwork/utils/artwork-gallery.utils"
-import { cn } from "@/lib/utils"
+import { cn } from "@/shared/utils/cn"
 
 type ArtworkGalleryProps = {
   artworks: ArtworkProjection[]

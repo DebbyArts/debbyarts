@@ -4,7 +4,7 @@ import {
   ARTWORK_CATEGORY_LABELS,
   AVAILABILITY_LABELS,
 } from "@/features/artwork/constants"
-import type { RequestArtworkOption } from "@/types/request-catalogue"
+import type { RequestArtworkOption } from "@/shared/types/request-catalogue"
 import {
   ADMIN_ARTWORK_LIST_SELECT,
   ARTWORK_EDITOR_SELECT,

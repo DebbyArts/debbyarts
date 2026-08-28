@@ -1,7 +1,7 @@
 import { SeedManifestError } from "@/db/seed/manifest-validation"
 import { isSeedStoragePath } from "@/db/seed/storage-paths"
-import { validateImageBuffer } from "@/server/storage/image-validation"
-import { createStorageAdminClient } from "@/server/storage/storage-admin"
+import { validateImageBuffer } from "@/shared/storage/image-validation"
+import { createStorageAdminClient } from "@/shared/storage/storage-admin"
 import { CATALOGUE_MEDIA_BUCKET } from "@/shared/constants/storage"
 
 async function uploadSeedCatalogueImage(path: string, buffer: Buffer) {

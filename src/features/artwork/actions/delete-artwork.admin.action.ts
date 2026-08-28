@@ -5,7 +5,7 @@ import { redirect } from "next/navigation"
 
 import { ARTWORK_REVALIDATION_PATHS } from "@/features/artwork/constants"
 import { removeArtwork } from "@/features/artwork/services/artwork.service"
-import { requireAdmin } from "@/server/auth/authorize"
+import { requireAdmin } from "@/shared/auth/authorize"
 
 async function deleteArtworkAction(artworkId: string) {
   const admin = await requireAdmin()

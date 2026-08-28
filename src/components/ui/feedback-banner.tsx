@@ -1,7 +1,7 @@
 import type { ReactNode } from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/shared/utils/cn"
 
 const feedbackBannerVariants = cva(
   "flex min-h-11 items-center justify-between gap-3 border px-3.5 py-3 text-xs leading-[1.125rem]",

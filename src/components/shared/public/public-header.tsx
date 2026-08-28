@@ -1,7 +1,7 @@
 import Link from "next/link"
 
 import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
+import { cn } from "@/shared/utils/cn"
 import { PublicMobileMenu } from "@/components/shared/public/public-mobile-menu"
 import { SiteLogo } from "@/components/shared/public/site-logo"
 import {

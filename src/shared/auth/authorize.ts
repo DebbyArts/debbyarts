@@ -2,8 +2,8 @@ import "server-only"
 
 import type { SupabaseClient } from "@supabase/supabase-js"
 
-import { getAdminEmail, normalizeEmail } from "@/server/auth/config"
-import { createSupabaseServerClient } from "@/server/auth/supabase-server"
+import { getAdminEmail, normalizeEmail } from "@/shared/auth/config"
+import { createSupabaseServerClient } from "@/shared/auth/supabase-server"
 
 class AdminAuthorizationError extends Error {
   constructor() {

@@ -13,7 +13,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
-import { cn } from "@/lib/utils"
+import { cn } from "@/shared/utils/cn"
 import {
   PUBLIC_NAVIGATION,
   type PublicPath,

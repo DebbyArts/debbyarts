@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache"
 
 import { EnquiryStatus } from "@/db/generated/prisma/enums"
 import { updateEnquiryStatus } from "@/features/enquiries/services/enquiry.service"
-import { requireAdmin } from "@/server/auth/authorize"
+import { requireAdmin } from "@/shared/auth/authorize"
 
 async function updateEnquiryStatusAction(
   enquiryId: string,

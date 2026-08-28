@@ -6,7 +6,7 @@ import { ARTWORK_REVALIDATION_PATHS } from "@/features/artwork/constants"
 import { addArtworkImage } from "@/features/artwork/services/artwork.service"
 import type { ArtworkImageActionState } from "@/features/artwork/types"
 import { parseArtworkImageAlt } from "@/features/artwork/validation/artwork.validation"
-import { requireAdmin } from "@/server/auth/authorize"
+import { requireAdmin } from "@/shared/auth/authorize"
 
 async function addArtworkImageAction(
   artworkId: string,

@@ -3,7 +3,7 @@ import * as motion from "motion/react-client"
 import { MediaImage } from "@/components/ui/media-image"
 import { artworkCategoryLabels } from "@/features/home/constants"
 import type { HomeArtwork } from "@/features/home/types"
-import { cn } from "@/lib/utils"
+import { cn } from "@/shared/utils/cn"
 
 function ArtworkCard({
   artwork,

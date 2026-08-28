@@ -6,7 +6,7 @@ import {
   ADMIN_NAVIGATION,
   type AdminSection,
 } from "@/components/shared/admin/admin-navigation"
-import { cn } from "@/lib/utils"
+import { cn } from "@/shared/utils/cn"
 
 type AdminShellProps = {
   accountAction?: ReactNode

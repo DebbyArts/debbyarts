@@ -19,7 +19,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
-import { cn } from "@/lib/utils"
+import { cn } from "@/shared/utils/cn"
 
 type AdminMobileNavigationProps = {
   accountAction?: ReactNode

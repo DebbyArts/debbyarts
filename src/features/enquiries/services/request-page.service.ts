@@ -6,7 +6,7 @@ import type {
   RequestPageData,
   RequestSearchParams,
 } from "@/features/enquiries/types"
-import { getPublishedRequestCatalogue } from "@/server/request-catalogue"
+import { getPublishedRequestCatalogue } from "@/shared/request-catalogue"
 
 type LoadRequestPageResult = RequestPageData | InvalidRequestPageData
 

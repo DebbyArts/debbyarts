@@ -3,7 +3,7 @@ import "server-only"
 import {
   getSupabasePublicConfig,
   getSupabaseStorageAdminConfig,
-} from "@/server/supabase-config"
+} from "@/shared/supabase-config"
 
 const DEFAULT_ADMIN_PATH = "/admin/artwork"
 

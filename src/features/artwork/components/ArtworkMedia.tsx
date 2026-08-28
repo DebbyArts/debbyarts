@@ -4,7 +4,7 @@ import { ImageOffIcon } from "lucide-react"
 import { type ComponentProps, useState } from "react"
 
 import { MediaImage } from "@/components/ui/media-image"
-import { cn } from "@/lib/utils"
+import { cn } from "@/shared/utils/cn"
 
 type ArtworkMediaProps = Omit<ComponentProps<"div">, "children"> & {
   alt: string

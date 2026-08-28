@@ -7,7 +7,7 @@ import { AdminShell } from "@/components/shared/admin/admin-shell"
 import { Button } from "@/components/ui/button"
 import { ServiceEditor } from "@/features/services/components/admin/ServiceEditor"
 import { getServiceEditor } from "@/features/services/services/service.service"
-import { requireAdmin } from "@/server/auth/authorize"
+import { requireAdmin } from "@/shared/auth/authorize"
 
 async function ServiceEditPage({
   accountAction,

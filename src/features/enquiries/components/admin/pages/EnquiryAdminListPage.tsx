@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input"
 import { EnquiryStatus, RequestKind } from "@/db/generated/prisma/enums"
 import { getEnquiryList } from "@/features/enquiries/services/enquiry.service"
 import type { EnquiryListSearchParams } from "@/features/enquiries/types"
-import { requireAdmin } from "@/server/auth/authorize"
+import { requireAdmin } from "@/shared/auth/authorize"
 
 type EnquiryListPageProps = {
   accountAction?: ReactNode

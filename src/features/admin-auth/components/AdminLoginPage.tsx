@@ -1,5 +1,5 @@
 import { LoginForm } from "@/features/admin-auth/components/login-form"
-import { safeAdminRedirect } from "@/server/auth/config"
+import { safeAdminRedirect } from "@/shared/auth/config"
 
 type AdminLoginSearchParams = {
   configuration?: string

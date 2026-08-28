@@ -9,7 +9,7 @@ import {
   ArtworkValidationError,
   parseArtworkRequestOptions,
 } from "@/features/artwork/validation/artwork.validation"
-import { requireAdmin } from "@/server/auth/authorize"
+import { requireAdmin } from "@/shared/auth/authorize"
 
 async function saveArtworkOptionsAction(
   artworkId: string,

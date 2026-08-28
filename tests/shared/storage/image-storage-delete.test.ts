@@ -25,7 +25,7 @@ import {
   deleteCatalogueImage,
   ImageStorageError,
   uploadCatalogueImage,
-} from "@/server/storage/image-storage"
+} from "@/shared/storage/image-storage"
 
 describe("catalogue image deletion", () => {
   const admin = {

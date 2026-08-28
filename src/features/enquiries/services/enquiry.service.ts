@@ -35,7 +35,7 @@ import { ENQUIRIES_PAGE_SIZE } from "@/features/enquiries/constants"
 import {
   getPublishedRequestArtwork,
   getPublishedRequestService,
-} from "@/server/request-catalogue"
+} from "@/shared/request-catalogue"
 
 type EnquiryWriteRecord = EnquiryPersistenceInput
 

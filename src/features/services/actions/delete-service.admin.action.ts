@@ -5,7 +5,7 @@ import { redirect } from "next/navigation"
 
 import { SERVICE_REVALIDATION_PATHS } from "@/features/services/constants"
 import { removeService } from "@/features/services/services/service.service"
-import { requireAdmin } from "@/server/auth/authorize"
+import { requireAdmin } from "@/shared/auth/authorize"
 
 async function deleteServiceAction(serviceId: string) {
   const admin = await requireAdmin()

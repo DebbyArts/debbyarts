@@ -6,7 +6,7 @@ import {
   getSupabasePublicConfig,
   normalizeEmail,
   safeAdminRedirect,
-} from "@/server/auth/config"
+} from "@/shared/auth/config"
 
 async function refreshAdminSession(request: NextRequest) {
   const path = request.nextUrl.pathname

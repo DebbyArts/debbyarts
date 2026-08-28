@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache"
 
 import { SERVICE_REVALIDATION_PATHS } from "@/features/services/constants"
 import { unpublishService } from "@/features/services/services/service.service"
-import { requireAdmin } from "@/server/auth/authorize"
+import { requireAdmin } from "@/shared/auth/authorize"
 
 async function unpublishServiceAction(serviceId: string) {
   await requireAdmin()

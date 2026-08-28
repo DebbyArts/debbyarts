@@ -7,7 +7,7 @@ import { AdminShell } from "@/components/shared/admin/admin-shell"
 import { Button } from "@/components/ui/button"
 import { ArtworkEditor } from "@/features/artwork/components/admin/ArtworkEditor"
 import { getArtworkEditor } from "@/features/artwork/services/artwork.service"
-import { requireAdmin } from "@/server/auth/authorize"
+import { requireAdmin } from "@/shared/auth/authorize"
 
 async function ArtworkEditPage({
   accountAction,

@@ -1,5 +1,5 @@
 import type { Prisma } from "@/db/generated/prisma/client"
-import type { RequestServiceOption } from "@/types/request-catalogue"
+import type { RequestServiceOption } from "@/shared/types/request-catalogue"
 import { SERVICE_GROUP_DEFINITIONS } from "@/features/services/constants"
 import { REQUEST_SERVICE_SELECT } from "@/features/services/repositories/service.repository"
 import { resolvePublicStorageObjectUrl } from "@/shared/utils/storage"

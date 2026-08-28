@@ -15,7 +15,7 @@ import { EnquiryStatus } from "@/db/generated/prisma/enums"
 import { updateEnquiryStatusAction } from "@/features/enquiries/actions/update-enquiry-status.admin.action"
 import { WhatsAppContinuation } from "@/features/enquiries/components/admin/WhatsAppContinuation"
 import { getEnquiryDetail } from "@/features/enquiries/services/enquiry.service"
-import { requireAdmin } from "@/server/auth/authorize"
+import { requireAdmin } from "@/shared/auth/authorize"
 
 type DetailRowProps = {
   label: string

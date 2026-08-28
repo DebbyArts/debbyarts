@@ -10,7 +10,7 @@ const { exchangeCodeForSession, getClaims, signOut, verifyOtp } = vi.hoisted(
   })
 )
 
-vi.mock("@/server/auth/supabase-server", () => ({
+vi.mock("@/shared/auth/supabase-server", () => ({
   createSupabaseServerClient: vi.fn(async () => ({
     auth: { exchangeCodeForSession, getClaims, signOut, verifyOtp },
   })),

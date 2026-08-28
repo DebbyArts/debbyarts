@@ -5,7 +5,7 @@ import {
   getSupabaseStorageAdminConfig,
   normalizeEmail,
   safeAdminRedirect,
-} from "@/server/auth/config"
+} from "@/shared/auth/config"
 
 afterEach(() => {
   vi.unstubAllEnvs()

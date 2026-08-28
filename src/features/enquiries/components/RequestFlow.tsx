@@ -49,7 +49,7 @@ import {
   normalizePhone,
   normalizePreferredDate,
 } from "@/features/enquiries/validation/request.validation"
-import { cn } from "@/lib/utils"
+import { cn } from "@/shared/utils/cn"
 
 
 function initialDraft(data: RequestPageData): RequestDraft {

@@ -16,7 +16,7 @@ const mocks = vi.hoisted(() => ({
 
 vi.mock("next/cache", () => ({ revalidatePath: mocks.revalidatePath }))
 vi.mock("next/navigation", () => ({ redirect: mocks.redirect }))
-vi.mock("@/server/auth/authorize", () => ({ requireAdmin: mocks.requireAdmin }))
+vi.mock("@/shared/auth/authorize", () => ({ requireAdmin: mocks.requireAdmin }))
 vi.mock("@/db/client", () => ({
   prisma: {
     artwork: {
@@ -31,8 +31,8 @@ vi.mock("@/db/client", () => ({
     },
   },
 }))
-vi.mock("@/server/storage/image-storage", async (importOriginal) => ({
-  ...(await importOriginal<typeof import("@/server/storage/image-storage")>()),
+vi.mock("@/shared/storage/image-storage", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/shared/storage/image-storage")>()),
   deleteCatalogueImage: mocks.deleteCatalogueImage,
   uploadCatalogueImage: mocks.uploadCatalogueImage,
 }))

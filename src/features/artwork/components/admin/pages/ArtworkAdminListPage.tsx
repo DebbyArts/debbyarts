@@ -21,7 +21,7 @@ import type {
   ArtworkCategory,
   ArtworkListSearchParams,
 } from "@/features/artwork/types"
-import { requireAdmin } from "@/server/auth/authorize"
+import { requireAdmin } from "@/shared/auth/authorize"
 
 type ArtworkListPageProps = {
   accountAction?: ReactNode

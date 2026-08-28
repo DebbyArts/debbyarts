@@ -5,7 +5,7 @@ import { AdminPage, AdminPageHeader } from "@/components/shared/admin/admin-page
 import { AdminShell } from "@/components/shared/admin/admin-shell"
 import { Button } from "@/components/ui/button"
 import { ServiceEditor } from "@/features/services"
-import { requireAdmin } from "@/server/auth/authorize"
+import { requireAdmin } from "@/shared/auth/authorize"
 
 async function ServiceNewPage({ accountAction }: { accountAction?: ReactNode }) {
   await requireAdmin()
