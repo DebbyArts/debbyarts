@@ -24,6 +24,15 @@ Apply only the rules defined here. Preserve everything else.
 - Keep feature-specific application types in `types/index.ts`.
 - Keep feature code inside its owning feature unless it is genuinely shared.
 
+## Page composition
+
+- A route or page that primarily composes existing domain features is not automatically a feature.
+- Keep page-specific presentation components in `components/<page>/` when they have no independent domain ownership.
+- Keep repositories, services, mappers, schemas, and domain types with the domain feature that owns the data or behaviour used by the page.
+- Route files may compose page-specific components and the public APIs of multiple features.
+- Do not retain a page-level composition wrapper when the route can express the same composition clearly.
+- Keep single-consumer page content or constants local to the component that owns them. Move domain constants into the owning feature and expose them through that feature's public entry point only when an external consumer needs them.
+
 ## Domain surfaces
 
 - Organise features by domain, not by public or Admin surface.
@@ -47,7 +56,8 @@ Apply only the rules defined here. Preserve everything else.
 - Keep transport parsers in `parsers/`; FormData parsers use `<feature>-form.parser.ts`.
 - Parsers decode external input, call the relevant schema, and return typed application input. They do not derive presentation labels, formatted values, image URLs, or destination URLs.
 - Use Zod errors for invalid submitted input. Add a custom error class only for an error category materially different from schema validation.
-- Rules that require database, Storage, authentication, or existing-record state belong in mutation services rather than schemas.
+- Schemas validate external input without querying database, Storage, authentication, or existing-record state.
+- Mutation services load required state and coordinate state-aware rules. When the resulting pure domain validation is substantial and cohesive, it may be extracted into a focused validator that receives the already-loaded state.
 - Keep immutable initial action states in `constants/index.ts` and their state types in `types/index.ts`.
 
 Examples:
@@ -58,6 +68,14 @@ actions/save-artwork.admin.action.ts
 parsers/artwork-form.parser.ts
 schemas/artwork.schema.ts
 ```
+
+## Domain validators
+
+- Use `validators/<subject>.validator.ts` only for substantial domain validation that does not belong in an input schema and becomes clearer outside a service.
+- Validators are pure: they receive normalized input and any already-loaded records, return validated domain values or throw a focused domain error, and perform no database, Storage, authentication, network, or framework work.
+- Services remain responsible for loading state, invoking validators, and coordinating the overall operation.
+- Keep small single-use validation helpers private inside their owning validator or service rather than creating generic utility files.
+- Do not duplicate the same rule in schemas and validators, and do not create a validator folder merely for structural symmetry.
 
 ## Constants
 
@@ -92,6 +110,13 @@ Apply these rules only where the corresponding responsibility already exists or 
 - `repositories/` contains direct database or external data access.
 - `mappers/` transforms persisted or external data into feature-specific projections.
 - `services/` coordinates feature use cases using repositories, mappers, or other dependencies.
+- Begin with one `repositories/<feature>.repository.ts` when its reads and writes remain cohesive and understandable.
+- When that repository becomes genuinely oversized or mixes distinct read and write responsibilities, replace it with `repositories/<feature>.query.repository.ts` and `repositories/<feature>.mutation.repository.ts`.
+- Do not retain a catch-all `<feature>.repository.ts` alongside query and mutation repositories. Use either the single repository or the split pair.
+- Query repositories own direct reads even when a mutation service needs those reads to validate or resolve existing state. Mutation repositories own direct writes.
+- Keep raw ORM query definitions next to the repository that consumes them. Create `<feature>.queries.ts` only when definitions are genuinely shared by multiple repositories or mappers, or form a deliberate generated-payload boundary.
+- Split repositories by data-access responsibility, not by page, public/Admin surface, or individual use case.
+- Repositories perform data access and should not contain presentation mapping or domain workflow validation.
 - Use services consistently; do not add a parallel `usecases/` layer.
 - When a feature has both read and write responsibilities, use `services/<feature>.query.service.ts` and `services/<feature>.mutation.service.ts`.
 - Query services coordinate repositories and mappers for reads. Mutation services coordinate state changes, external infrastructure, rollback, cleanup, and state-dependent rules.
@@ -129,9 +154,12 @@ utils/artwork-gallery.utils.ts
 - React component names and component filenames use `PascalCase`.
 - Repository files use `<name>.repository.ts`.
 - Query and mutation service files use `<feature>.query.service.ts` and `<feature>.mutation.service.ts` when both responsibilities exist.
+- A single repository file uses `<feature>.repository.ts`; a justified split uses `<feature>.query.repository.ts` and `<feature>.mutation.repository.ts`.
+- Shared raw query-definition files use `<feature>.queries.ts` only under the conditions defined above.
 - Mapper files use `<name>.mapper.ts`.
 - Form parser files use `<feature>-form.parser.ts`.
 - Schema files use `<subject>.schema.ts`.
+- Domain validator files use `<subject>.validator.ts`.
 - Non-component filenames use lowercase.
 - Avoid unnecessary hyphenation. Use kebab-case only for genuine multiword non-component names.
 
@@ -139,7 +167,9 @@ Examples:
 
 ```text
 artwork.repository.ts
-featured-artwork.repository.ts
+enquiry.query.repository.ts
+enquiry.mutation.repository.ts
+enquiry.queries.ts
 artwork.query.service.ts
 artwork.mutation.service.ts
 artwork.mapper.ts
