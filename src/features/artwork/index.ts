@@ -6,4 +6,10 @@ export { ArtworkEditPage } from "./components/admin/pages/ArtworkEditPage"
 export { ArtworkNewPage } from "./components/admin/pages/ArtworkNewPage"
 export { ArtworkOptionsPage } from "./components/admin/pages/ArtworkOptionsPage"
 export { ArtworkLoading } from "./components/ArtworkLoading"
-export type { ArtworkListSearchParams } from "./types"
+export { ARTWORK_CATEGORY_ITEM_LABELS } from "./constants"
+export { getFeaturedArtwork } from "./services/artwork.query.service"
+export type {
+  ArtworkListSearchParams,
+  FeaturedArtwork,
+  FeaturedArtworkResult,
+} from "./types"

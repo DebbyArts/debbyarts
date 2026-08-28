@@ -3,7 +3,7 @@ import Link from "next/link"
 import { Container } from "@/components/ui/container"
 import { Reveal } from "@/components/shared/motion/reveal"
 import { Button } from "@/components/ui/button"
-import type { FeaturedArtworkResult } from "@/features/home/types"
+import type { FeaturedArtworkResult } from "@/features/artwork"
 import { ArtworkCard } from "./ArtworkCard"
 import { Eyebrow } from "./Eyebrow"
 

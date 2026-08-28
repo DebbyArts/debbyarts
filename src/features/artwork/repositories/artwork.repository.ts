@@ -64,9 +64,34 @@ const PUBLISHED_ARTWORK_QUERY = {
   },
 } satisfies Prisma.ArtworkFindManyArgs
 
+const FEATURED_ARTWORK_QUERY = {
+  where: {
+    featured: true,
+    published: true,
+  },
+  orderBy: [{ displayOrder: "asc" }, { createdAt: "desc" }],
+  take: 3,
+  select: {
+    id: true,
+    slug: true,
+    title: true,
+    category: true,
+    mediumFormat: true,
+    primaryImagePath: true,
+    primaryImageAlt: true,
+    primaryImageWidth: true,
+    primaryImageHeight: true,
+  },
+} satisfies Prisma.ArtworkFindManyArgs
+
 async function findPublishedArtworks() {
   const { prisma } = await import("@/db/client")
   return prisma.artwork.findMany(PUBLISHED_ARTWORK_QUERY)
+}
+
+async function findFeaturedArtwork() {
+  const { prisma } = await import("@/db/client")
+  return prisma.artwork.findMany(FEATURED_ARTWORK_QUERY)
 }
 
 async function findArtworkById(id: string) {
@@ -255,6 +280,7 @@ export {
   ADMIN_ARTWORK_LIST_SELECT,
   ARTWORK_EDITOR_SELECT,
   ARTWORK_OPTIONS_SELECT,
+  FEATURED_ARTWORK_QUERY,
   PUBLISHED_ARTWORK_QUERY,
   createArtwork,
   createArtworkImage,
@@ -267,6 +293,7 @@ export {
   findArtworkImagePath,
   findArtworkImage,
   findArtworkImageCount,
+  findFeaturedArtwork,
   findPublishedArtworks,
   updateArtwork,
   updateArtworkImageAlt,

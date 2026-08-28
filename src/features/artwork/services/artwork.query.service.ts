@@ -7,18 +7,41 @@ import {
   mapToArtworkEditorValue,
   mapToArtworkOptionsValue,
   mapToArtworkProjection,
+  mapToFeaturedArtwork,
 } from "@/features/artwork/mappers/artwork.mapper"
 import {
   findAdminArtworks,
   findArtworkForEditor,
   findArtworkForOptions,
+  findFeaturedArtwork,
   findPublishedArtworks,
 } from "@/features/artwork/repositories/artwork.repository"
-import type { ArtworkAdminListFilters } from "@/features/artwork/types"
+import type {
+  ArtworkAdminListFilters,
+  FeaturedArtworkResult,
+} from "@/features/artwork/types"
 
 async function getPublishedArtworks() {
   await connection()
   return (await findPublishedArtworks()).map(mapToArtworkProjection)
+}
+
+async function getFeaturedArtwork(): Promise<FeaturedArtworkResult> {
+  if (!process.env.DATABASE_URL) {
+    console.warn(
+      "Featured artwork is unavailable because DATABASE_URL is not configured."
+    )
+    return { status: "unavailable" }
+  }
+
+  try {
+    const artwork = await findFeaturedArtwork()
+
+    return { status: "ready", artwork: artwork.map(mapToFeaturedArtwork) }
+  } catch (error) {
+    console.error("Featured artwork could not be loaded.", error)
+    return { status: "unavailable" }
+  }
 }
 
 async function getAdminArtworks(filters: ArtworkAdminListFilters) {
@@ -42,5 +65,6 @@ export {
   getAdminArtworks,
   getArtworkEditor,
   getArtworkOptions,
+  getFeaturedArtwork,
   getPublishedArtworks,
 }

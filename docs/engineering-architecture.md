@@ -8,10 +8,10 @@ This document defines the structure and conventions for Debby Art & Prints. Keep
 src/
   app/                 # Next.js routes, layouts, metadata, boundaries, composition
   components/
+    home/              # Home page-specific presentation sections
     ui/                # Low-level shadcn/base UI primitives
     shared/            # Proven cross-feature application UI
   features/
-    home/              # Home domain/UI
     artwork/           # Art & Gallery public/admin domain
     services/          # Services public/admin domain
     enquiries/         # Make a Request and Enquiries admin domain

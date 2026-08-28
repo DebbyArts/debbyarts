@@ -3,9 +3,15 @@ import * as motion from "motion/react-client"
 
 import { Container } from "@/components/ui/container"
 import { Button } from "@/components/ui/button"
-import { requestSteps } from "@/features/home/constants"
 import { cn } from "@/shared/utils/cn"
 import { Eyebrow } from "./Eyebrow"
+
+const requestSteps = [
+  ["Explore the relevant artwork or service.", "EXPLORE"],
+  ["Choose the artwork or service you’re interested in.", "CHOOSE"],
+  ["Add the few details Debby Art & Prints needs.", "ADD DETAILS"],
+  ["Submit your request, then continue the conversation on WhatsApp.", "SUBMIT"],
+] as const
 
 function RequestProcess() {
   return (

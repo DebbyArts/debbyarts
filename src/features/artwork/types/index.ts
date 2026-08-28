@@ -1,9 +1,11 @@
+import type { Prisma } from "@/db/generated/prisma/client"
 import type {
   ArtworkCategory,
   AvailabilityStatus,
   PricingMode,
 } from "@/db/generated/prisma/enums"
 import type { ALL_ARTWORK } from "@/features/artwork/constants"
+import type { FEATURED_ARTWORK_QUERY } from "@/features/artwork/repositories/artwork.repository"
 
 type ArtworkFilter = ArtworkCategory | typeof ALL_ARTWORK
 
@@ -36,6 +38,18 @@ type ArtworkGalleryImage = {
   src: string | null
   width: number | null
 }
+
+type FeaturedArtworkRecord = Prisma.ArtworkGetPayload<{
+  select: typeof FEATURED_ARTWORK_QUERY.select
+}>
+
+type FeaturedArtwork = Omit<FeaturedArtworkRecord, "primaryImagePath"> & {
+  primaryImageUrl: string | null
+}
+
+type FeaturedArtworkResult =
+  | { status: "ready"; artwork: FeaturedArtwork[] }
+  | { status: "unavailable" }
 
 type ArtworkAdminListFilters = {
   category?: ArtworkCategory
@@ -153,5 +167,8 @@ export type {
   ArtworkOptionsValue,
   ArtworkProjection,
   ArtworkRequestOptionsInput,
+  FeaturedArtwork,
+  FeaturedArtworkRecord,
+  FeaturedArtworkResult,
   PricingMode as ArtworkPricingMode,
 }

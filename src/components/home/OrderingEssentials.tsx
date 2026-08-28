@@ -1,9 +1,14 @@
 import * as motion from "motion/react-client"
 
 import { Container } from "@/components/ui/container"
-import { essentials } from "@/features/home/constants"
 import { cn } from "@/shared/utils/cn"
 import { Eyebrow } from "./Eyebrow"
+
+const essentials = [
+  { eyebrow: "SERVICE AREA", title: "LAGOS + NATIONWIDE", description: "Debby Art & Prints serves customers across Lagos and nationwide." },
+  { eyebrow: "ORDERING", title: "DETAILS CONFIRMED WITH YOU", description: "Production details are confirmed for each request." },
+  { eyebrow: "DELIVERY / PICKUP", title: "CONFIRMED PER REQUEST", description: "Final delivery or pickup details are discussed for the specific request." },
+] as const
 
 function OrderingEssentials() {
   return (

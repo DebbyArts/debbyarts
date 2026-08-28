@@ -15,6 +15,8 @@ import type {
   ArtworkEditorValue,
   ArtworkOptionsValue,
   ArtworkProjection,
+  FeaturedArtwork,
+  FeaturedArtworkRecord,
 } from "@/features/artwork/types"
 import { formatNgn } from "@/shared/utils/format-ngn"
 import { resolvePublicStorageObjectUrl } from "@/shared/storage/public-url"
@@ -141,10 +143,22 @@ function mapToArtworkOptionsValue(
   return artwork
 }
 
+function mapToFeaturedArtwork(
+  artwork: FeaturedArtworkRecord
+): FeaturedArtwork {
+  const { primaryImagePath, ...projection } = artwork
+
+  return {
+    ...projection,
+    primaryImageUrl: resolvePublicStorageObjectUrl(primaryImagePath),
+  }
+}
+
 export {
   mapToArtworkProjection,
   mapToArtworkAdminListItem,
   mapToArtworkEditorValue,
   mapToArtworkOptionsValue,
   type PublishedArtworkRecord,
+  mapToFeaturedArtwork,
 }

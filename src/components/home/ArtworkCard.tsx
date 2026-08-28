@@ -1,18 +1,20 @@
 import * as motion from "motion/react-client"
 
 import { MediaImage } from "@/components/ui/media-image"
-import { artworkCategoryLabels } from "@/features/home/constants"
-import type { HomeArtwork } from "@/features/home/types"
+import {
+  ARTWORK_CATEGORY_ITEM_LABELS,
+  type FeaturedArtwork,
+} from "@/features/artwork"
 import { cn } from "@/shared/utils/cn"
 
 function ArtworkCard({
   artwork,
   index,
 }: {
-  artwork: HomeArtwork
+  artwork: FeaturedArtwork
   index: number
 }) {
-  const category = artworkCategoryLabels[artwork.category]
+  const category = ARTWORK_CATEGORY_ITEM_LABELS[artwork.category]
 
   return (
     <motion.article
