@@ -210,6 +210,34 @@ describe("Artwork Admin action boundaries", () => {
     })
   })
 
+  it("returns expected schema failures without reaching a mutation", async () => {
+    const invalidArtworkForm = artworkForm()
+    invalidArtworkForm.delete("title")
+    const invalidArtwork = await saveArtworkAction(
+      existingArtwork.id,
+      INITIAL_ARTWORK_ACTION_STATE,
+      invalidArtworkForm
+    )
+    const invalidOptions = new FormData()
+    invalidOptions.set("availableSizesEnabled", "on")
+
+    expect(invalidArtwork).toEqual({
+      message: "Title is required and must be 120 characters or fewer.",
+      status: "error",
+    })
+    await expect(
+      saveArtworkOptionsAction(
+        existingArtwork.id,
+        INITIAL_ARTWORK_ACTION_STATE,
+        invalidOptions
+      )
+    ).resolves.toEqual({
+      message: "Add at least one size option or turn size choices off.",
+      status: "error",
+    })
+    expect(mocks.artworkUpdate).not.toHaveBeenCalled()
+  })
+
   it("reports delete cleanup failure as an explicit partial success", async () => {
     mocks.deleteCatalogueImage.mockRejectedValue(new Error("storage unavailable"))
 

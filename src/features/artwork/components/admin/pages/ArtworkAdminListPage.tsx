@@ -16,7 +16,7 @@ import {
   ARTWORK_CATEGORY_ITEM_LABELS,
   AVAILABILITY_LABELS,
 } from "@/features/artwork/constants"
-import { getAdminArtworks } from "@/features/artwork/services/artwork.service"
+import { getAdminArtworks } from "@/features/artwork/services/artwork.query.service"
 import type {
   ArtworkCategory,
   ArtworkListSearchParams,

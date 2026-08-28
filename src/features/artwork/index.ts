@@ -1,4 +1,4 @@
-export { ArtworkPage } from "./ArtworkPage"
+export { ArtworkPage } from "./components/ArtworkPage"
 export { ArtworkEditor } from "./components/admin/ArtworkEditor"
 export { ArtworkOptionsForm } from "./components/admin/ArtworkOptionsForm"
 export { ArtworkAdminListPage } from "./components/admin/pages/ArtworkAdminListPage"
@@ -9,5 +9,5 @@ export { ArtworkLoading } from "./components/ArtworkLoading"
 export {
   getPublishedRequestArtwork,
   getPublishedRequestArtworks,
-} from "./services/artwork.service"
+} from "./services/artwork.query.service"
 export type { ArtworkListSearchParams } from "./types"

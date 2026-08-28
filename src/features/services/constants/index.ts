@@ -19,10 +19,6 @@ const SERVICE_GROUP_LABELS: Record<ServiceGroupValue, string> = {
   [ServiceGroup.BRANDING_SIGNAGE]: "Branding & signage",
 }
 
-const NGN_FORMATTER = new Intl.NumberFormat("en-NG", {
-  style: "currency", currency: "NGN", minimumFractionDigits: 0, maximumFractionDigits: 2,
-})
-
 const SERVICE_REVALIDATION_PATHS = [
   "/admin/services",
   "/services",
@@ -58,7 +54,6 @@ const REQUEST_PREPARATION_DETAILS = [
 
 export {
   INITIAL_SERVICE_ACTION_STATE,
-  NGN_FORMATTER,
   REQUEST_PREPARATION_DETAILS,
   SERVICE_ADMIN_SELECT_CLASS,
   SERVICE_GROUP_DEFINITIONS,

@@ -2,7 +2,6 @@ import {
   PricingMode,
 } from "@/db/generated/prisma/enums"
 import {
-  NGN_FORMATTER,
   SERVICE_GROUP_DEFINITIONS,
   SERVICE_GROUP_ORDER,
 } from "@/features/services/constants"
@@ -22,6 +21,7 @@ import {
   SERVICE_OPTIONS_SELECT,
 } from "@/features/services/repositories/service.repository"
 import { resolvePublicStorageObjectUrl } from "@/shared/utils/storage"
+import { formatNgn } from "@/shared/utils/format-ngn"
 
 type AdminServiceListRecord = Prisma.ServiceGetPayload<{
   select: typeof ADMIN_SERVICE_LIST_SELECT
@@ -63,7 +63,7 @@ function derivePricingPresentation(
     throw invalidPricingError(service)
   }
 
-  const formattedAmount = NGN_FORMATTER.format(amount)
+  const formattedAmount = formatNgn(amount)
 
   if (service.pricingMode === PricingMode.EXACT) {
     return {

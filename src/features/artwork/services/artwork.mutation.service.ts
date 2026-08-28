@@ -1,36 +1,20 @@
 import "server-only"
 
-import { connection } from "next/server"
-
-import {
-  mapToArtworkAdminListItem,
-  mapToArtworkEditorValue,
-  mapToArtworkOptionsValue,
-  mapToArtworkProjection,
-  mapToRequestArtworkOption,
-} from "@/features/artwork/mappers/artwork.mapper"
+import { MAX_ARTWORK_GALLERY_IMAGE_COUNT } from "@/features/artwork/constants"
 import {
   createArtwork,
   createArtworkImage,
   deleteArtwork,
   deleteArtworkImage,
-  findAdminArtworks,
   findArtworkById,
-  findArtworkForEditor,
-  findArtworkForOptions,
-  findArtworkImagePath,
   findArtworkImage,
   findArtworkImageCount,
-  findPublishedArtworks,
-  findPublishedRequestArtwork,
-  findPublishedRequestArtworks,
+  findArtworkImagePath,
+  moveArtworkImage as moveArtworkImageRecord,
   updateArtwork,
   updateArtworkImageAlt,
-  moveArtworkImage as moveArtworkImageRecord,
 } from "@/features/artwork/repositories/artwork.repository"
-import { MAX_ARTWORK_GALLERY_IMAGE_COUNT } from "@/features/artwork/constants"
 import type {
-  ArtworkAdminListFilters,
   ArtworkMutationInput,
   ArtworkRequestOptionsInput,
 } from "@/features/artwork/types"
@@ -39,6 +23,13 @@ import {
   deleteCatalogueImage,
   uploadCatalogueImage,
 } from "@/shared/storage/image-storage"
+
+class ArtworkMutationError extends Error {
+  constructor(message: string) {
+    super(message)
+    this.name = "ArtworkMutationError"
+  }
+}
 
 type ArtworkSaveInput = {
   admin: VerifiedAdmin
@@ -52,39 +43,7 @@ type ArtworkSaveResult =
   | { createdId?: string; status: "saved"; warning?: string }
   | { createdId?: never; status: "not-saved"; warning: string }
 
-async function getPublishedArtworks() {
-  await connection()
-  return (await findPublishedArtworks()).map(mapToArtworkProjection)
-}
-
-async function getPublishedRequestArtworks() {
-  await connection()
-  return (await findPublishedRequestArtworks()).map(mapToRequestArtworkOption)
-}
-
-async function getPublishedRequestArtwork(slug: string) {
-  const artwork = await findPublishedRequestArtwork(slug)
-  return artwork ? mapToRequestArtworkOption(artwork) : null
-}
-
-async function getAdminArtworks(filters: ArtworkAdminListFilters) {
-  await connection()
-  return (await findAdminArtworks(filters)).map(mapToArtworkAdminListItem)
-}
-
-async function getArtworkEditor(id: string) {
-  await connection()
-  const artwork = await findArtworkForEditor(id)
-  return artwork ? mapToArtworkEditorValue(artwork) : null
-}
-
-async function getArtworkOptions(id: string) {
-  await connection()
-  const artwork = await findArtworkForOptions(id)
-  return artwork ? mapToArtworkOptionsValue(artwork) : null
-}
-
-async function getArtworkForSave(id: string) {
+async function getArtworkForMutation(id: string) {
   return findArtworkById(id)
 }
 
@@ -98,12 +57,14 @@ async function saveArtwork({
   if (
     file &&
     !existing?.primaryImagePath &&
-    (existing?.additionalImages.length ?? 0) >= MAX_ARTWORK_GALLERY_IMAGE_COUNT
+    (existing?.additionalImages.length ?? 0) >=
+      MAX_ARTWORK_GALLERY_IMAGE_COUNT
   ) {
-    throw new Error(
+    throw new ArtworkMutationError(
       `An artwork can have at most ${MAX_ARTWORK_GALLERY_IMAGE_COUNT} gallery images.`
     )
   }
+
   const uploaded = file
     ? await uploadCatalogueImage(admin, "artwork", file)
     : null
@@ -207,13 +168,15 @@ async function addArtworkImage(
   const artwork = await findArtworkById(artworkId)
   if (!artwork) return { status: "not-found" as const }
   if (!artwork.primaryImagePath) {
-    throw new Error("Add a primary cover image before adding gallery images.")
+    throw new ArtworkMutationError(
+      "Add a primary cover image before adding gallery images."
+    )
   }
 
   const imageCount = await findArtworkImageCount(artworkId)
   const totalImages = imageCount + 1
   if (totalImages >= MAX_ARTWORK_GALLERY_IMAGE_COUNT) {
-    throw new Error(
+    throw new ArtworkMutationError(
       `An artwork can have at most ${MAX_ARTWORK_GALLERY_IMAGE_COUNT} gallery images.`
     )
   }
@@ -232,7 +195,7 @@ async function addArtworkImage(
     try {
       await deleteCatalogueImage(admin, "artwork", uploaded.path)
     } catch {
-      throw new Error(
+      throw new ArtworkMutationError(
         "The gallery image was uploaded, but its database record failed and needs manual Storage cleanup."
       )
     }
@@ -283,19 +246,14 @@ async function moveArtworkImage(
 }
 
 export {
-  getAdminArtworks,
+  ArtworkMutationError,
   addArtworkImage,
-  getArtworkEditor,
-  getArtworkForSave,
-  getArtworkOptions,
-  getPublishedArtworks,
-  getPublishedRequestArtwork,
-  getPublishedRequestArtworks,
+  getArtworkForMutation,
+  moveArtworkImage,
   removeArtwork,
   removeArtworkImage,
   saveArtwork,
   saveArtworkOptions,
   unpublishArtwork,
   updateArtworkImageDescription,
-  moveArtworkImage,
 }

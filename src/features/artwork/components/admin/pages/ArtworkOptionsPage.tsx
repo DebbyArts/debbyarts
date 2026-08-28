@@ -6,7 +6,7 @@ import { AdminPage, AdminPageHeader } from "@/components/shared/admin/admin-page
 import { AdminShell } from "@/components/shared/admin/admin-shell"
 import { Button } from "@/components/ui/button"
 import { ArtworkOptionsForm } from "@/features/artwork/components/admin/ArtworkOptionsForm"
-import { getArtworkOptions } from "@/features/artwork/services/artwork.service"
+import { getArtworkOptions } from "@/features/artwork/services/artwork.query.service"
 import { requireAdmin } from "@/shared/auth/authorize"
 
 async function ArtworkOptionsPage({

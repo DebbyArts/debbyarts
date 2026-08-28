@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
 
 import { ARTWORK_REVALIDATION_PATHS } from "@/features/artwork/constants"
-import { removeArtwork } from "@/features/artwork/services/artwork.service"
+import { removeArtwork } from "@/features/artwork/services/artwork.mutation.service"
 import { requireAdmin } from "@/shared/auth/authorize"
 
 async function deleteArtworkAction(artworkId: string) {

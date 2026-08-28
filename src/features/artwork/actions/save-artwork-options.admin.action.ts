@@ -1,14 +1,12 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
+import { ZodError } from "zod"
 
 import { ARTWORK_REVALIDATION_PATHS } from "@/features/artwork/constants"
-import { saveArtworkOptions } from "@/features/artwork/services/artwork.service"
+import { parseArtworkRequestOptions } from "@/features/artwork/parsers/artwork-form.parser"
+import { saveArtworkOptions } from "@/features/artwork/services/artwork.mutation.service"
 import type { ArtworkActionState } from "@/features/artwork/types"
-import {
-  ArtworkValidationError,
-  parseArtworkRequestOptions,
-} from "@/features/artwork/validation/artwork.validation"
 import { requireAdmin } from "@/shared/auth/authorize"
 
 async function saveArtworkOptionsAction(
@@ -27,8 +25,8 @@ async function saveArtworkOptionsAction(
     return {
       status: "error",
       message:
-        error instanceof ArtworkValidationError
-          ? error.message
+        error instanceof ZodError
+          ? (error.issues[0]?.message ?? "The request options are invalid.")
           : "The request options could not be saved.",
     }
   }

@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache"
 
 import { ARTWORK_REVALIDATION_PATHS } from "@/features/artwork/constants"
-import { unpublishArtwork } from "@/features/artwork/services/artwork.service"
+import { unpublishArtwork } from "@/features/artwork/services/artwork.mutation.service"
 import { requireAdmin } from "@/shared/auth/authorize"
 
 async function unpublishArtworkAction(artworkId: string) {

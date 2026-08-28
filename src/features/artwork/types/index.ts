@@ -134,6 +134,8 @@ type ArtworkRequestOptionsInput = {
   framingOptions: string[]
 }
 
+type ArtworkImageAltInput = string | null
+
 export type {
   ArtworkActionState,
   ArtworkAdditionalImage,
@@ -145,6 +147,7 @@ export type {
   ArtworkFilter,
   ArtworkGalleryImage,
   ArtworkImageActionState,
+  ArtworkImageAltInput,
   ArtworkListSearchParams,
   ArtworkMutationInput,
   ArtworkOptionsValue,

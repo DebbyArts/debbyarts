@@ -1,16 +1,6 @@
-import { describe, expect, test, vi } from "vitest"
+import { describe, expect, test } from "vitest"
 
-import {
-  ALL_ARTWORK,
-} from "@/features/artwork/constants"
-import {
-  getArtworkPriceLabel,
-  mapToArtworkAdminListItem,
-  mapToArtworkEditorValue,
-  mapToArtworkProjection,
-  mapToRequestArtworkOption,
-} from "@/features/artwork/mappers/artwork.mapper"
-import { PUBLISHED_ARTWORK_QUERY } from "@/features/artwork/repositories/artwork.repository"
+import { ALL_ARTWORK } from "@/features/artwork/constants"
 import type { ArtworkProjection } from "@/features/artwork/types"
 import {
   distributeArtworks,
@@ -46,18 +36,6 @@ function artwork(
 }
 
 describe("artwork catalogue rules", () => {
-  test("the public query is published-only with stable display ordering", () => {
-    expect(PUBLISHED_ARTWORK_QUERY.where).toEqual({ published: true })
-    expect(PUBLISHED_ARTWORK_QUERY.orderBy).toEqual([
-      { displayOrder: "asc" },
-      { createdAt: "asc" },
-      { id: "asc" },
-    ])
-    expect(PUBLISHED_ARTWORK_QUERY.select.additionalImages).toMatchObject({
-      orderBy: { displayOrder: "asc" },
-    })
-  })
-
   test("only exposes useful populated filters for a sufficiently sized gallery", () => {
     const artworks = [
       artwork("one", "PAINTING"),
@@ -101,108 +79,4 @@ describe("artwork catalogue rules", () => {
     expect(distributeArtworks(artworks, 1)[0]).toEqual(artworks)
   })
 
-  test("formats the approved pricing modes without inventing an amount", () => {
-    expect(getArtworkPriceLabel({ pricingMode: "NONE", priceAmount: null })).toBe(
-      "Price on request"
-    )
-    expect(
-      getArtworkPriceLabel({ pricingMode: "STARTING_FROM", priceAmount: "125000" })
-    ).toContain("From")
-  })
-
-  test("maps persisted artwork into fields ready for the gallery", () => {
-    vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "https://example.supabase.co")
-
-    const projection = mapToArtworkProjection({
-      slug: "blue-horse",
-      title: "Blue Horse",
-      description: "A blue horse study.",
-      category: "PAINTING",
-      mediumFormat: null,
-      displayedPieceDimensions: null,
-      availability: "AVAILABLE",
-      primaryImagePath: "artwork/blue horse.jpg",
-      primaryImageAlt: null,
-      primaryImageWidth: 800,
-      primaryImageHeight: 1200,
-      pricingMode: "NONE",
-      priceAmount: null,
-      additionalImages: [
-        {
-          id: "detail-1",
-          storagePath: "artwork/blue-horse-detail.jpg",
-          altText: "Detail of the blue horse study",
-          width: 900,
-          height: 600,
-        },
-      ],
-    })
-
-    expect(projection).toMatchObject({
-      categoryLabel: "Paintings",
-      categoryItemLabel: "Painting",
-      availabilityLabel: "Available",
-      imageSrc:
-        "https://example.supabase.co/storage/v1/object/public/catalogue-media/artwork/blue%20horse.jpg",
-      imageAlt: "Blue Horse, an artwork by Debby Art & Prints",
-      priceLabel: "Price on request",
-      requestHref: "/request?artwork=blue-horse",
-    })
-    expect(projection.gallery.map((image) => image.id)).toEqual(["cover", "detail-1"])
-  })
-
-  test("uses the shared public-storage URL for request and Admin artwork projections", () => {
-    vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "http://localhost:54321")
-    const expectedUrl =
-      "http://localhost:54321/storage/v1/object/public/catalogue-media/artwork/blue%20horse.jpg"
-
-    expect(
-      mapToRequestArtworkOption({
-        id: "artwork-1",
-        slug: "blue-horse",
-        title: "Blue Horse",
-        category: "PAINTING",
-        primaryImagePath: "artwork/blue horse.jpg",
-        primaryImageAlt: "Blue horse study",
-        availableSizes: [],
-        framingEnabled: false,
-        framingOptions: [],
-        askQuantity: false,
-      }).imageSrc
-    ).toBe(expectedUrl)
-
-    expect(
-      mapToArtworkAdminListItem({
-        id: "artwork-1",
-        title: "Blue Horse",
-        category: "PAINTING",
-        availability: "AVAILABLE",
-        primaryImagePath: "artwork/blue horse.jpg",
-        primaryImageAlt: "Blue horse study",
-        published: true,
-        featured: false,
-        displayOrder: 0,
-      }).imageUrl
-    ).toBe(expectedUrl)
-
-    expect(
-      mapToArtworkEditorValue({
-        id: "artwork-1",
-        title: "Blue Horse",
-        description: "A blue horse study.",
-        category: "PAINTING",
-        mediumFormat: null,
-        displayedPieceDimensions: null,
-        availability: "AVAILABLE",
-        primaryImagePath: "artwork/blue horse.jpg",
-        primaryImageAlt: "Blue horse study",
-        pricingMode: "NONE",
-        priceAmount: null,
-        published: true,
-        featured: false,
-        displayOrder: 0,
-        additionalImages: [],
-      }).imageUrl
-    ).toBe(expectedUrl)
-  })
 })

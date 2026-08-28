@@ -18,6 +18,7 @@ import type {
   ArtworkOptionsValue,
   ArtworkProjection,
 } from "@/features/artwork/types"
+import { formatNgn } from "@/shared/utils/format-ngn"
 import { resolvePublicStorageObjectUrl } from "@/shared/utils/storage"
 
 type PublishedArtworkRecord = Prisma.ArtworkGetPayload<{
@@ -36,7 +37,7 @@ type ArtworkOptionsRecord = Prisma.ArtworkGetPayload<{
   select: typeof ARTWORK_OPTIONS_SELECT
 }>
 
-function getArtworkPriceLabel(
+function deriveArtworkPriceLabel(
   artwork: Pick<ArtworkProjection, "priceAmount" | "pricingMode">
 ) {
   if (artwork.pricingMode === "NONE" || !artwork.priceAmount) {
@@ -47,12 +48,7 @@ function getArtworkPriceLabel(
 
   if (!Number.isFinite(amount)) return "Price on request"
 
-  const formattedAmount = new Intl.NumberFormat("en-NG", {
-    style: "currency",
-    currency: "NGN",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
-  }).format(amount)
+  const formattedAmount = formatNgn(amount)
 
   return artwork.pricingMode === "STARTING_FROM"
     ? `From ${formattedAmount}`
@@ -95,7 +91,7 @@ function mapToArtworkProjection(artwork: PublishedArtworkRecord): ArtworkProject
     ],
   }
 
-  return { ...projection, priceLabel: getArtworkPriceLabel(projection) }
+  return { ...projection, priceLabel: deriveArtworkPriceLabel(projection) }
 }
 
 function mapToRequestArtworkOption(artwork: RequestArtworkRecord): RequestArtworkOption {
@@ -167,7 +163,6 @@ export {
   mapToArtworkEditorValue,
   mapToArtworkOptionsValue,
   mapToRequestArtworkOption,
-  getArtworkPriceLabel,
   type PublishedArtworkRecord,
   type RequestArtworkRecord,
 }

@@ -1,17 +1,16 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
+import { ZodError } from "zod"
 
 import { ARTWORK_REVALIDATION_PATHS } from "@/features/artwork/constants"
+import { parseArtworkMutation } from "@/features/artwork/parsers/artwork-form.parser"
 import {
-  getArtworkForSave,
+  ArtworkMutationError,
+  getArtworkForMutation,
   saveArtwork,
-} from "@/features/artwork/services/artwork.service"
+} from "@/features/artwork/services/artwork.mutation.service"
 import type { ArtworkActionState } from "@/features/artwork/types"
-import {
-  ArtworkValidationError,
-  parseArtworkMutation,
-} from "@/features/artwork/validation/artwork.validation"
 import { requireAdmin } from "@/shared/auth/authorize"
 import {
   ImageStorageError,
@@ -25,11 +24,18 @@ function imageFile(formData: FormData) {
 
 function actionError(error: unknown): ArtworkActionState {
   if (
-    error instanceof ArtworkValidationError ||
+    error instanceof ArtworkMutationError ||
     error instanceof ImageValidationError ||
     error instanceof ImageStorageError
   ) {
     return { status: "error", message: error.message }
+  }
+
+  if (error instanceof ZodError) {
+    return {
+      status: "error",
+      message: error.issues[0]?.message ?? "The artwork details are invalid.",
+    }
   }
 
   if (
@@ -56,7 +62,7 @@ async function saveArtworkAction(
   formData: FormData
 ): Promise<ArtworkActionState> {
   const admin = await requireAdmin()
-  const existing = artworkId ? await getArtworkForSave(artworkId) : null
+  const existing = artworkId ? await getArtworkForMutation(artworkId) : null
 
   if (artworkId && !existing) {
     return { status: "error", message: "Artwork not found." }

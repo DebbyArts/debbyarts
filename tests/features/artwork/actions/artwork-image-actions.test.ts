@@ -1,5 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from "vitest"
 
+const ArtworkMutationError = vi.hoisted(
+  () => class ArtworkMutationError extends Error {}
+)
+
 const mocks = vi.hoisted(() => ({
   addArtworkImage: vi.fn(),
   removeArtworkImage: vi.fn(),
@@ -9,7 +13,8 @@ const mocks = vi.hoisted(() => ({
 
 vi.mock("next/cache", () => ({ revalidatePath: mocks.revalidatePath }))
 vi.mock("@/shared/auth/authorize", () => ({ requireAdmin: mocks.requireAdmin }))
-vi.mock("@/features/artwork/services/artwork.service", () => ({
+vi.mock("@/features/artwork/services/artwork.mutation.service", () => ({
+  ArtworkMutationError,
   addArtworkImage: mocks.addArtworkImage,
   removeArtworkImage: mocks.removeArtworkImage,
 }))
@@ -55,6 +60,47 @@ describe("Artwork gallery image actions", () => {
 
     expect(result).toEqual({ message: "Choose an image to upload.", status: "error" })
     expect(mocks.addArtworkImage).not.toHaveBeenCalled()
+  })
+
+  it("returns expected Zod issues and hides unexpected service failures", async () => {
+    const invalidAlt = new FormData()
+    invalidAlt.set(
+      "image",
+      new File(["image"], "detail.jpg", { type: "image/jpeg" })
+    )
+    invalidAlt.set("altText", "x".repeat(181))
+
+    await expect(
+      addArtworkImageAction(
+        "artwork-1",
+        { message: "", status: "idle" },
+        invalidAlt
+      )
+    ).resolves.toEqual({
+      message: "Image alt text must be 180 characters or fewer.",
+      status: "error",
+    })
+    expect(mocks.addArtworkImage).not.toHaveBeenCalled()
+
+    mocks.addArtworkImage.mockRejectedValue(
+      new Error("internal database connection detail")
+    )
+    const valid = new FormData()
+    valid.set(
+      "image",
+      new File(["image"], "detail.jpg", { type: "image/jpeg" })
+    )
+
+    await expect(
+      addArtworkImageAction(
+        "artwork-1",
+        { message: "", status: "idle" },
+        valid
+      )
+    ).resolves.toEqual({
+      message: "The gallery image could not be saved.",
+      status: "error",
+    })
   })
 
   it("keeps a post-database Storage cleanup warning explicit on removal", async () => {
