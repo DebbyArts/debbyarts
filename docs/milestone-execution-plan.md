@@ -7,7 +7,7 @@ This document is the durable execution map for the five Debby Art & Prints miles
 - Foundation base commit: `715f62f03d8669b4819ce067a2c940b6da698e5c`
 - Worktree base: the `main` commit that adds this execution plan
 - Base branch: `main`
-- GitHub repository: https://github.com/Freeman-md/debbyarts
+- GitHub repository: https://github.com/DebbyArts/debbyarts
 - Workflow: Freeman Codex Workflows `1.0.1`
 - Merge method: `squash`
 - GitHub capability note: repository auto-merge is disabled, so all five contracts use `Merge Mode: Manual`. No repository setting or protection rule is changed.

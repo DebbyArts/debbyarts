@@ -21,6 +21,21 @@ environment.
 for local development because `prisma.config.ts` falls back to `DATABASE_URL`;
 use a direct or session-pooled connection for hosted migration commands.
 
+For production operator commands, create an ignored `.env.production` from
+`.env.production.example`. The production scripts explicitly load that file and
+override any development values already present in the shell:
+
+```bash
+npm run db:deploy:production
+npm run db:seed:production
+
+# Both commands, in order
+npm run db:setup:production
+```
+
+Do not rely on `NODE_ENV=production`: Next.js understands `.env.production`,
+but standalone Prisma commands do not select it automatically.
+
 ## Variable ownership
 
 | Concern | Values to set |
@@ -64,10 +79,10 @@ supabase db push --dry-run
 supabase db push
 
 # Application tables and Prisma migration history only: src/db/migrations/
-npm run db:deploy
+npm run db:deploy:production
 
 # Curated public objects and catalogue records
-npm run db:seed
+npm run db:seed:production
 ```
 
 Do not use Prisma to create Storage/Auth objects, and do not use Supabase
@@ -75,6 +90,26 @@ dashboard or CLI migrations for application tables. Do not run `npm run
 db:migrate` against a hosted environment; it is the local development command.
 `npm run db:reset-local` is intentionally destructive and rejects every
 non-loopback database target before Prisma runs.
+
+For a new production environment, `npm run db:setup:production` combines only
+the Prisma migration and catalogue-seed stages. Supabase Auth/Storage
+infrastructure remains the explicit preceding `supabase db push` step because
+the CLI's linked project must be reviewed before it mutates a remote project.
+
+## GitHub repository handover
+
+Use the client-owned GitHub repository as `origin`. Preserve the previous
+developer remote under a descriptive read-only name when historical access is
+still useful, then push `main` and set its upstream:
+
+```bash
+git remote rename origin developer-origin
+git remote add origin <client-repository-url>
+git push -u origin main
+```
+
+Confirm the destination repository is empty or intentionally accepts this
+history before the push. Do not force-push or replace unrelated client history.
 
 ## Vercel preview and production
 
@@ -87,6 +122,11 @@ repository only on that operator's machine:
 vercel login
 vercel link
 ```
+
+For the normal Git workflow, import the client-owned GitHub repository into the
+client's Vercel team and set `main` as the production branch. Vercel will then
+create previews for non-production branches and production deployments for
+pushes to `main`; no duplicate GitHub Actions deployment workflow is required.
 
 Set the variables from the table above in Vercel's Development, Preview, and
 Production environments as applicable. `DIRECT_URL` belongs in the protected
@@ -104,6 +144,11 @@ vercel --prod
 
 The Vercel project association is local `.vercel` state and remains ignored.
 This repository contains no project IDs, account IDs, or deployment secrets.
+
+Database migrations and seeds are deliberately not part of `next build` or the
+Vercel build command. Run the explicit production database commands before the
+deployment that depends on a schema/content change. This prevents preview builds
+or repeated production builds from mutating the database unexpectedly.
 
 ## Client-account handover
 

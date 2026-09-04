@@ -21,6 +21,9 @@
     "db:deploy": "prisma migrate deploy",
     "db:seed": "prisma db seed",
     "db:setup": "npm run db:deploy && npm run db:seed",
+    "db:deploy:production": "DOTENV_CONFIG_PATH=.env.production DOTENV_CONFIG_OVERRIDE=true prisma migrate deploy",
+    "db:seed:production": "DOTENV_CONFIG_PATH=.env.production DOTENV_CONFIG_OVERRIDE=true prisma db seed",
+    "db:setup:production": "npm run db:deploy:production && npm run db:seed:production",
     "db:reset-local": "tsx src/db/seed/reset-local.ts",
     "db:studio": "prisma studio"
   },
