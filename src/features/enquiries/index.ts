@@ -1,4 +1,5 @@
 export { RequestFeaturePage } from "./RequestFeaturePage"
 export { EnquiryAdminDetailPage } from "./components/admin/pages/EnquiryAdminDetailPage"
 export { EnquiryAdminListPage } from "./components/admin/pages/EnquiryAdminListPage"
+export { loadRequestPage } from "./services/enquiry.query.service"
 export type { EnquiryListSearchParams, RequestSearchParams } from "./types"

@@ -4,12 +4,14 @@ import {
   getPublishedServiceGroups,
   ServicesPage,
 } from "@/features/services"
+import { createPageMetadata } from "../site-metadata"
 
-const metadata: Metadata = {
-  title: "Services | Debby Art & Prints",
+const metadata: Metadata = createPageMetadata({
+  title: "Services",
   description:
     "Explore personalised products, print and event materials, branding, and signage from Debby Art & Prints.",
-}
+  path: "/services",
+})
 
 async function Page() {
   const groups = await getPublishedServiceGroups()
